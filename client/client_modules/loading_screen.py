@@ -12,7 +12,7 @@ def start_loading_screen(app):
         text_color = "#a5a8ad",
         font = ("Courier New", 70)
     )
-    bitwire_label.pack()
+    bitwire_label.pack(pady = (0, 10))
 
     line_frame = CTkFrame(
         loading_frame,
@@ -20,7 +20,7 @@ def start_loading_screen(app):
         height = 2,
         fg_color = "#2554a1"
     )
-    line_frame.pack()
+    line_frame.pack(pady = (0, 20))
 
     subtitle_label = CTkLabel(
         loading_frame,
@@ -39,6 +39,14 @@ def start_loading_screen(app):
     progress_bar.pack(pady = 30)
     progress_bar.set(0)
 
+    loading_label = CTkLabel(
+        loading_frame,
+        text = "Loading...",
+        text_color = "#a5a8ad",
+        font = ("Courier New", 20)
+    )
+    loading_label.pack()
+
     def update_progress():
         global progress_value
         if progress_value < 1.0:
@@ -47,7 +55,10 @@ def start_loading_screen(app):
             progress_bar.after(20, update_progress)
         else:
             progress_bar.set(1.0)
-            print("dela")
+            loading_label.configure(
+                text = "Success!"
+            )
+            loading_frame.after(1000, loading_frame.destroy)
     update_progress()
 
 
