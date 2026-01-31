@@ -2,7 +2,6 @@ from customtkinter import *
 from client_modules.ui import start_ui
 
 progress_value = 0.0
-
 def start_loading_screen():
     app = CTk()
     app.geometry("200x250")
