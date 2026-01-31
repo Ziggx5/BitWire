@@ -1,5 +1,4 @@
 from customtkinter import *
-from client_modules.loading_screen import start_loading_screen
 
 def start_ui():
     app = CTk()
@@ -7,8 +6,5 @@ def start_ui():
     app.title("BitWire")
     app.resizable(False, False)
     app.configure(fg_color = "#0e1117")
-
-    start_loading_screen(app)
-
 
     app.mainloop()
