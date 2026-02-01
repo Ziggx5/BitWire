@@ -4,10 +4,17 @@ from client_modules.ui import start_ui
 progress_value = 0.0
 def start_loading_screen():
     app = CTk()
-    app.geometry("200x250")
+    app.overrideredirect(True)
+    app.update_idletasks()
+    width = app.winfo_width()
+    height = app.winfo_height()
+    x = (app.winfo_screenwidth() // 2) - (width // 2)
+    y = (app.winfo_screenheight() // 2) - (height // 2)
+    app.geometry(f"200x250+{x}+{y}")
     app.title("BitWire")
     app.resizable(False, False)
     app.configure(fg_color = "#0e1117")
+
     loading_frame = CTkFrame(app, fg_color = "transparent")
     loading_frame.place(relx = 0.5, rely = 0.5, anchor = "center")
 
