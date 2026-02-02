@@ -1,73 +1,53 @@
-from customtkinter import *
-from client_modules.ui import start_ui
+import sys
+from PySide6.QtWidgets import *
+from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import *
 
-progress_value = 0.0
-def start_loading_screen():
-    app = CTk()
-    app.overrideredirect(True)
-    app.update_idletasks()
-    width = app.winfo_width()
-    height = app.winfo_height()
-    x = (app.winfo_screenwidth() // 2) - (width // 2)
-    y = (app.winfo_screenheight() // 2) - (height // 2)
-    app.geometry(f"200x250+{x}+{y}")
-    app.title("BitWire")
-    app.resizable(False, False)
-    app.configure(fg_color = "#0e1117")
+class LoadingScreen(QWidget):
+    def __init__(self):
+        super().__init__()
 
-    loading_frame = CTkFrame(app, fg_color = "transparent")
-    loading_frame.place(relx = 0.5, rely = 0.5, anchor = "center")
+        self.setFixedSize(200, 250)
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setStyleSheet("background-color : #0e1117;")
 
-    bitwire_label = CTkLabel(
-        loading_frame,
-        text = "BITWIRE",
-        text_color = "#a5a8ad",
-        font = ("Courier New", 20)
-    )
-    bitwire_label.pack(pady = (0, 10))
+        self.value = 0
 
-    line_frame = CTkFrame(
-        loading_frame,
-        width = 100,
-        height = 2,
-        fg_color = "#2554a1"
-    )
-    line_frame.pack(pady = (0, 10))
+        layout = QVBoxLayout()
+        layout.setAlignment(Qt.AlignCenter)
+        layout.setSpacing(12)
 
-    progress_bar = CTkProgressBar(
-        loading_frame,
-        width = 80,
-        progress_color = "#4f87e3",
-    )
-    progress_bar.pack(pady = 10)
-    progress_bar.set(0)
+        title = QLabel("BITWARE")
+        title.setFont(QFont("Courier New", 20))
+        title.setStyleSheet("color: #a5a8ad;")
 
-    loading_label = CTkLabel(
-        loading_frame,
-        text = "Loading...",
-        text_color = "#a5a8ad",
-        font = ("Courier New", 10)
-    )
-    loading_label.pack()
+        line = QLabel()
+        line.setFixedSize(120, 2)
+        line.setStyleSheet("background-color: #2554a1;")
 
-    def update_progress():
-        global progress_value
-        if progress_value < 1.0:
-            progress_value += 0.01
-            progress_bar.set(progress_value)
-            app.after(20, update_progress)
+        self.progress = QProgressBar()
+        self.progress.setFixedSize(80, 5)
+        self.progress.setRange(0, 100)
+        self.progress.setStyleSheet("background-color: #1c1f26; border-radius: 4px;")
+
+        self.label = QLabel("Loading...")
+        self.label.setFont(QFont("Courier New", 10))
+        self.label.setStyleSheet("color: #a5a8ad;")
+
+        layout.addWidget(title, alignment = Qt.AlignCenter)
+        layout.addWidget(line, alignment = Qt.AlignCenter)
+        layout.addWidget(self.progress, alignment = Qt.AlignCenter)
+        layout.addWidget(self.label, alignment = Qt.AlignCenter)
+        self.setLayout(layout)
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_progress_bar)
+        self.timer.start(20)
+
+    def update_progress_bar(self):
+        if self.value < 100:
+            self.value += 1
+            self.progress.setValue(self.value)
         else:
-            progress_bar.set(1.0)
-            loading_label.configure(
-                text = "Success!"
-            )
-            app.after(1000, finish)
-    
-    def finish():
-        app.destroy()
-        start_ui()
-
-    update_progress()
-    app.mainloop()
-
-
+            self.label.setText("Success!")
+            self.close()
