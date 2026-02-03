@@ -1,74 +1,55 @@
-from customtkinter import *
-from client_modules.add_server import add_server_handler
-def start_ui():
-    app = CTk()
-    app.geometry("900x600")
-    app.title("BitWire")
-    app.resizable(False, False)
-    app.configure(fg_color = "#0e1117")
+from PySide6.QtWidgets import *
+from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QFont
 
-    left_frame = CTkFrame(
-        app,
-        height = 500,
-        fg_color = "transparent",
-        border_color = "#737373",
-        border_width = 1,
-        corner_radius = 0
-    )
-    left_frame.place(x = 0, y = 100)
-    left_frame.propagate(False)
-    
-    right_frame = CTkFrame(
-        app,
-        fg_color = "transparent",
-        height = 600,
-        width = 700,
-        border_color = "#737373",
-        border_width = 1,
-        corner_radius = 0
-    )
-    right_frame.place(x = 200, y = 0)
-    right_frame.propagate(False)
+class MainUi(QWidget):
+    def __init__(self):
+        super().__init__()
 
-    upper_frame = CTkFrame(
-        app,
-        fg_color = "transparent",
-        height = 50,
-        width = 200,
-        border_color = "#737373",
-        border_width = 1,
-        corner_radius = 0
-    )
-    upper_frame.place(x = 0, y = 50)
-    upper_frame.propagate(False)
+        self.setFixedSize(900, 600)
+        self.setWindowTitle("BitWire")
+        self.setStyleSheet("background-color : #0e1117;")
 
-    server_placeholder_label = CTkLabel(
-        upper_frame,
-        text = "All servers"
-    )
-    server_placeholder_label.pack(side = "left", padx = 10)
+        self.left_frame = QFrame(self)
+        self.left_frame.setGeometry(0, 100, 200, 500)
+        self.left_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
 
-    bitwire_label = CTkLabel(
-        app,
-        text = "BITWIRE",
-        text_color = "#a5a8ad",
-        font = ("Courier New", 30)
-    )
-    bitwire_label.place(x = 35, y = 10)
+        self.right_frame = QFrame(self)
+        self.right_frame.setGeometry(200, 0, 700, 600)
+        self.right_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
 
-    add_new_server = CTkButton(
-        upper_frame,
-        text = "+",
-        font = ("Courier New", 18, "bold"),
-        width = 32,
-        height = 32,
-        fg_color = "#1f6feb",
-        hover_color = "#388bfd",
-        text_color = "#ffffff",
-        corner_radius = 16,
-        border_width = 0,
-        command = lambda: add_server_handler(app, left_frame, right_frame, upper_frame, bitwire_label)
-    )
-    add_new_server.pack(side = "right", padx = 10)
+        self.upper_frame = QFrame(self)
+        self.upper_frame.setGeometry(0, 50, 200, 50)
+        self.upper_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
 
-    app.mainloop()
+        self.bitwire_label = QLabel("BitWire", self)
+        self.bitwire_label.setFont(QFont("Courier New", 25))
+        self.bitwire_label.setStyleSheet("color: #a5a8ad;")
+        self.bitwire_label.move(30, 10)
+
+        self.add_server_label = QLabel("All servers", self.upper_frame)
+        self.add_server_label.setFont(QFont("Courier New", 11))
+        self.add_server_label.setStyleSheet("color: white; border: none")
+        self.add_server_label.move(10, 15)
+
+        self.add_button = QPushButton("+", self.upper_frame)
+        self.add_button.setFont(QFont("Courier New", 15, QFont.Bold))
+        self.add_button.setStyleSheet("""
+            QPushButton {
+            color: white;
+            background-color: #1f6feb;
+            border-radius: 10px;
+            border: 2px solid #ffffff;
+            }
+            
+            QPushButton:hover {
+                border-color: #58a6ff;
+            }
+
+            QPushButton:pressed {
+            background-color: #1a5fd1;
+            border-color: #1a5fd1;
+            }
+            
+            """)
+        self.add_button.setGeometry(150, 10, 32, 32)

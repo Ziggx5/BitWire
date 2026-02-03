@@ -1,7 +1,7 @@
-import sys
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import *
+from PySide6.QtGui import QFont
+from client_modules.ui import MainUi
 
 class LoadingScreen(QWidget):
     def __init__(self):
@@ -49,5 +49,9 @@ class LoadingScreen(QWidget):
             self.value += 1
             self.progress.setValue(self.value)
         else:
+            self.timer.stop()
             self.label.setText("Success!")
+            self.close()
+            self.MainUi = MainUi()
+            self.MainUi.show()
             self.close()
