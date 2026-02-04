@@ -1,12 +1,13 @@
 from PySide6.QtWidgets import *
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
+from client_modules.add_server import AddServer
 
 class MainUi(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setFixedSize(900, 600)
+        self.add_server_window = AddServer(self.show_main_ui)
         self.setWindowTitle("BitWire")
         self.setStyleSheet("background-color : #0e1117;")
 
@@ -53,3 +54,13 @@ class MainUi(QWidget):
             
             """)
         self.add_button.setGeometry(150, 10, 32, 32)
+
+        self.add_button.clicked.connect(self.open_add_server)
+
+    def open_add_server(self):
+        self.add_server_window.show()
+        self.hide()
+
+    def show_main_ui(self):
+        self.add_server_window.close()
+        self.show()
