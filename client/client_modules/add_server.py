@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
+from client_modules.save_server import save_server_handler
 
 class AddServer(QWidget):
     def __init__(self, on_cancel):
@@ -41,5 +42,10 @@ class AddServer(QWidget):
         self.confirm.clicked.connect(self.check_entries)
 
     def check_entries(self):
-        if self.server_name.text() == "" and self.ip_address.text() == "":
-            print("Working")
+        name = self.server_name.text()
+        ip_address = self.ip_address.text()
+
+        if name and ip_address:
+            save_server_handler(name, ip_address)
+        else:
+            print("NO!!")
