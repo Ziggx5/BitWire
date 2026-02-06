@@ -2,6 +2,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
 from client_modules.save_server import save_server_handler
+from client_modules.load_servers import server_loader
 
 class AddServer(QWidget):
     def __init__(self, on_cancel):
@@ -47,5 +48,12 @@ class AddServer(QWidget):
 
         if name and ip_address:
             save_server_handler(name, ip_address)
+            self.on_cancel()
+            self.close()
+            server_loader()
         else:
-            print("NO!!")
+            QMessageBox.warning(
+                self,
+                "Something went wrong.",
+                "Please enter server name and IP address."
+            )
