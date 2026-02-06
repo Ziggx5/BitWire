@@ -2,7 +2,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from client_modules.add_server import AddServer
-
+from client_modules.load_servers import server_loader
 class MainUi(QWidget):
     def __init__(self):
         super().__init__()
@@ -18,6 +18,10 @@ class MainUi(QWidget):
         self.right_frame = QFrame(self)
         self.right_frame.setGeometry(200, 0, 700, 600)
         self.right_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
+
+        self.left_layout = QVBoxLayout(self.left_frame)
+        self.left_layout.setAlignment(Qt.AlignTop)
+        self.left_layout.setSpacing(6)
 
         self.upper_frame = QFrame(self)
         self.upper_frame.setGeometry(0, 50, 200, 50)
@@ -54,8 +58,8 @@ class MainUi(QWidget):
             
             """)
         self.add_button.setGeometry(150, 10, 32, 32)
-
         self.add_button.clicked.connect(self.open_add_server)
+        self.reload_servers()
 
     def open_add_server(self):
         self.add_server_window.show()
@@ -64,3 +68,25 @@ class MainUi(QWidget):
     def show_main_ui(self):
         self.add_server_window.close()
         self.show()
+        self.reload_servers()
+
+    def reload_servers(self):
+        server_list = server_loader()
+        for server in server_list:
+            server_button = QPushButton(server["name"])
+            server_button.setFixedHeight(36)
+            server_button.setFont(QFont("Courier New", 15))
+            server_button.setStyleSheet("""
+                QPushButton {
+                    text-align: left;
+                    padding-left: 10px;
+                    color: #a5a8ad;
+                    background-color: transparent;
+                    border-radius: 5px;
+                }
+
+                QPushButton:hover {
+                    background-color: #333333;
+                }
+            """)
+            self.left_layout.addWidget(server_button)
