@@ -15,13 +15,17 @@ class MainUi(QWidget):
         self.left_frame.setGeometry(0, 100, 200, 500)
         self.left_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
 
+        self.left_layout = QVBoxLayout(self.left_frame)
+        self.left_layout.setAlignment(Qt.AlignTop)
+        self.left_layout.setSpacing(1)
+
         self.right_frame = QFrame(self)
         self.right_frame.setGeometry(200, 0, 700, 600)
         self.right_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
 
-        self.left_layout = QVBoxLayout(self.left_frame)
-        self.left_layout.setAlignment(Qt.AlignTop)
-        self.left_layout.setSpacing(6)
+        self.right_layout = QVBoxLayout(self.right_frame)
+        self.right_layout.setContentsMargins(10, 10, 10, 10)
+        self.right_layout.setSpacing(8)
 
         self.upper_frame = QFrame(self)
         self.upper_frame.setGeometry(0, 50, 200, 50)
@@ -71,15 +75,21 @@ class MainUi(QWidget):
         self.reload_servers()
 
     def reload_servers(self):
+        while self.left_layout.count():
+            item = self.left_layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+
         server_list = server_loader()
         for server in server_list:
             server_button = QPushButton(server["name"])
-            server_button.setFixedHeight(36)
-            server_button.setFont(QFont("Courier New", 15))
+            server_button.setFixedHeight(35)
+            server_button.setFont(QFont("Courier New", 12))
             server_button.setStyleSheet("""
                 QPushButton {
                     text-align: left;
-                    padding-left: 10px;
+                    padding-left: 5px;
                     color: #a5a8ad;
                     background-color: transparent;
                     border-radius: 5px;
@@ -90,3 +100,24 @@ class MainUi(QWidget):
                 }
             """)
             self.left_layout.addWidget(server_button)
+            server_button.clicked.connect(self.load_chat)
+    
+    def load_chat(self):
+        while self.right_layout.count():
+            item = self.right_layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+
+        message_input = QTextEdit()
+        message_input.setFixedHeight(30)
+        message_input.setPlaceholderText("Type a message...")
+        message_input.setStyleSheet("""
+            QTextEdit {
+                border-radius: 10px;
+                background-color: #1a1e24;
+            }
+        """)
+
+        self.right_layout.addStretch()
+        self.right_layout.addWidget(message_input)
