@@ -1,10 +1,7 @@
-import socket
-import threading
-
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(("127.0.0.1", 50505))
-
-def receive_messages():
+def receive_messages(ip_address):
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((ip_address, 50505))
+    print("working")
     while True:
         try:
             message = client.recv(1024).decode("ascii")
@@ -16,11 +13,8 @@ def receive_messages():
 
 def write_message():
     while True:
-        message = f"Ziggx: {input("")}"
+        message = f"User: {input("")}"
         client.send(message.encode("ascii"))
-
-receive_messages_thread = threading.Thread(target = receive_messages)
-receive_messages_thread.start()
 
 write_message_thread = threading.Thread(target = write_message)
 write_message_thread.start()
