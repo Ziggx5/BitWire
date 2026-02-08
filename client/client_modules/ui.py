@@ -133,37 +133,37 @@ class MainUi(QWidget):
         self.server_address = server_button.property("ip")
         self.receive_messages_thread = threading.Thread(target = self.receive_messages, args = (self.server_address,))
         self.receive_messages_thread.start()
-        self.write_message_thread = threading.Thread(target = write_message)
-        self.write_message_thread.start()
 
-        message_input = QTextEdit()
-        message_input.setFixedHeight(30)
-        message_input.setPlaceholderText("Type a message...")
-        message_input.setStyleSheet("""
+        self.message_input = QTextEdit()
+        self.message_input.setFixedHeight(30)
+        self.message_input.setPlaceholderText("Type a message...")
+        self.message_input.setStyleSheet("""
             QTextEdit {
                 border-radius: 10px;
                 background-color: #1a1e24;
             }
         """)
 
+        send_message = QPushButton(">")
+        send_message.setFixedSize(30, 30)
+        send_message.clicked.connect(self.get_text_from_input)
+
         self.right_layout.addStretch()
-        self.right_layout.addWidget(message_input)
+        self.right_layout.addWidget(self.message_input)
+        self.right_layout.addWidget(send_message)
 
     def receive_messages(self, ip_address):
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect((ip_address, 50505))
-        print("working")
-        print(ip_address)
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.connect((ip_address, 50505))
         while True:
             try:
-                message = client.recv(1024).decode("ascii")
+                message = self.client.recv(1024).decode("ascii")
                 print(message)
             except:
                 print("An error occurred!")
-                client.close()
+                self.client.close()
                 break
-    
-    def write_message(self, message_input):
-        while True:
-            message = f"User: {input("")}"
-            client.send(message.encode("ascii"))
+
+    def get_text_from_input(self):
+        message = self.message_input.toPlainText()
+        self.client.send(message.encode("ascii"))
