@@ -9,7 +9,8 @@ class MainUi(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.ip_address = None
+        self.client = None
+        self.running = False
 
         self.add_server_window = AddServer(self.show_main_ui)
         self.setWindowTitle("BitWire")
@@ -122,6 +123,10 @@ class MainUi(QWidget):
             server_button.clicked.connect(self.load_chat)
     
     def load_chat(self):
+        if self.client:
+            self.running = False
+            self.client.close()
+            self.client = None
         while self.right_layout.count():
             item = self.right_layout.takeAt(0)
             widget = item.widget()
@@ -131,9 +136,12 @@ class MainUi(QWidget):
         server_button = self.sender()
         server_name = server_button.property("name")
         self.server_address = server_button.property("ip")
+        self.running = True
         self.receive_messages_thread = threading.Thread(target = self.receive_messages, args = (self.server_address,))
         self.receive_messages_thread.start()
 
+        self.chat_view = QTextBrowser()
+        self.chat_view.setStyleSheet("background-color: #1a1e24;")
         self.message_input = QTextEdit()
         self.message_input.setFixedHeight(30)
         self.message_input.setPlaceholderText("Type a message...")
@@ -146,24 +154,24 @@ class MainUi(QWidget):
 
         send_message = QPushButton(">")
         send_message.setFixedSize(30, 30)
-        send_message.clicked.connect(self.get_text_from_input)
+        send_message.clicked.connect(self.send_message)
 
-        self.right_layout.addStretch()
+        self.right_layout.addWidget(self.chat_view)
         self.right_layout.addWidget(self.message_input)
         self.right_layout.addWidget(send_message)
 
     def receive_messages(self, ip_address):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((ip_address, 50505))
-        while True:
+        while self.running:
             try:
                 message = self.client.recv(1024).decode("ascii")
-                print(message)
+                self.chat_view.append(message)
             except:
                 print("An error occurred!")
                 self.client.close()
                 break
 
-    def get_text_from_input(self):
+    def send_message(self):
         message = self.message_input.toPlainText()
         self.client.send(message.encode("ascii"))
