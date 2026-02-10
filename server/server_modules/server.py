@@ -15,7 +15,8 @@ def send_message_to_clients(message):
         try:
             client.send(message)
         except:
-            clients.remove(client)
+            if client in clients:
+                clients.remove(client)
             client.close()
 
 def client_handler(client):
@@ -24,7 +25,8 @@ def client_handler(client):
             message = client.recv(1024)
             send_message_to_clients(message)
         except Exception as e:
-            clients.remove(client)
+            if client in clients:
+                clients.remove(client)
             client.close()
             send_message_to_clients(f"{client} left the chat! {e}".encode("ascii"))
             break

@@ -11,6 +11,7 @@ class MainUi(QWidget):
 
         self.client = None
         self.running = False
+        self.active_server = None
 
         self.add_server_window = AddServer(self.show_main_ui)
         self.setWindowTitle("BitWire")
@@ -134,6 +135,17 @@ class MainUi(QWidget):
                 widget.deleteLater()
         
         server_button = self.sender()
+
+        if server_button == self.active_server:
+            return
+        
+        if self.active_server:
+            self.active_server.setEnabled(True)
+            
+        server_button.setEnabled(False)
+        self.active_server = server_button
+        self.active_server = server_button
+        print(self.active_server)
         server_name = server_button.property("name")
         self.server_address = server_button.property("ip")
         self.running = True
