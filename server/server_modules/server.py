@@ -15,21 +15,23 @@ def send_message_to_clients(message):
         try:
             client.send(message)
         except:
-            if client in clients:
-                clients.remove(client)
-            client.close()
+            pass
 
-def client_handler(client):
+def client_handler(client, address):
     while True:
         try:
             message = client.recv(1024)
             send_message_to_clients(message)
-        except Exception as e:
-            if client in clients:
-                clients.remove(client)
-            client.close()
-            send_message_to_clients(f"{client} left the chat! {e}".encode("ascii"))
+
+            if not message:
+                break
+
+        except:
             break
+    if client in clients:
+        clients.remove(client)
+    client.close()
+    send_message_to_clients(f"{address} left the chat!".encode("ascii"))
 
 def receive_connection():
     while True:
@@ -38,7 +40,7 @@ def receive_connection():
         send_message_to_clients(f"{address} has joined the chat!".encode("ascii"))
         client.send(f"Connected to the server!".encode("ascii"))
 
-        thread = threading.Thread(target = client_handler, args = (client,))
+        thread = threading.Thread(target = client_handler, args = (client, address,))
         thread.start()
 
 print("server running...")

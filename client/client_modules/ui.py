@@ -144,8 +144,6 @@ class MainUi(QWidget):
             
         server_button.setEnabled(False)
         self.active_server = server_button
-        self.active_server = server_button
-        print(self.active_server)
         server_name = server_button.property("name")
         self.server_address = server_button.property("ip")
         self.running = True
@@ -183,6 +181,7 @@ class MainUi(QWidget):
                 print("An error occurred!")
                 self.client.close()
                 break
+        self.client.close()
 
     def send_message(self):
         message = self.message_input.toPlainText()
