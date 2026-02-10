@@ -42,11 +42,22 @@ class MainUi(QWidget):
         self.user_frame.setGeometry(0, 550, 200, 50)
         self.user_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
 
-        self.username_input = QTextEdit(self.user_frame)
+        self.username_input = QLineEdit(self.user_frame)
         self.username_input.setPlaceholderText("Name")
-        self.username_input.setFixedSize(100, 30)
-        self.username_input.setStyleSheet("border: 1px solid #737373")
+        self.username_input.setFixedSize(130, 30)
+        self.username_input.setStyleSheet("""
+            QLineEdit {
+                border: 1px solid #737373;
+                padding: 5px;
+            }
+        """)
         self.username_input.move(10, 10)
+        self.username_input.setReadOnly(True)
+
+        self.save_username_button = QPushButton("Edit", self.user_frame)
+        self.save_username_button.setFixedSize(40, 30)
+        self.save_username_button.move(150, 10)
+        self.save_username_button.pressed.connect(self.save_username)
 
         self.server_button_group = QButtonGroup(self)
         self.server_button_group.setExclusive(True)
@@ -80,7 +91,7 @@ class MainUi(QWidget):
             border-color: #1a5fd1;
             }
             
-            """)
+        """)
         self.add_button.setGeometry(150, 10, 32, 32)
         self.add_button.clicked.connect(self.open_add_server)
         self.reload_servers()
@@ -233,3 +244,13 @@ class MainUi(QWidget):
     def send_message(self):
         message = self.message_input.toPlainText()
         self.client.send(message.encode("ascii"))
+
+    def save_username(self):
+        if self.username_input.isReadOnly():
+            self.username_input.setReadOnly(False)
+            self.username_input.setFocus()
+            self.save_username_button.setText("Save")
+        else:
+            self.username_input.setReadOnly(True)
+            self.save_username_button.setText("Edit")
+
