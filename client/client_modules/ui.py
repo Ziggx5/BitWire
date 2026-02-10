@@ -243,7 +243,8 @@ class MainUi(QWidget):
 
     def send_message(self):
         message = self.message_input.toPlainText()
-        self.client.send(message.encode("ascii"))
+        complete_message = f"{self.username}: {message}"
+        self.client.send(complete_message.encode("ascii"))
 
     def save_username(self):
         if self.username_input.isReadOnly():
@@ -251,6 +252,13 @@ class MainUi(QWidget):
             self.username_input.setFocus()
             self.save_username_button.setText("Save")
         else:
+            if self.username_input.text() == "":
+                self.username = "User"
+                self.username_input.setText("User")
+            else:
+                self.username = self.username_input.text().strip()
             self.username_input.setReadOnly(True)
             self.save_username_button.setText("Edit")
+            print(self.username)
+
 
