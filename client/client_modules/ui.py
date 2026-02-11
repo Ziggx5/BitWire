@@ -13,10 +13,12 @@ class MainUi(QWidget):
         self.client = None
         self.running = False
         self.active_server = None
+        self.username = "User"
 
         self.add_server_window = AddServer(self.show_main_ui)
         self.setWindowTitle("BitWire")
         self.setStyleSheet("background-color : #0e1117;")
+        self.setFixedSize(900, 600)
 
         self.server_frame = QFrame(self)
         self.server_frame.setGeometry(0, 100, 200, 450)
@@ -44,15 +46,23 @@ class MainUi(QWidget):
 
         self.username_input = QLineEdit(self.user_frame)
         self.username_input.setPlaceholderText("Name")
+        self.username_input.setText("User")
         self.username_input.setFixedSize(130, 30)
         self.username_input.setStyleSheet("""
             QLineEdit {
                 border: 1px solid #737373;
                 padding: 5px;
+                border-radius: 12px;
+                background-color: #2d3440;
+            }
+            
+            QLineEdit:focus {
+                background-color: #4b576b;
             }
         """)
         self.username_input.move(10, 10)
         self.username_input.setReadOnly(True)
+        self.username_input.setEnabled(False)
 
         self.save_username_button = QPushButton("Edit", self.user_frame)
         self.save_username_button.setFixedSize(40, 30)
@@ -215,8 +225,7 @@ class MainUi(QWidget):
             }
 
             QTextEdit:focus {
-            border: 1px solid #505f75;
-            
+                border: 1px solid #505f75;
             }
         """)
 
@@ -226,6 +235,7 @@ class MainUi(QWidget):
 
         self.main_layout.addWidget(self.chat_view)
         self.main_layout.addWidget(self.message_input)
+        self.message_input.setFocus()
         self.main_layout.addWidget(send_message)
 
     def receive_messages(self, ip_address):
@@ -236,29 +246,32 @@ class MainUi(QWidget):
                 message = self.client.recv(1024).decode("ascii")
                 self.chat_view.append(message)
             except:
-                print("An error occurred!")
                 self.client.close()
                 break
         self.client.close()
 
     def send_message(self):
+        if self.message_input.toPlainText() == "":
+            self.message_input.setFocus()
+            return
         message = self.message_input.toPlainText()
-        complete_message = f"{self.username}: {message}"
+        complete_message = f"{self.username}: {message}".strip()
         self.client.send(complete_message.encode("ascii"))
+        self.message_input.clear()
+        self.message_input.setFocus()
 
     def save_username(self):
         if self.username_input.isReadOnly():
             self.username_input.setReadOnly(False)
+            self.username_input.setEnabled(True)
             self.username_input.setFocus()
             self.save_username_button.setText("Save")
         else:
             if self.username_input.text() == "":
-                self.username = "User"
                 self.username_input.setText("User")
             else:
                 self.username = self.username_input.text().strip()
             self.username_input.setReadOnly(True)
+            self.username_input.setEnabled(False)
             self.save_username_button.setText("Edit")
-            print(self.username)
-
 
