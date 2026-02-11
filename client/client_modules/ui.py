@@ -1,10 +1,11 @@
+import socket
+import threading
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
-import socket
-import threading
 from client_modules.add_server import AddServer
 from client_modules.load_servers import server_loader
+from client_modules.networking import ChatHandler
 
 class MainUi(QWidget):
     def __init__(self):
@@ -16,6 +17,7 @@ class MainUi(QWidget):
         self.username = "User"
 
         self.add_server_window = AddServer(self.show_main_ui)
+        self.chat_handler = ChatHandler(self.display_message)
         self.setWindowTitle("BitWire")
         self.setStyleSheet("background-color : #0e1117;")
         self.setFixedSize(900, 600)
@@ -179,8 +181,6 @@ class MainUi(QWidget):
         server_name = server_button.property("name")
         self.server_address = server_button.property("ip")
         self.running = True
-        self.receive_messages_thread = threading.Thread(target = self.receive_messages, args = (self.server_address,), daemon = True)
-        self.receive_messages_thread.start()
 
         self.chat_view = QTextBrowser()
         self.chat_view.verticalScrollBar().setSingleStep(10)
@@ -237,7 +237,9 @@ class MainUi(QWidget):
         self.main_layout.addWidget(self.message_input)
         self.message_input.setFocus()
         self.main_layout.addWidget(send_message)
+        self.chat_handler.connect_to_server(self.server_address)
 
+    '''
     def receive_messages(self, ip_address):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((ip_address, 50505))
@@ -249,6 +251,8 @@ class MainUi(QWidget):
                 self.client.close()
                 break
         self.client.close()
+    '''
+
 
     def send_message(self):
         if self.message_input.toPlainText() == "":
@@ -275,3 +279,5 @@ class MainUi(QWidget):
             self.username_input.setEnabled(False)
             self.save_username_button.setText("Edit")
 
+    def display_message(self, message):
+        self.chat_view.append(message)
