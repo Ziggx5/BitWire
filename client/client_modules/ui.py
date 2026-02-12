@@ -6,18 +6,20 @@ from PySide6.QtGui import QFont
 from client_modules.add_server import AddServer
 from client_modules.load_servers import server_loader
 from client_modules.networking import ChatHandler
+from client_modules.tray_manager import TrayManager
 
 class MainUi(QWidget):
     def __init__(self):
         super().__init__()
 
         self.client = None
-        self.running = False
         self.active_server = None
         self.username = "User"
 
         self.add_server_window = AddServer(self.show_main_ui)
         self.chat_handler = ChatHandler(self.client_display_message)
+        self.tray = TrayManager(self)
+
         self.setWindowTitle("BitWire")
         self.setStyleSheet("background-color : #0e1117;")
         self.setFixedSize(900, 600)
@@ -159,7 +161,6 @@ class MainUi(QWidget):
     
     def load_chat(self):
         if self.client:
-            self.running = False
             self.client.close()
             self.client = None
         while self.main_layout.count():
@@ -180,7 +181,6 @@ class MainUi(QWidget):
         self.active_server = server_button
         server_name = server_button.property("name")
         self.server_address = server_button.property("ip")
-        self.running = True
 
         self.chat_view = QTextBrowser()
         self.chat_view.verticalScrollBar().setSingleStep(10)
@@ -266,3 +266,7 @@ class MainUi(QWidget):
         self.chat_handler.send_message(complete_message)
         self.message_input.clear()
         self.message_input.setFocus()
+
+    def closeEvent(self, event):
+        event.ignore()
+        self.hide()
