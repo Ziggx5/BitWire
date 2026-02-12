@@ -17,7 +17,7 @@ class MainUi(QWidget):
         self.username = "User"
 
         self.add_server_window = AddServer(self.show_main_ui)
-        self.chat_handler = ChatHandler(self.display_message)
+        self.chat_handler = ChatHandler(self.client_display_message)
         self.setWindowTitle("BitWire")
         self.setStyleSheet("background-color : #0e1117;")
         self.setFixedSize(900, 600)
@@ -231,38 +231,13 @@ class MainUi(QWidget):
 
         send_message = QPushButton(">")
         send_message.setFixedSize(30, 30)
-        send_message.clicked.connect(self.send_message)
+        send_message.clicked.connect(self.client_send_message)
 
         self.main_layout.addWidget(self.chat_view)
         self.main_layout.addWidget(self.message_input)
         self.message_input.setFocus()
         self.main_layout.addWidget(send_message)
         self.chat_handler.connect_to_server(self.server_address)
-
-    '''
-    def receive_messages(self, ip_address):
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.connect((ip_address, 50505))
-        while self.running:
-            try:
-                message = self.client.recv(1024).decode("ascii")
-                self.chat_view.append(message)
-            except:
-                self.client.close()
-                break
-        self.client.close()
-    '''
-
-
-    def send_message(self):
-        if self.message_input.toPlainText() == "":
-            self.message_input.setFocus()
-            return
-        message = self.message_input.toPlainText()
-        complete_message = f"{self.username}: {message}".strip()
-        self.client.send(complete_message.encode("ascii"))
-        self.message_input.clear()
-        self.message_input.setFocus()
 
     def save_username(self):
         if self.username_input.isReadOnly():
@@ -279,5 +254,15 @@ class MainUi(QWidget):
             self.username_input.setEnabled(False)
             self.save_username_button.setText("Edit")
 
-    def display_message(self, message):
+    def client_display_message(self, message):
         self.chat_view.append(message)
+
+    def client_send_message(self):
+        message = self.message_input.toPlainText().strip()
+        if not message:
+            self.message_input.setFocus()
+            return
+        complete_message = f"{self.username}: {message}".strip()
+        self.chat_handler.send_message(complete_message)
+        self.message_input.clear()
+        self.message_input.setFocus()

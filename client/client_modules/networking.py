@@ -21,3 +21,6 @@ class ChatHandler:
             except:
                 break
         self.client.close()
+    
+    def send_message(self, message):
+        self.client.send(message.encode("ascii"))
