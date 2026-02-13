@@ -9,8 +9,10 @@ class AddServer(QWidget):
         super().__init__()
 
         self.on_cancel = on_cancel
+        self.stacked = QStackedLayout(self)
 
-        layout = QVBoxLayout(self)
+        self.add_page = QWidget()
+        add_layout = QVBoxLayout(self.add_page)
 
         add_server_title = QLabel("Add server")
         add_server_title.setFont(QFont("Courier New", 20))
@@ -29,27 +31,58 @@ class AddServer(QWidget):
 
         self.cancel = QPushButton("Cancel")
         self.confirm = QPushButton("Confirm")
-
+        self.confirm.clicked.connect(self.add_server_check_entries)
         self.cancel.clicked.connect(self.on_cancel)
 
-        layout.addWidget(add_server_title)
-        layout.addWidget(server_name_title)
-        layout.addWidget(self.server_name)
-        layout.addWidget(server_address_title)
-        layout.addWidget(self.ip_address)
-        layout.addWidget(self.cancel)
-        layout.addWidget(self.confirm)
+        add_layout.addWidget(add_server_title)
+        add_layout.addWidget(server_name_title)
+        add_layout.addWidget(self.server_name)
+        add_layout.addWidget(server_address_title)
+        add_layout.addWidget(self.ip_address)
+        add_layout.addWidget(self.cancel)
+        add_layout.addWidget(self.confirm)
+        self.stacked.addWidget(self.add_page)
 
-        self.confirm.clicked.connect(self.check_entries)
+        self.register_page = QWidget()
+        register_layout = QVBoxLayout(self.register_page)
 
-    def check_entries(self):
-        name = self.server_name.text()
-        ip_address = self.ip_address.text()
+        register_label = QLabel("Register")
+        register_label.setFont(QFont("Courier New", 20))
+        register_label.setStyleSheet("color: #a5a8ad;")
 
-        if name and ip_address:
-            save_server_handler(name, ip_address)
-            self.on_cancel()
-            self.close()
+        username_label = QLabel("Username")
+        username_label.setFont(QFont("Courier New", 20))
+        username_label.setStyleSheet("color: #a5a8ad;")
+
+        self.username_input = QLineEdit()
+
+        password_label = QLabel("Password")
+        password_label.setFont(QFont("Courier New", 20))
+        password_label.setStyleSheet("color: #a5a8ad;")
+
+        self.password_input = QLineEdit()
+        self.password_input.setEchoMode(QLineEdit.Password)
+
+        self.cancel = QPushButton("Cancel")
+        self.confirm = QPushButton("Confirm")
+        self.confirm.clicked.connect(self.register_check_entries)
+        self.cancel.clicked.connect(self.on_cancel)
+
+        register_layout.addWidget(register_label)
+        register_layout.addWidget(username_label)
+        register_layout.addWidget(self.username_input)
+        register_layout.addWidget(password_label)
+        register_layout.addWidget(self.password_input)
+        register_layout.addWidget(self.cancel)
+        register_layout.addWidget(self.confirm)
+        self.stacked.addWidget(self.register_page)
+
+    def add_server_check_entries(self):
+        self.name = self.server_name.text()
+        self.ip_address = self.ip_address.text()
+
+        if self.name and self.ip_address:
+            self.stacked.setCurrentWidget(self.register_page)
             server_loader()
         else:
             QMessageBox.warning(
@@ -57,3 +90,9 @@ class AddServer(QWidget):
                 "Something went wrong.",
                 "Please enter server name and IP address."
             )
+
+    def register_check_entries(self):
+        if self.username_input.text() and self.password_input.text():
+            save_server_handler(self.name, self.ip_address)
+            self.on_cancel()
+            self.close()
