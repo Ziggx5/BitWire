@@ -7,6 +7,7 @@ from client_modules.add_server import AddServer
 from client_modules.load_servers import server_loader
 from client_modules.networking import ChatHandler
 from client_modules.tray_manager import TrayManager
+from client_modules.login import Login
 
 class MainUi(QWidget):
     def __init__(self):
@@ -16,7 +17,8 @@ class MainUi(QWidget):
         self.active_server = None
         self.username = "User"
 
-        self.add_server_window = AddServer(self.show_main_ui)
+        self.add_server_window = AddServer(self.add_server_window_show_main_ui)
+        self.login_server_window = Login(self.login_server_window_show_main_ui)
         self.chat_handler = ChatHandler(self.client_display_message)
         self.tray = TrayManager(self)
 
@@ -114,10 +116,14 @@ class MainUi(QWidget):
         self.add_server_window.show()
         self.hide()
 
-    def show_main_ui(self):
+    def add_server_window_show_main_ui(self):
         self.add_server_window.close()
         self.show()
         self.reload_servers()
+
+    def login_server_window_show_main_ui(self):
+        self.login_server_window.close()
+        self.show()
 
     def reload_servers(self):
         while self.server_layout.count():
@@ -181,6 +187,7 @@ class MainUi(QWidget):
         self.active_server = server_button
         server_name = server_button.property("name")
         self.server_address = server_button.property("ip")
+        self.login_page()
 
         self.chat_view = QTextBrowser()
         self.chat_view.verticalScrollBar().setSingleStep(10)
@@ -269,4 +276,8 @@ class MainUi(QWidget):
 
     def closeEvent(self, event):
         event.ignore()
+        self.hide()
+
+    def login_page(self):
+        self.login_server_window.show()
         self.hide()
