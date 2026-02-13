@@ -1,7 +1,6 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
-import requests
 from client_modules.save_server import save_server_handler
 from client_modules.load_servers import server_loader
 
@@ -97,13 +96,17 @@ class AddServer(QWidget):
         password = self.password_input.text()
         if username and password:
             save_server_handler(self.name, self.ip_address)
-            send_to = f"http://{self.ip_address}:50005/register"
             data = {
+                "type": "register",
                 "username": username,
                 "password": password
             }
-            response = requests.post(send_to, json = data)
-            print(response)
             self.on_cancel()
             self.stacked.setCurrentWidget(self.add_page)
             self.close()
+        else:
+            QMessageBox.warning(
+                self,
+                "Something went wrong.",
+                "Please enter username and password."
+            )

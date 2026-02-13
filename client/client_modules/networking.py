@@ -1,5 +1,6 @@
 import socket
 import threading
+import json
 
 class ChatHandler:
     def __init__(self, message_callback):
