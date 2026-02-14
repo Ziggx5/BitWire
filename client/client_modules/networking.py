@@ -24,4 +24,14 @@ class ChatHandler:
         self.client.close()
     
     def send_message(self, message):
-        self.client.send(message.encode("ascii"))
+        self.client.send(json.dumps(message).encode("ascii"))
+
+    def register(self, username, password, ip_address):
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.connect((ip_address, 50505))
+        self.send_message({
+            "type": "register",
+            "username": username,
+            "password": password
+        })
+        self.client.close()

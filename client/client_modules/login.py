@@ -1,7 +1,6 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
-import requests
 
 class Login(QWidget):
     def __init__(self, on_cancel):

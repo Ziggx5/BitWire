@@ -3,6 +3,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
 from client_modules.save_server import save_server_handler
 from client_modules.load_servers import server_loader
+from client_modules.networking import ChatHandler
 
 class AddServer(QWidget):
     def __init__(self, on_cancel):
@@ -10,6 +11,7 @@ class AddServer(QWidget):
 
         self.on_cancel = on_cancel
         self.stacked = QStackedLayout(self)
+        self.chat_handler = ChatHandler(self)
 
         self.add_page = QWidget()
         add_layout = QVBoxLayout(self.add_page)
@@ -26,8 +28,8 @@ class AddServer(QWidget):
         server_address_title.setFont(QFont("Courier New", 20))
         server_address_title.setStyleSheet("color: #a5a8ad;")
 
-        self.server_name = QLineEdit()
-        self.ip_address = QLineEdit()
+        self.server_name_input = QLineEdit()
+        self.ip_address_input = QLineEdit()
 
         self.cancel = QPushButton("Cancel")
         self.confirm = QPushButton("Confirm")
@@ -36,9 +38,9 @@ class AddServer(QWidget):
 
         add_layout.addWidget(add_server_title)
         add_layout.addWidget(server_name_title)
-        add_layout.addWidget(self.server_name)
+        add_layout.addWidget(self.server_name_input)
         add_layout.addWidget(server_address_title)
-        add_layout.addWidget(self.ip_address)
+        add_layout.addWidget(self.ip_address_input)
         add_layout.addWidget(self.cancel)
         add_layout.addWidget(self.confirm)
         self.stacked.addWidget(self.add_page)
@@ -78,8 +80,8 @@ class AddServer(QWidget):
         self.stacked.addWidget(self.register_page)
 
     def add_server_check_entries(self):
-        self.name = self.server_name.text()
-        self.ip_address = self.ip_address.text()
+        self.name = self.server_name_input.text()
+        self.ip_address = self.ip_address_input.text()
 
         if self.name and self.ip_address:
             self.stacked.setCurrentWidget(self.register_page)
@@ -96,11 +98,8 @@ class AddServer(QWidget):
         password = self.password_input.text()
         if username and password:
             save_server_handler(self.name, self.ip_address)
-            data = {
-                "type": "register",
-                "username": username,
-                "password": password
-            }
+            self.chat_handler.connect_to_server(self.ip_address)
+            self.chat_handler.register(username, password, self.ip_address)
             self.on_cancel()
             self.stacked.setCurrentWidget(self.add_page)
             self.close()
