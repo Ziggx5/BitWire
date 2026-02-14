@@ -30,6 +30,21 @@ def client_handler(client, address):
 
             data = json.loads(recv_data.decode("ascii"))
 
+            if data["type"] == "register":
+                username = data["username"]
+                password = data["password"]
+
+                if username in users:
+                    send_json(client, {"type": "register", "status": "fail"})
+                    print("ne dela")
+                    print(f"1 {users}")
+                else:
+                    users[username] = password
+                    send_json(client, {"type": "register", "status": "ok"})
+                    print("dela")
+                    print(f"2 {users}")
+            else:
+                break
         except:
             break
     if client in clients:
@@ -46,6 +61,9 @@ def receive_connection():
 
         thread = threading.Thread(target = client_handler, args = (client, address,))
         thread.start()
+
+def send_json(client, data):
+    client.send(json.dumps(data).encode("ascii"))
 
 print("server running...")
 receive_connection()
