@@ -97,8 +97,8 @@ class AddServer(QWidget):
         username = self.username_input.text()
         password = self.password_input.text()
         if username and password:
+            print(self.ip_address)
             save_server_handler(self.name, self.ip_address)
-            self.chat_handler.connect_to_server(self.ip_address)
             self.chat_handler.register(username, password, self.ip_address)
             self.on_cancel()
             self.stacked.setCurrentWidget(self.add_page)

@@ -279,5 +279,6 @@ class MainUi(QWidget):
         self.hide()
 
     def login_page(self):
+        self.login_server_window.get_ip_address(self.server_address)
         self.login_server_window.show()
         self.hide()

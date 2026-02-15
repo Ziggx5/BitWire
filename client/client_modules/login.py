@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
+from client_modules.networking import ChatHandler
 
 class Login(QWidget):
     def __init__(self, on_cancel):
@@ -8,14 +9,46 @@ class Login(QWidget):
 
         self.on_cancel = on_cancel
 
-        login_page = QVBoxLayout(self)
+        self.login_page = QVBoxLayout(self)
+        self.chat_handler = ChatHandler(self)
 
         login_label = QLabel("Login")
         login_label.setFont(QFont("Courier New", 20))
         login_label.setStyleSheet("color: #a5a8ad;")
 
+        self.username_input = QLineEdit(self)
+        self.password_input = QLineEdit(self)
+        self.password_input.setEchoMode(QLineEdit.Password)
+
         self.cancel = QPushButton("Cancel")
         self.confirm = QPushButton("Confirm")
         self.cancel.clicked.connect(self.on_cancel)
+        self.confirm.clicked.connect(self.login_check_entries)
 
+        self.login_page.addWidget(login_label)
+        self.login_page.addWidget(self.username_input)
+        self.login_page.addWidget(self.password_input)
+        self.login_page.addWidget(self.cancel)
+        self.login_page.addWidget(self.confirm)
+
+    def login_check_entries(self):
+        username = self.username_input.text().strip()
+        password = self.password_input.text().strip()
+
+        if username and password:
+            self.chat_handler.login(username, password, self.ip_address)
+            print(username)
+            print(password)
+            self.on_cancel()
+            self.close()
+        else:
+            QMessageBox.warning(
+            self,
+            "Something went wrong.",
+            "Check your entries"
+        )
+
+    def get_ip_address(self, ip_address):
+        self.ip_address = ip_address
+        print(self.ip_address)
 
