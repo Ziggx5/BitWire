@@ -23,14 +23,34 @@ class ChatHandler:
                 break
         self.client.close()
     
-    def send_message(self, message):
+    def send_json_message(self, message):
         self.client.send(json.dumps(message).encode("ascii"))
 
     def register(self, username, password, ip_address):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((ip_address, 50505))
-        self.send_message({
+        self.send_json_message({
             "type": "register",
+            "username": username,
+            "password": password
+        })
+        self.client.close()
+
+    def login(self, username, password, ip_address):
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.connect((ip_address, 50505))
+        self.send_json_message({
+            "type": "login",
+            "username": username,
+            "password": password
+        })
+        self.client.close()
+
+    def send_message(self, username, password, ip_address):
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.connect((ip_address, 50505))
+        self.send_json_message({
+            "type": "message",
             "username": username,
             "password": password
         })

@@ -20,10 +20,10 @@ def send_message_to_clients(message):
             pass
 
 def client_handler(client, address):
+    logged_user = None
     while True:
         try:
             recv_data = client.recv(1024)
-            send_message_to_clients(recv_data)
 
             if not recv_data:
                 break
@@ -33,20 +33,29 @@ def client_handler(client, address):
             if data["type"] == "register":
                 username = data["username"]
                 password = data["password"]
-
+        
                 if username in users:
                     send_json(client, {"type": "register", "status": "fail"})
-                    print("ne dela")
-                    print(f"1 {users}")
+                    
                 else:
                     users[username] = password
                     send_json(client, {"type": "register", "status": "ok"})
-                    print("dela")
-                    print(f"2 {users}")
-            else:
-                break
+                    
+            elif data["type"] == "login":
+                username = data["username"]
+                password = data["password"]
+
+                if users.get(username) == password:
+                    logged_user = username
+                    clients.append(client)
+                    send_json(client, {"type": "login", "status": "ok"})
+                else:
+                    send_json(client, {"type": "login", "status": "fail"})
+            elif data["type"] == "message":
+                send_message_to_clients(f"{logged_user}:")
         except:
             break
+        
     if client in clients:
         clients.remove(client)
     client.close()
@@ -56,8 +65,8 @@ def receive_connection():
     while True:
         client, address = server.accept()
         clients.append(client)
-        send_message_to_clients(f"{address} has joined the chat!".encode("ascii"))
-        client.send(f"Connected to the server!".encode("ascii"))
+        #send_message_to_clients(f"{address} has joined the chat!".encode("ascii"))
+        #client.send(f"Connected to the server!".encode("ascii"))
 
         thread = threading.Thread(target = client_handler, args = (client, address,))
         thread.start()
