@@ -17,8 +17,7 @@ class ChatHandler:
     def receive_messages(self):
         while self.running:
             try:
-                message = self.client.recv(1024).decode("ascii")
-                self.message_callback(message)
+                message = json.loads(self.client.recv(1024).decode("ascii"))
             except:
                 break
         self.client.close()
@@ -34,7 +33,13 @@ class ChatHandler:
             "username": username,
             "password": password
         })
+        try:
+            response = json.loads(self.client.recv(1024).decode("ascii"))
+        except:
+            pass
+            
         self.client.close()
+        return response
 
     def login(self, username, password, ip_address):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

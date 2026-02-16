@@ -89,7 +89,7 @@ class AddServer(QWidget):
         else:
             QMessageBox.warning(
                 self,
-                "Something went wrong.",
+                "Error",
                 "Please enter server name and IP address."
             )
 
@@ -97,15 +97,27 @@ class AddServer(QWidget):
         username = self.username_input.text()
         password = self.password_input.text()
         if username and password:
-            print(self.ip_address)
             save_server_handler(self.name, self.ip_address)
-            self.chat_handler.register(username, password, self.ip_address)
-            self.on_cancel()
-            self.stacked.setCurrentWidget(self.add_page)
-            self.close()
+            return_message = self.chat_handler.register(username, password, self.ip_address)
+            if return_message["type"] == "register" and return_message["status"] == "ok":
+                self.on_cancel()
+                self.stacked.setCurrentWidget(self.add_page)
+                self.close()
+            elif return_message["type"] == "register" and return_message["status"] == "fail":
+                QMessageBox.warning(
+                self,
+                "Error",
+                "Username already taken, try another one."
+                )
+            else:
+                QMessageBox.warning(
+                self,
+                "Error",
+                f"Something went wrong, try again.\n {return_message}"
+                )
         else:
             QMessageBox.warning(
                 self,
-                "Something went wrong.",
+                "Error",
                 "Please enter username and password."
             )
