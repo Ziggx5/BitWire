@@ -4,10 +4,11 @@ from PySide6.QtGui import QFont
 from client_modules.networking import ChatHandler
 
 class Login(QWidget):
-    def __init__(self, on_cancel):
+    def __init__(self, on_cancel, on_success):
         super().__init__()
 
         self.on_cancel = on_cancel
+        self.on_success = on_success
 
         self.login_page = QVBoxLayout(self)
         self.chat_handler = ChatHandler(self)
@@ -36,16 +37,30 @@ class Login(QWidget):
         password = self.password_input.text().strip()
 
         if username and password:
-            self.chat_handler.login(username, password, self.ip_address)
+            return_message = self.chat_handler.login(username, password, self.ip_address)
             print(username)
             print(password)
-            self.on_cancel()
-            self.close()
+            if return_message["type"] == "login" and return_message["status"] == "ok":
+                self.on_success(username, self.ip_address)
+                self.on_cancel()
+                self.close()
+            elif return_message["type"] == "login" and return_message["status"] == "fail":
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    "Incorrect username or password."
+                )
+            else:
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    f"Something went wrong, try again.\n {return_message}"
+                )
         else:
             QMessageBox.warning(
             self,
-            "Something went wrong.",
-            "Check your entries"
+            "Error",
+            "Please enter username and password."
         )
 
     def get_ip_address(self, ip_address):

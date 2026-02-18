@@ -18,6 +18,9 @@ class ChatHandler:
         while self.running:
             try:
                 message = json.loads(self.client.recv(1024).decode("ascii"))
+                complete_message = f"{message['user']}: {message['content']}"
+                print(complete_message)
+                self.message_callback(complete_message)
             except:
                 break
         self.client.close()
@@ -49,14 +52,16 @@ class ChatHandler:
             "username": username,
             "password": password
         })
+        try:
+            response = json.loads(self.client.recv(1024).decode("ascii"))
+        except:
+            pass
+        
         self.client.close()
+        return response
 
-    def send_message(self, username, password, ip_address):
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.connect((ip_address, 50505))
+    def send_message(self, message):
         self.send_json_message({
             "type": "message",
-            "username": username,
-            "password": password
+            "content": message
         })
-        self.client.close()

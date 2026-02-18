@@ -8,6 +8,7 @@ from client_modules.load_servers import server_loader
 from client_modules.networking import ChatHandler
 from client_modules.tray_manager import TrayManager
 from client_modules.login import Login
+import json
 
 class MainUi(QWidget):
     def __init__(self):
@@ -18,7 +19,7 @@ class MainUi(QWidget):
         self.username = "User"
 
         self.add_server_window = AddServer(self.add_server_window_show_main_ui)
-        self.login_server_window = Login(self.login_server_window_show_main_ui)
+        self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login)
         self.chat_handler = ChatHandler(self.client_display_message)
         self.tray = TrayManager(self)
 
@@ -189,6 +190,43 @@ class MainUi(QWidget):
         self.server_address = server_button.property("ip")
         self.login_page()
 
+    def save_username(self):
+        if self.username_input.isReadOnly():
+            self.username_input.setReadOnly(False)
+            self.username_input.setEnabled(True)
+            self.username_input.setFocus()
+            self.save_username_button.setText("Save")
+        else:
+            if self.username_input.text() == "":
+                self.username_input.setText("User")
+            else:
+                self.username = self.username_input.text().strip()
+            self.username_input.setReadOnly(True)
+            self.username_input.setEnabled(False)
+            self.save_username_button.setText("Edit")
+
+    def client_display_message(self, message):
+        self.chat_view.append(message)
+
+    def client_send_message(self):
+        message = self.message_input.toPlainText().strip()
+        if not message:
+            self.message_input.setFocus()
+            return
+        self.chat_handler.send_message(message)
+        self.message_input.clear()
+        self.message_input.setFocus()
+
+    def closeEvent(self, event):
+        event.ignore()
+        self.hide()
+
+    def login_page(self):
+        self.login_server_window.get_ip_address(self.server_address)
+        self.login_server_window.show() 
+        self.hide()
+    
+    def on_success_login(self, username, ip_address):
         self.chat_view = QTextBrowser()
         self.chat_view.verticalScrollBar().setSingleStep(10)
         self.chat_view.setStyleSheet("""
@@ -245,40 +283,3 @@ class MainUi(QWidget):
         self.message_input.setFocus()
         self.main_layout.addWidget(send_message)
         self.chat_handler.connect_to_server(self.server_address)
-
-    def save_username(self):
-        if self.username_input.isReadOnly():
-            self.username_input.setReadOnly(False)
-            self.username_input.setEnabled(True)
-            self.username_input.setFocus()
-            self.save_username_button.setText("Save")
-        else:
-            if self.username_input.text() == "":
-                self.username_input.setText("User")
-            else:
-                self.username = self.username_input.text().strip()
-            self.username_input.setReadOnly(True)
-            self.username_input.setEnabled(False)
-            self.save_username_button.setText("Edit")
-
-    def client_display_message(self, message):
-        self.chat_view.append(message)
-
-    def client_send_message(self):
-        message = self.message_input.toPlainText().strip()
-        if not message:
-            self.message_input.setFocus()
-            return
-        complete_message = f"{self.username}: {message}".strip()
-        self.chat_handler.send_message(complete_message)
-        self.message_input.clear()
-        self.message_input.setFocus()
-
-    def closeEvent(self, event):
-        event.ignore()
-        self.hide()
-
-    def login_page(self):
-        self.login_server_window.get_ip_address(self.server_address)
-        self.login_server_window.show()
-        self.hide()

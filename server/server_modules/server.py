@@ -9,18 +9,21 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((host, port))
 server.listen()
 
+logged_user = None
+
 clients = []
 users = {}
 
 def send_message_to_clients(message):
     for client in clients[:]:
         try:
-            client.send(message)
+            client.send(json.dumps(message).encode("ascii"))
+            print(message)
         except:
             pass
 
 def client_handler(client, address):
-    logged_user = None
+    global logged_user
     while True:
         try:
             recv_data = client.recv(1024)
@@ -51,8 +54,9 @@ def client_handler(client, address):
                     send_json(client, {"type": "login", "status": "ok"})
                 else:
                     send_json(client, {"type": "login", "status": "fail"})
+
             elif data["type"] == "message":
-                send_message_to_clients(f"{logged_user}:")
+                send_message_to_clients({"type": "message", "user": logged_user, "content": data['content']})
         except:
             break
         
