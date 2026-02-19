@@ -1,5 +1,3 @@
-import socket
-import threading
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
@@ -28,7 +26,7 @@ class MainUi(QWidget):
         self.setFixedSize(900, 600)
 
         self.server_frame = QFrame(self)
-        self.server_frame.setGeometry(0, 100, 200, 450)
+        self.server_frame.setGeometry(0, 100, 200, 500)
         self.server_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
 
         self.server_layout = QVBoxLayout(self.server_frame)
@@ -46,35 +44,6 @@ class MainUi(QWidget):
         self.upper_frame = QFrame(self)
         self.upper_frame.setGeometry(0, 50, 200, 50)
         self.upper_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
-
-        self.user_frame = QFrame(self)
-        self.user_frame.setGeometry(0, 550, 200, 50)
-        self.user_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
-
-        self.username_input = QLineEdit(self.user_frame)
-        self.username_input.setPlaceholderText("Name")
-        self.username_input.setText("User")
-        self.username_input.setFixedSize(130, 30)
-        self.username_input.setStyleSheet("""
-            QLineEdit {
-                border: 1px solid #737373;
-                padding: 5px;
-                border-radius: 12px;
-                background-color: #2d3440;
-            }
-            
-            QLineEdit:focus {
-                background-color: #4b576b;
-            }
-        """)
-        self.username_input.move(10, 10)
-        self.username_input.setReadOnly(True)
-        self.username_input.setEnabled(False)
-
-        self.save_username_button = QPushButton("Edit", self.user_frame)
-        self.save_username_button.setFixedSize(40, 30)
-        self.save_username_button.move(150, 10)
-        self.save_username_button.pressed.connect(self.save_username)
 
         self.server_button_group = QButtonGroup(self)
         self.server_button_group.setExclusive(True)
@@ -176,34 +145,20 @@ class MainUi(QWidget):
             if widget:
                 widget.deleteLater()
         
-        server_button = self.sender()
-
-        if server_button == self.active_server:
+        self.server_button = self.sender()
+        
+        if self.server_button == self.active_server:
             return
         
         if self.active_server:
             self.active_server.setEnabled(True)
             
-        server_button.setEnabled(False)
-        self.active_server = server_button
-        server_name = server_button.property("name")
-        self.server_address = server_button.property("ip")
+        self.server_button.setEnabled(False)
+        self.active_server = self.server_button
+        
+        server_name = self.server_button.property("name")
+        self.server_address = self.server_button.property("ip")
         self.login_page()
-
-    def save_username(self):
-        if self.username_input.isReadOnly():
-            self.username_input.setReadOnly(False)
-            self.username_input.setEnabled(True)
-            self.username_input.setFocus()
-            self.save_username_button.setText("Save")
-        else:
-            if self.username_input.text() == "":
-                self.username_input.setText("User")
-            else:
-                self.username = self.username_input.text().strip()
-            self.username_input.setReadOnly(True)
-            self.username_input.setEnabled(False)
-            self.save_username_button.setText("Edit")
 
     def client_display_message(self, message):
         self.chat_view.append(message)

@@ -19,7 +19,6 @@ class ChatHandler:
             try:
                 message = json.loads(self.client.recv(1024).decode("ascii"))
                 complete_message = f"{message['user']}: {message['content']}"
-                print(complete_message)
                 self.message_callback(complete_message)
             except:
                 break

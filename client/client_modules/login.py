@@ -37,9 +37,15 @@ class Login(QWidget):
         password = self.password_input.text().strip()
 
         if username and password:
-            return_message = self.chat_handler.login(username, password, self.ip_address)
-            print(username)
-            print(password)
+            try:
+                return_message = self.chat_handler.login(username, password, self.ip_address)
+            except Exception as e:
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    f"Server is not online. /n{str(e)}"
+                )
+                return
             if return_message["type"] == "login" and return_message["status"] == "ok":
                 self.on_success(username, self.ip_address)
                 self.on_cancel()
@@ -65,5 +71,3 @@ class Login(QWidget):
 
     def get_ip_address(self, ip_address):
         self.ip_address = ip_address
-        print(self.ip_address)
-

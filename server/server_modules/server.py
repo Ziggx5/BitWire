@@ -18,7 +18,6 @@ def send_message_to_clients(message):
     for client in clients[:]:
         try:
             client.send(json.dumps(message).encode("ascii"))
-            print(message)
         except:
             pass
 
