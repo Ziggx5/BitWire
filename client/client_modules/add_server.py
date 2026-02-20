@@ -98,7 +98,15 @@ class AddServer(QWidget):
         password = self.password_input.text()
         if username and password:
             save_server_handler(self.name, self.ip_address)
-            return_message = self.chat_handler.register(username, password, self.ip_address)
+            try:
+                return_message = self.chat_handler.register(username, password, self.ip_address)
+            except Exception as e:
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    f"Server is not online. \n{str(e)}"
+                )
+                return
             if return_message["type"] == "register" and return_message["status"] == "ok":
                 self.on_cancel()
                 self.stacked.setCurrentWidget(self.add_page)

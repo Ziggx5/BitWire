@@ -94,6 +94,7 @@ class MainUi(QWidget):
     def login_server_window_show_main_ui(self):
         self.login_server_window.close()
         self.show()
+        self.reload_servers()
 
     def reload_servers(self):
         while self.server_layout.count():
@@ -136,6 +137,7 @@ class MainUi(QWidget):
             server_button.clicked.connect(self.load_chat)
     
     def load_chat(self):
+        self.active_server = None
         if self.client:
             self.client.close()
             self.client = None

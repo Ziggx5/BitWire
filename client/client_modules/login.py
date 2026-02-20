@@ -43,7 +43,7 @@ class Login(QWidget):
                 QMessageBox.warning(
                     self,
                     "Error",
-                    f"Server is not online. /n{str(e)}"
+                    f"Server is not online. \n{str(e)}"
                 )
                 return
             if return_message["type"] == "login" and return_message["status"] == "ok":
