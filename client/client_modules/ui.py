@@ -6,15 +6,12 @@ from client_modules.load_servers import server_loader
 from client_modules.networking import ChatHandler
 from client_modules.tray_manager import TrayManager
 from client_modules.login import Login
-import json
 
 class MainUi(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.client = None
         self.active_server = None
-        self.username = "User"
 
         self.add_server_window = AddServer(self.add_server_window_show_main_ui)
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login)
@@ -138,9 +135,6 @@ class MainUi(QWidget):
     
     def load_chat(self):
         self.active_server = None
-        if self.client:
-            self.client.close()
-            self.client = None
         while self.main_layout.count():
             item = self.main_layout.takeAt(0)
             widget = item.widget()
@@ -158,7 +152,6 @@ class MainUi(QWidget):
         self.server_button.setEnabled(False)
         self.active_server = self.server_button
         
-        server_name = self.server_button.property("name")
         self.server_address = self.server_button.property("ip")
         self.login_page()
 
@@ -231,12 +224,15 @@ class MainUi(QWidget):
             }
         """)
 
-        send_message = QPushButton(">")
-        send_message.setFixedSize(30, 30)
-        send_message.clicked.connect(self.client_send_message)
+        self.send_message = QPushButton(">")
+        self.send_message.setFixedSize(30, 30)
+        self.send_message.clicked.connect(self.client_send_message)
+
+        input_layout = QHBoxLayout()
+        input_layout.addWidget(self.message_input)
+        input_layout.addWidget(self.send_message)
 
         self.main_layout.addWidget(self.chat_view)
-        self.main_layout.addWidget(self.message_input)
+        self.main_layout.addLayout(input_layout)
         self.message_input.setFocus()
-        self.main_layout.addWidget(send_message)
         self.chat_handler.connect_to_server(self.server_address)

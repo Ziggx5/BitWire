@@ -2,7 +2,7 @@ import socket
 import threading
 import json
 
-host = "192.168.1.7"
+host = "0.0.0.0"
 port = 50505
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
