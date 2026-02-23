@@ -9,18 +9,23 @@ class ChatHandler:
         self.message_callback = message_callback
 
     def receive_messages(self):
+        buffer = ""
+
         while self.running:
-            message = json.loads(self.client.recv(1024).decode("ascii"))
-            complete_message = f"{message['user']}: {message['content']}"
-            self.message_callback(complete_message)
-            print(complete_message)
-            #try:
-                #message = json.loads(self.client.recv(1024).decode("ascii"))
-                #complete_message = f"{message['user']}: {message['content']}"
-                #self.message_callback(complete_message)
-            #except:
-                #break
-        #self.client.close()
+            try:
+                buffer += self.client.recv(1024).decode("ascii")
+                while "\n" in buffer:
+                    line, buffer = buffer.split("\n", 1)
+                    print(line, buffer)
+                    if not line.strip():
+                        continue
+                message = json.loads(line)
+                print(message)
+                complete_message = f"{message['user']}: {message['content']}"
+                self.message_callback(complete_message)
+                print(complete_message)
+            except Exception as e:
+                print(str(e))
     
     def send_json_message(self, message):
         self.client.send(json.dumps(message).encode("ascii"))

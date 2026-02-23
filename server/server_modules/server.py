@@ -15,7 +15,7 @@ users = {}
 def send_message_to_clients(message):
     for client in clients[:]:
         try:
-            client.send(json.dumps(message) + "\n".encode("ascii"))
+            yo = client.send((json.dumps(message) + "\n").encode("ascii"))
         except:
             clients.remove(client)
 
@@ -29,7 +29,6 @@ def client_handler(client, address):
                 break
 
             data = json.loads(recv_data.decode("ascii"))
-            print(data)
             if data["type"] == "register":
                 username = data["username"]
                 password = data["password"]
