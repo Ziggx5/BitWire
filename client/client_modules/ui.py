@@ -14,8 +14,8 @@ class MainUi(QWidget):
         self.active_server = None
 
         self.add_server_window = AddServer(self.add_server_window_show_main_ui)
-        self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login)
         self.chat_handler = ChatHandler(self.client_display_message)
+        self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
         self.tray = TrayManager(self)
 
         self.setWindowTitle("BitWire")
@@ -235,4 +235,3 @@ class MainUi(QWidget):
         self.main_layout.addWidget(self.chat_view)
         self.main_layout.addLayout(input_layout)
         self.message_input.setFocus()
-        self.chat_handler.connect_to_server(self.server_address)

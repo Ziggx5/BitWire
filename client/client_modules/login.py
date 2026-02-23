@@ -4,14 +4,14 @@ from PySide6.QtGui import QFont
 from client_modules.networking import ChatHandler
 
 class Login(QWidget):
-    def __init__(self, on_cancel, on_success):
+    def __init__(self, on_cancel, on_success, chat_handler):
         super().__init__()
 
         self.on_cancel = on_cancel
         self.on_success = on_success
+        self.chat_handler = chat_handler
 
         self.login_page = QVBoxLayout(self)
-        self.chat_handler = ChatHandler(self)
 
         login_label = QLabel("Login")
         login_label.setFont(QFont("Courier New", 20))

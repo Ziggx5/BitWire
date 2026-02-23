@@ -2,14 +2,12 @@ import socket
 import threading
 import json
 
-host = "0.0.0.0"
+host = "192.168.1.7"
 port = 50505
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((host, port))
 server.listen()
-
-logged_user = None
 
 clients = []
 users = {}
@@ -17,12 +15,12 @@ users = {}
 def send_message_to_clients(message):
     for client in clients[:]:
         try:
-            client.send(json.dumps(message).encode("ascii"))
+            client.send(json.dumps(message) + "\n".encode("ascii"))
         except:
-            pass
+            clients.remove(client)
 
 def client_handler(client, address):
-    global logged_user
+    logged_user = None
     while True:
         try:
             recv_data = client.recv(1024)
@@ -31,7 +29,7 @@ def client_handler(client, address):
                 break
 
             data = json.loads(recv_data.decode("ascii"))
-
+            print(data)
             if data["type"] == "register":
                 username = data["username"]
                 password = data["password"]
@@ -49,8 +47,11 @@ def client_handler(client, address):
 
                 if users.get(username) == password:
                     logged_user = username
+                    print(logged_user)
                     clients.append(client)
                     send_json(client, {"type": "login", "status": "ok"})
+                    #send_message_to_clients({"type": "message", "content": f"{logged_user} has joined the chat!"})
+                    #send_json(client, {"type": "message", "content": "Connected to the server!"})
                 else:
                     send_json(client, {"type": "login", "status": "fail"})
 
@@ -67,7 +68,6 @@ def client_handler(client, address):
 def receive_connection():
     while True:
         client, address = server.accept()
-        clients.append(client)
         #send_message_to_clients(f"{address} has joined the chat!".encode("ascii"))
         #client.send(f"Connected to the server!".encode("ascii"))
 
