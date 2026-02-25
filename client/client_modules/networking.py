@@ -12,7 +12,7 @@ class ChatHandler:
         buffer = ""
         while self.running:
             try:
-                buffer += self.client.recv(1024).decode("ascii")
+                buffer += self.client.recv(1024).decode("utf-8")
                 while "\n" in buffer:
                     line, buffer = buffer.split("\n", 1)
                     print(line, buffer)
@@ -27,7 +27,7 @@ class ChatHandler:
                 print(str(e))
     
     def send_json_message(self, message):
-        self.client.send(json.dumps(message).encode("ascii"))
+        self.client.send(json.dumps(message).encode("utf-8"))
 
     def register(self, username, password, ip_address):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -38,7 +38,7 @@ class ChatHandler:
             "password": password
         })
         try:
-            response = json.loads(self.client.recv(1024).decode("ascii"))
+            response = json.loads(self.client.recv(1024).decode("utf-8"))
         except:
             pass
             
@@ -55,7 +55,7 @@ class ChatHandler:
             "password": password
         })
         try:
-            response = json.loads(self.client.recv(1024).decode("ascii"))
+            response = json.loads(self.client.recv(1024).decode("utf-8"))
             if response["status"] == "ok":
                 print("dela")
                 self.running = True

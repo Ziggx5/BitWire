@@ -31,18 +31,18 @@ class AddServer(QWidget):
         self.server_name_input = QLineEdit()
         self.ip_address_input = QLineEdit()
 
-        self.cancel = QPushButton("Cancel")
-        self.confirm = QPushButton("Confirm")
-        self.confirm.clicked.connect(self.add_server_check_entries)
-        self.cancel.clicked.connect(self.on_cancel)
+        self.cancel_server = QPushButton("Cancel")
+        self.cancel_server.clicked.connect(self.reset)
+        self.confirm_server = QPushButton("Confirm")
+        self.confirm_server.clicked.connect(self.add_server_check_entries)
 
         add_layout.addWidget(add_server_title)
         add_layout.addWidget(server_name_title)
         add_layout.addWidget(self.server_name_input)
         add_layout.addWidget(server_address_title)
         add_layout.addWidget(self.ip_address_input)
-        add_layout.addWidget(self.cancel)
-        add_layout.addWidget(self.confirm)
+        add_layout.addWidget(self.cancel_server)
+        add_layout.addWidget(self.confirm_server)
         self.stacked.addWidget(self.add_page)
 
         self.register_page = QWidget()
@@ -65,18 +65,18 @@ class AddServer(QWidget):
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.Password)
 
-        self.cancel = QPushButton("Cancel")
-        self.confirm = QPushButton("Confirm")
-        self.confirm.clicked.connect(self.register_check_entries)
-        self.cancel.clicked.connect(self.on_cancel)
+        self.cancel_register = QPushButton("Cancel")
+        self.cancel_register.clicked.connect(self.reset)
+        self.confirm_register = QPushButton("Confirm")
+        self.confirm_register.clicked.connect(self.register_check_entries)
 
         register_layout.addWidget(register_label)
         register_layout.addWidget(username_label)
         register_layout.addWidget(self.username_input)
         register_layout.addWidget(password_label)
         register_layout.addWidget(self.password_input)
-        register_layout.addWidget(self.cancel)
-        register_layout.addWidget(self.confirm)
+        register_layout.addWidget(self.cancel_register)
+        register_layout.addWidget(self.confirm_register)
         self.stacked.addWidget(self.register_page)
 
     def add_server_check_entries(self):
@@ -97,7 +97,6 @@ class AddServer(QWidget):
         username = self.username_input.text()
         password = self.password_input.text()
         if username and password:
-            save_server_handler(self.name, self.ip_address)
             try:
                 return_message = self.chat_handler.register(username, password, self.ip_address)
             except Exception as e:
@@ -108,7 +107,8 @@ class AddServer(QWidget):
                 )
                 return
             if return_message["type"] == "register" and return_message["status"] == "ok":
-                self.on_cancel()
+                save_server_handler(self.name, self.ip_address)
+                self.reset()
                 self.stacked.setCurrentWidget(self.add_page)
                 self.close()
             elif return_message["type"] == "register" and return_message["status"] == "fail":
@@ -129,3 +129,11 @@ class AddServer(QWidget):
                 "Error",
                 "Please enter username and password."
             )
+    
+    def reset(self):
+        self.stacked.setCurrentWidget(self.add_page)
+        self.server_name_input.clear()
+        self.ip_address_input.clear()
+        self.username_input.clear()
+        self.password_input.clear()
+        self.on_cancel()

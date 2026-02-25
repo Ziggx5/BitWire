@@ -15,7 +15,7 @@ users = {}
 def send_message_to_clients(message):
     for client in clients[:]:
         try:
-            yo = client.send((json.dumps(message) + "\n").encode("ascii"))
+            yo = client.send((json.dumps(message) + "\n").encode("utf-8"))
         except:
             clients.remove(client)
 
@@ -29,7 +29,7 @@ def client_handler(client, address):
             if not recv_data:
                 break
 
-            data = json.loads(recv_data.decode("ascii"))
+            data = json.loads(recv_data.decode("utf-8"))
             if data["type"] == "register":
                 username = data["username"]
                 password = data["password"]
@@ -63,19 +63,19 @@ def client_handler(client, address):
     if client in clients:
         clients.remove(client)
     client.close()
-    send_message_to_clients(f"{address} left the chat!".encode("ascii"))
+    send_message_to_clients(f"{address} left the chat!".encode("utf-8"))
 
 def receive_connection():
     while True:
         client, address = server.accept()
-        #send_message_to_clients(f"{address} has joined the chat!".encode("ascii"))
-        #client.send(f"Connected to the server!".encode("ascii"))
+        #send_message_to_clients(f"{address} has joined the chat!".encode("utf-8"))
+        #client.send(f"Connected to the server!".encode("utf-8"))
 
         thread = threading.Thread(target = client_handler, args = (client, address,))
         thread.start()
 
 def send_json(client, data):
-    client.send(json.dumps(data).encode("ascii"))
+    client.send(json.dumps(data).encode("utf-8"))
 
 print("server running...")
 receive_connection()
