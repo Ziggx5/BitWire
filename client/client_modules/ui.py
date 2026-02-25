@@ -24,7 +24,7 @@ class MainUi(QWidget):
 
         self.server_frame = QFrame(self)
         self.server_frame.setGeometry(0, 100, 200, 500)
-        self.server_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
+        self.server_frame.setStyleSheet("background: #1a1a24")
 
         self.server_layout = QVBoxLayout(self.server_frame)
         self.server_layout.setAlignment(Qt.AlignTop)
@@ -42,20 +42,28 @@ class MainUi(QWidget):
         self.upper_frame.setGeometry(0, 50, 200, 50)
         self.upper_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
 
+        self.upper_layout = QHBoxLayout(self.upper_frame)
+
+        self.logo_frame = QFrame(self)
+        self.logo_frame.setGeometry(0, 0, 200, 50)
+        self.logo_frame.setStyleSheet("background: transparent")
+
+        self.logo_layout = QHBoxLayout(self.logo_frame)
+
         self.server_button_group = QButtonGroup(self)
         self.server_button_group.setExclusive(True)
 
-        self.bitwire_label = QLabel("BitWire", self)
-        self.bitwire_label.setFont(QFont("Courier New", 25))
+        self.bitwire_label = QLabel("BitWire")
+        self.bitwire_label.setFont(QFont("Courier New", 17))
         self.bitwire_label.setStyleSheet("color: #a5a8ad;")
-        self.bitwire_label.move(30, 10)
+        
+        self.logo_layout.addWidget(self.bitwire_label, alignment = Qt.AlignCenter)
 
-        self.add_server_label = QLabel("All servers", self.upper_frame)
+        self.add_server_label = QLabel("All servers")
         self.add_server_label.setFont(QFont("Courier New", 11))
         self.add_server_label.setStyleSheet("color: white; border: none")
-        self.add_server_label.move(10, 15)
 
-        self.add_button = QPushButton("+", self.upper_frame)
+        self.add_button = QPushButton("+")
         self.add_button.setFont(QFont("Courier New", 15, QFont.Bold))
         self.add_button.setStyleSheet("""
             QPushButton {
@@ -75,9 +83,13 @@ class MainUi(QWidget):
             }
             
         """)
-        self.add_button.setGeometry(150, 10, 32, 32)
+        self.add_button.setFixedSize(40, 32)
         self.add_button.clicked.connect(self.open_add_server)
         self.reload_servers()
+
+        self.upper_layout.addWidget(self.add_server_label)
+        self.upper_layout.addStretch()
+        self.upper_layout.addWidget(self.add_button)
 
     def open_add_server(self):
         self.add_server_window.show()
@@ -113,8 +125,9 @@ class MainUi(QWidget):
                     text-align: left;
                     padding-left: 5px;
                     color: #a5a8ad;
-                    background-color: transparent;
-                    border-radius: 5px;
+                    background-color: #1e1e2f;
+                    border-radius: 10px;
+                    border: 1px solid #3f3f4a;
                 }
 
                 QPushButton:hover {

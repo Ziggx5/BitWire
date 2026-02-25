@@ -23,7 +23,7 @@ class Login(QWidget):
 
         self.cancel = QPushButton("Cancel")
         self.confirm = QPushButton("Confirm")
-        self.cancel.clicked.connect(self.on_cancel)
+        self.cancel.clicked.connect(self.reset)
         self.confirm.clicked.connect(self.login_check_entries)
 
         self.login_page.addWidget(login_label)
@@ -71,3 +71,8 @@ class Login(QWidget):
 
     def get_ip_address(self, ip_address):
         self.ip_address = ip_address
+    
+    def reset(self):
+        self.username_input.clear()
+        self.password_input.clear()
+        self.on_cancel()
