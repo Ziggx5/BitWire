@@ -24,11 +24,11 @@ class MainUi(QWidget):
 
         self.server_frame = QFrame(self)
         self.server_frame.setGeometry(0, 100, 200, 500)
-        self.server_frame.setStyleSheet("background: #1a1a24")
+        self.server_frame.setStyleSheet("background: #1a1a24; border-right: 1px solid #30363d")
 
         self.server_layout = QVBoxLayout(self.server_frame)
         self.server_layout.setAlignment(Qt.AlignTop)
-        self.server_layout.setSpacing(1)
+        self.server_layout.setSpacing(3)
 
         self.main_frame = QFrame(self)
         self.main_frame.setGeometry(200, 0, 700, 600)
@@ -40,13 +40,13 @@ class MainUi(QWidget):
 
         self.upper_frame = QFrame(self)
         self.upper_frame.setGeometry(0, 50, 200, 50)
-        self.upper_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
+        self.upper_frame.setStyleSheet("background: #232338; border-right: 1px solid #30363d")
 
         self.upper_layout = QHBoxLayout(self.upper_frame)
 
         self.logo_frame = QFrame(self)
         self.logo_frame.setGeometry(0, 0, 200, 50)
-        self.logo_frame.setStyleSheet("background: transparent")
+        self.logo_frame.setStyleSheet("background: transparent; border-right: 1px solid #30363d")
 
         self.logo_layout = QHBoxLayout(self.logo_frame)
 
@@ -55,7 +55,7 @@ class MainUi(QWidget):
 
         self.bitwire_label = QLabel("BitWire")
         self.bitwire_label.setFont(QFont("Courier New", 17))
-        self.bitwire_label.setStyleSheet("color: #a5a8ad;")
+        self.bitwire_label.setStyleSheet("color: #a5a8ad; border: none")
         
         self.logo_layout.addWidget(self.bitwire_label, alignment = Qt.AlignCenter)
 
@@ -119,7 +119,7 @@ class MainUi(QWidget):
             server_button.setProperty("name", server["name"])
             server_button.setProperty("ip", server["ip_address"])
             server_button.setFixedHeight(35)
-            server_button.setFont(QFont("Courier New", 12))
+            server_button.setFont(QFont("Courier New", 11))
             server_button.setStyleSheet("""
                 QPushButton {
                     text-align: left;
