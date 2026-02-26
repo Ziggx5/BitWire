@@ -114,6 +114,9 @@ class MainUi(QWidget):
 
         server_list = server_loader()
         for server in server_list:
+            server_button = ServerButton(server["name"], server["ip_address"], self.test1, self.test2)
+            self.server_layout.addWidget(server_button)
+            '''
             server_button = QPushButton(server["name"])
             server_button.setCheckable(True)
             server_button.setProperty("name", server["name"])
@@ -145,6 +148,7 @@ class MainUi(QWidget):
             self.server_layout.addWidget(server_button)
             self.server_button_group.addButton(server_button)
             server_button.clicked.connect(self.load_chat)
+            '''
     
     def load_chat(self):
         self.active_server = None
@@ -248,3 +252,38 @@ class MainUi(QWidget):
         self.main_layout.addWidget(self.chat_view)
         self.main_layout.addLayout(input_layout)
         self.message_input.setFocus()
+
+    def test1(self):
+        pass
+
+    def test2(self):
+        pass
+
+class ServerButton(QFrame):
+    def __init__(self, name, ip, on_click, on_delete):
+        super().__init__()
+
+        self.setFixedHeight(35)
+        self.setStyleSheet("""
+            QFrame {
+                background-color: #1e1e2f;
+                border-radius: 10px;
+                border: 1px solid #3f3f4a;
+            }
+
+            QFrame:hover {
+                background-color: #333333;
+            }
+        """)
+
+        layout = QHBoxLayout(self)
+
+        self.label = QLabel(name)
+        self.label.setStyleSheet("color: #a5a8ad")
+
+        self.delete_button = QPushButton("X")
+        self.delete_button.setFixedSize(20, 20)
+
+        layout.addWidget(self.label)
+        layout.addStretch()
+        layout.addWidget(self.delete_button)

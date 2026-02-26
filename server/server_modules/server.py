@@ -15,9 +15,10 @@ users = {}
 def send_message_to_clients(message):
     for client in clients[:]:
         try:
-            yo = client.send((json.dumps(message) + "\n").encode("utf-8"))
-        except:
+            client.send((json.dumps(message) + "\n").encode("utf-8"))
+        except Exception as e:
             clients.remove(client)
+            print(f"send message to clients {str(e)}")
 
 def client_handler(client, address):
     logged_user = None
@@ -47,35 +48,29 @@ def client_handler(client, address):
 
                 if users.get(username) == password:
                     logged_user = username
-                    print(logged_user)
-                    clients.append(client)
+                    if client not in clients:
+                        clients.append(client)
                     send_json(client, {"type": "login", "status": "ok"})
-                    #send_message_to_clients({"type": "message", "content": f"{logged_user} has joined the chat!"})
-                    #send_json(client, {"type": "message", "content": "Connected to the server!"})
                 else:
                     send_json(client, {"type": "login", "status": "fail"})
 
             elif data["type"] == "message":
                 send_message_to_clients({"type": "message", "user": logged_user, "content": data['content']})
-        except:
-            break
+        except Exception as e:
+            print(f"client handler {str(e)}")
         
     if client in clients:
         clients.remove(client)
     client.close()
-    send_message_to_clients(f"{address} left the chat!".encode("utf-8"))
 
 def receive_connection():
     while True:
         client, address = server.accept()
-        #send_message_to_clients(f"{address} has joined the chat!".encode("utf-8"))
-        #client.send(f"Connected to the server!".encode("utf-8"))
-
         thread = threading.Thread(target = client_handler, args = (client, address,))
         thread.start()
 
 def send_json(client, data):
-    client.send(json.dumps(data).encode("utf-8"))
+    client.send((json.dumps(data) + "\n").encode("utf-8"))
 
 print("server running...")
 receive_connection()
