@@ -114,63 +114,8 @@ class MainUi(QWidget):
 
         server_list = server_loader()
         for server in server_list:
-            server_button = ServerButton(server["name"], server["ip_address"], self.test1, self.test2)
+            server_button = ServerButton(server["name"], server["ip_address"], self.login_page, self.test2)
             self.server_layout.addWidget(server_button)
-            '''
-            server_button = QPushButton(server["name"])
-            server_button.setCheckable(True)
-            server_button.setProperty("name", server["name"])
-            server_button.setProperty("ip", server["ip_address"])
-            server_button.setFixedHeight(35)
-            server_button.setFont(QFont("Courier New", 11))
-            server_button.setStyleSheet("""
-                QPushButton {
-                    text-align: left;
-                    padding-left: 5px;
-                    color: #a5a8ad;
-                    background-color: #1e1e2f;
-                    border-radius: 10px;
-                    border: 1px solid #3f3f4a;
-                }
-
-                QPushButton:hover {
-                    background-color: #333333;
-                }
-
-                QPushButton:checked {
-                    background-color: #333333;
-                }
-
-                QPushButton:pressed {
-                    background-color: #262626;
-                }
-            """)
-            self.server_layout.addWidget(server_button)
-            self.server_button_group.addButton(server_button)
-            server_button.clicked.connect(self.load_chat)
-            '''
-    
-    def load_chat(self):
-        self.active_server = None
-        while self.main_layout.count():
-            item = self.main_layout.takeAt(0)
-            widget = item.widget()
-            if widget:
-                widget.deleteLater()
-        
-        self.server_button = self.sender()
-        
-        if self.server_button == self.active_server:
-            return
-        
-        if self.active_server:
-            self.active_server.setEnabled(True)
-            
-        self.server_button.setEnabled(False)
-        self.active_server = self.server_button
-        
-        self.server_address = self.server_button.property("ip")
-        self.login_page()
 
     def client_display_message(self, message):
         self.chat_view.append(message)
@@ -188,7 +133,8 @@ class MainUi(QWidget):
         event.ignore()
         self.hide()
 
-    def login_page(self):
+    def login_page(self, item):
+        self.server_address = item.ip
         self.login_server_window.get_ip_address(self.server_address)
         self.login_server_window.show() 
         self.hide()
@@ -263,7 +209,12 @@ class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
         super().__init__()
 
-        self.setFixedHeight(35)
+        self.name = name
+        self.ip = ip
+        self.on_click = on_click
+        self.on_delete = on_delete
+
+        self.setFixedHeight(40)
         self.setStyleSheet("""
             QFrame {
                 background-color: #1e1e2f;
@@ -279,11 +230,37 @@ class ServerButton(QFrame):
         layout = QHBoxLayout(self)
 
         self.label = QLabel(name)
-        self.label.setStyleSheet("color: #a5a8ad")
+        self.label.setFixedWidth(130)
+        self.label.setFont(QFont("Courier New", 13))
+        self.label.setStyleSheet("""
+            QLabel {
+                color: #a5a8ad;
+                border: none;
+                background: transparent
+            }
+        """)
 
         self.delete_button = QPushButton("X")
         self.delete_button.setFixedSize(20, 20)
+        self.delete_button.setStyleSheet("""
+            QPushButton {
+                border: none;
+                color: #1e1e2f;
+                background: transparent
+            }
+
+            QPushButton:hover {
+                color: white;
+                border: 1px solid white;
+                border-radius: 5px
+            }
+        """)
 
         layout.addWidget(self.label)
         layout.addStretch()
         layout.addWidget(self.delete_button)
+
+        self.mousePressEvent = self._clicked
+    
+    def _clicked(self, event):
+        self.on_click(self)
