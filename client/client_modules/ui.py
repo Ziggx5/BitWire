@@ -3,6 +3,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from client_modules.add_server import AddServer
 from client_modules.load_servers import server_loader
+from client_modules.save_server import delete_server
 from client_modules.networking import ChatHandler
 from client_modules.tray_manager import TrayManager
 from client_modules.login import Login
@@ -114,7 +115,7 @@ class MainUi(QWidget):
 
         server_list = server_loader()
         for server in server_list:
-            server_button = ServerButton(server["name"], server["ip_address"], self.login_page, self.test2)
+            server_button = ServerButton(server["name"], server["ip_address"], self.login_page, self.server_delete_data)
             self.server_layout.addWidget(server_button)
 
     def client_display_message(self, message):
@@ -199,11 +200,10 @@ class MainUi(QWidget):
         self.main_layout.addLayout(input_layout)
         self.message_input.setFocus()
 
-    def test1(self):
-        pass
-
-    def test2(self):
-        pass
+    def server_delete_data(self, item):
+        self.server_address = item.ip
+        delete_server(self.server_address)
+        self.reload_servers()
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
@@ -260,7 +260,15 @@ class ServerButton(QFrame):
         layout.addStretch()
         layout.addWidget(self.delete_button)
 
-        self.mousePressEvent = self._clicked
+        self.mousePressEvent = self.frame_clicked
+        self.delete_button.clicked.connect(self.delete_button_clicked)
     
-    def _clicked(self, event):
+    def frame_clicked(self, event):
         self.on_click(self)
+
+    def delete_button_clicked(self):
+        self.on_delete(self)
+
+    
+    
+    

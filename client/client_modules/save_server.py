@@ -10,7 +10,7 @@ def save_server_path():
 
     return servers_file_path
 
-def save_server_handler(name, ip_address):
+def save_server_data(name, ip_address):
     servers_file_path = save_server_path()
     data = {
         "name": name,
@@ -30,3 +30,21 @@ def save_server_handler(name, ip_address):
     with open (servers_file_path, "w", encoding = "utf-8") as f:
         json.dump(servers, f, indent = 4)
     
+def delete_server(ip_address):
+    servers_file_path = save_server_path()
+    servers = []
+
+    if os.path.exists(servers_file_path):
+        with open (servers_file_path, "r", encoding = "utf-8") as f:
+            try:
+                servers = json.load(f)
+            except json.JSONDecodeError:
+                servers = []
+        
+    for i, server in enumerate(servers):
+        if server["ip_address"] == ip_address:
+            servers.pop(i)
+    
+    with open (servers_file_path, "w", encoding = "utf-8") as f:
+        json.dump(servers, f, indent = 4)
+        

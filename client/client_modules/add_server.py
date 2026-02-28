@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
-from client_modules.save_server import save_server_handler
+from client_modules.save_server import save_server_data
 from client_modules.load_servers import server_loader
 from client_modules.networking import ChatHandler
 
@@ -107,7 +107,7 @@ class AddServer(QWidget):
                 )
                 return
             if return_message["type"] == "register" and return_message["status"] == "ok":
-                save_server_handler(self.name, self.ip_address)
+                save_server_data(self.name, self.ip_address)
                 self.reset()
                 self.stacked.setCurrentWidget(self.add_page)
                 self.close()
