@@ -64,7 +64,6 @@ class AddServerUi(QWidget):
         }
         QPushButton:hover {
             background-color: #878787;
-        
         }
         """
 

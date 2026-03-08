@@ -33,11 +33,13 @@ class AddIdentityUi(QWidget):
         }
         """
         
-        add_identity_layout = QHBoxLayout(self)
+        add_identity_layout = QVBoxLayout(self)
         add_identity_layout.setSpacing(0)
 
+        add_identity_upper_layout = QHBoxLayout()
         add_identity_left_layout = QVBoxLayout()
         add_identity_right_layout = QVBoxLayout()
+        add_identity_lower_layout = QHBoxLayout()
 
         self.profile_picture_widget = QWidget()
         self.profile_picture_widget.setFixedSize(160, 160)
@@ -66,7 +68,7 @@ class AddIdentityUi(QWidget):
         profile_picture_layout.addWidget(profile_picture)
         profile_picture_layout.addWidget(profile_picture_subtitle)
 
-        title = QLabel("Add identity")
+        title = QLabel("Add new identity")
         title.setStyleSheet(main_title)
         title.setFixedHeight(30)
 
@@ -85,12 +87,73 @@ class AddIdentityUi(QWidget):
         self.password_input = QLineEdit()
         self.password_input.setStyleSheet(input_style)
 
+        self.cancel_button = QPushButton("Cancel")
+        self.cancel_button.setFixedSize(110, 35)
+        self.cancel_button.setStyleSheet("""
+            QPushButton {
+                background-color: #6e6e6e;
+                font-weight: 600;
+                border-radius: 5px;
+                border: 1px solid #30363d;
+            }
+            QPushButton:hover {
+                background-color: #878787;
+            }
+        """)
+
+        self.confirm_button = QPushButton("Confirm")
+        self.confirm_button.setFixedSize(110, 35)
+        self.confirm_button.setStyleSheet("""
+            QPushButton {
+                background-color: #175723;
+                font-weight: 600;
+                border-radius: 5px;
+                border: 1px solid #30363d;
+            }
+
+            QPushButton:hover {
+                background-color: #1e732e;
+            }
+        """)
+
+        self.all_identities_button = QPushButton("Identities")
+        self.all_identities_button.setFixedSize(110, 35)
+        self.all_identities_button.setStyleSheet("""
+            QPushButton {
+            background-color: #1f6feb;
+            font-weight: 600;
+            border-radius: 5px;
+            border: 1px solid #30363d;
+            }
+
+            QPushButton:hover {
+            background-color: #388bfd;
+            }
+        """)
+
         add_identity_left_layout.addWidget(self.profile_picture_widget)
+
         add_identity_right_layout.addWidget(title)
+        add_identity_right_layout.addSpacing(10)
         add_identity_right_layout.addWidget(username_label)
+        add_identity_right_layout.addSpacing(5)
         add_identity_right_layout.addWidget(self.username_input)
+        add_identity_right_layout.addSpacing(10)
         add_identity_right_layout.addWidget(password_label)
+        add_identity_right_layout.addSpacing(5)
         add_identity_right_layout.addWidget(self.password_input)
 
-        add_identity_layout.addLayout(add_identity_left_layout)
-        add_identity_layout.addLayout(add_identity_right_layout)
+        add_identity_upper_layout.addLayout(add_identity_left_layout)
+        add_identity_upper_layout.addSpacing(30)
+        add_identity_upper_layout.addLayout(add_identity_right_layout)
+
+        add_identity_lower_layout.addStretch()
+        add_identity_lower_layout.addWidget(self.all_identities_button)
+        add_identity_lower_layout.addSpacing(10)
+        add_identity_lower_layout.addWidget(self.cancel_button)
+        add_identity_lower_layout.addSpacing(10)
+        add_identity_lower_layout.addWidget(self.confirm_button)
+
+        add_identity_layout.addLayout(add_identity_upper_layout)
+        add_identity_layout.addStretch()
+        add_identity_layout.addLayout(add_identity_lower_layout)
