@@ -21,7 +21,7 @@ class MainUi(QWidget):
         self.add_server_window = AddServerUi(self.add_server_window_show_main_ui)
         self.chat_handler = ChatHandler(self.client_display_message)
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
-        self.identity_window = AddIdentityUi()
+        self.identity_window = AddIdentityUi(self.identity_window_show_main_ui)
         self.tray = TrayManager(self)
         image_path = file_root()
 
@@ -242,6 +242,12 @@ class MainUi(QWidget):
 
     def identity_window_open(self):
         self.identity_window.show()
+        self.hide()
+
+    def identity_window_show_main_ui(self):
+        self.identity_window.close()
+        self.show()
+
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):

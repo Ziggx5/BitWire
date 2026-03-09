@@ -1,13 +1,13 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont, QPixmap
+from PySide6.QtGui import QFont, QPixmap, QPainter, QPainterPath
 from client_modules.path_finder import file_root
 
 class AddIdentityUi(QWidget):
-    def __init__(self):
+    def __init__(self, on_cancel):
         super().__init__()
 
-        #self.on_cancel = on_cancel
+        self.on_cancel = on_cancel
         self.picture_path = file_root()
 
         self.setWindowTitle("BitWire")
@@ -43,6 +43,7 @@ class AddIdentityUi(QWidget):
 
         self.profile_picture_widget = QWidget()
         self.profile_picture_widget.setFixedSize(160, 160)
+        self.profile_picture_widget.mousePressEvent = self.select_picture
         self.profile_picture_widget.setStyleSheet("""
             QWidget { 
                 background-color: #0d1117;
@@ -57,16 +58,16 @@ class AddIdentityUi(QWidget):
         """)
         profile_picture_layout = QVBoxLayout(self.profile_picture_widget)
 
-        profile_picture = QLabel()
-        profile_picture.setPixmap(QPixmap(f"{self.picture_path}/camera.png").scaled(80, 80))
-        profile_picture.setStyleSheet("border: None; background-color: transparent;")
+        self.profile_picture = QLabel()
+        self.profile_picture.setPixmap(QPixmap(f"{self.picture_path}/camera.png").scaled(80, 80))
+        self.profile_picture.setStyleSheet("border: None; background-color: transparent;")
 
-        profile_picture_subtitle = QLabel("Select photo")
-        profile_picture_subtitle.setStyleSheet("border: None; background-color: transparent;")
+        self.profile_picture_subtitle = QLabel("Select photo")
+        self.profile_picture_subtitle.setStyleSheet("border: None; background-color: transparent;")
 
         profile_picture_layout.setAlignment(Qt.AlignCenter)
-        profile_picture_layout.addWidget(profile_picture)
-        profile_picture_layout.addWidget(profile_picture_subtitle)
+        profile_picture_layout.addWidget(self.profile_picture)
+        profile_picture_layout.addWidget(self.profile_picture_subtitle)
 
         title = QLabel("Add new identity")
         title.setStyleSheet(main_title)
@@ -89,6 +90,7 @@ class AddIdentityUi(QWidget):
 
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.setFixedSize(110, 35)
+        self.cancel_button.clicked.connect(self.on_cancel)
         self.cancel_button.setStyleSheet("""
             QPushButton {
                 background-color: #6e6e6e;
@@ -157,3 +159,26 @@ class AddIdentityUi(QWidget):
         add_identity_layout.addLayout(add_identity_upper_layout)
         add_identity_layout.addStretch()
         add_identity_layout.addLayout(add_identity_lower_layout)
+
+    def select_picture(self, event):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select profile picture", "", "Images (*.png *.jpg *.jpeg)")
+        
+        if file_path:
+            pixmap = QPixmap(file_path).scaled(160, 160, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+            rounded = QPixmap(160, 160)
+            rounded.fill(Qt.transparent)
+
+            painter = QPainter(rounded)
+            painter.setRenderHint(QPainter.Antialiasing)
+            painter.setRenderHint(QPainter.SmoothPixmapTransform)
+
+            path = QPainterPath()
+            path.addEllipse(0, 0, 160, 160)
+            
+            painter.setClipPath(path)
+            painter.drawPixmap(0, 0, pixmap)
+            painter.end()
+
+            self.profile_picture.setPixmap(rounded)
+            self.profile_picture.setScaledContents(True)
+            self.profile_picture_subtitle.hide()
