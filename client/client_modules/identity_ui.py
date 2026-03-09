@@ -39,7 +39,12 @@ class AddIdentityUi(QWidget):
         add_identity_upper_layout = QHBoxLayout()
         add_identity_left_layout = QVBoxLayout()
         add_identity_right_layout = QVBoxLayout()
+        add_identity_right_layout.setSpacing(8)
         add_identity_lower_layout = QHBoxLayout()
+
+        bot_line = QFrame()
+        bot_line.setFrameShape(QFrame.HLine)
+        bot_line.setStyleSheet("color: #30363d;")
 
         self.profile_picture_widget = QWidget()
         self.profile_picture_widget.setFixedSize(160, 160)
@@ -54,6 +59,7 @@ class AddIdentityUi(QWidget):
 
             QWidget:hover {
             border: 2px solid #58a6ff;
+            background-color: #0f141a;
             }
         """)
         profile_picture_layout = QVBoxLayout(self.profile_picture_widget)
@@ -79,18 +85,21 @@ class AddIdentityUi(QWidget):
         username_label.setFixedHeight(20)
         self.username_input = QLineEdit()
         self.username_input.setStyleSheet(input_style)
+        self.username_input.setPlaceholderText("Enter username")
 
         password_label = QLabel("Password")
         password_label.setFont(QFont("Courier New", 12))
         password_label.setStyleSheet("color: #a5a8ad;")
         password_label.setFixedHeight(20)
-
         self.password_input = QLineEdit()
         self.password_input.setStyleSheet(input_style)
+        self.password_input.setEchoMode(QLineEdit.Password)
+        self.password_input.setPlaceholderText("Enter password")
 
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.setFixedSize(110, 35)
         self.cancel_button.clicked.connect(self.on_cancel)
+        self.cancel_button.setCursor(Qt.PointingHandCursor)
         self.cancel_button.setStyleSheet("""
             QPushButton {
                 background-color: #6e6e6e;
@@ -105,6 +114,7 @@ class AddIdentityUi(QWidget):
 
         self.confirm_button = QPushButton("Confirm")
         self.confirm_button.setFixedSize(110, 35)
+        self.confirm_button.setCursor(Qt.PointingHandCursor)
         self.confirm_button.setStyleSheet("""
             QPushButton {
                 background-color: #175723;
@@ -120,6 +130,7 @@ class AddIdentityUi(QWidget):
 
         self.all_identities_button = QPushButton("Identities")
         self.all_identities_button.setFixedSize(110, 35)
+        self.all_identities_button.setCursor(Qt.PointingHandCursor)
         self.all_identities_button.setStyleSheet("""
             QPushButton {
             background-color: #1f6feb;
@@ -136,13 +147,9 @@ class AddIdentityUi(QWidget):
         add_identity_left_layout.addWidget(self.profile_picture_widget)
 
         add_identity_right_layout.addWidget(title)
-        add_identity_right_layout.addSpacing(10)
         add_identity_right_layout.addWidget(username_label)
-        add_identity_right_layout.addSpacing(5)
         add_identity_right_layout.addWidget(self.username_input)
-        add_identity_right_layout.addSpacing(10)
         add_identity_right_layout.addWidget(password_label)
-        add_identity_right_layout.addSpacing(5)
         add_identity_right_layout.addWidget(self.password_input)
 
         add_identity_upper_layout.addLayout(add_identity_left_layout)
@@ -158,6 +165,8 @@ class AddIdentityUi(QWidget):
 
         add_identity_layout.addLayout(add_identity_upper_layout)
         add_identity_layout.addStretch()
+        add_identity_layout.addWidget(bot_line)
+        add_identity_layout.addSpacing(10)
         add_identity_layout.addLayout(add_identity_lower_layout)
 
     def select_picture(self, event):
