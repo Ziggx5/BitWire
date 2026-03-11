@@ -206,7 +206,6 @@ class AddIdentityUi(QWidget):
             profile_picture_path = os.path.join(profile_pictures_folder_path, f"{username}.png")
             profile_picture.save(profile_picture_path)
             save_identity_data(username, password, profile_picture_path)
-            print(profile_picture_path)
         else:
             QMessageBox.warning(
                 self,
