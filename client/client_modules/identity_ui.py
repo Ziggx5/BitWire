@@ -1,8 +1,9 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QPixmap, QPainter, QPainterPath
+import os
 from client_modules.path_finder import file_root
-from client_modules.data_manipulation import save_identity_data
+from client_modules.data_manipulation import save_identity_data, pictures_file
 
 class AddIdentityUi(QWidget):
     def __init__(self, on_cancel):
@@ -196,11 +197,16 @@ class AddIdentityUi(QWidget):
             self.profile_picture_subtitle.hide()
 
     def save_identity(self):
+        profile_pictures_folder_path = pictures_file()
         username = self.username_input.text().strip()
         password = self.password_input.text().strip()
+        profile_picture = self.rounded
         
-        if username and password and self.rounded:
-            save_identity_data(username, password)
+        if username and password and profile_picture:
+            profile_picture_path = os.path.join(profile_pictures_folder_path, f"{username}.png")
+            profile_picture.save(profile_picture_path)
+            save_identity_data(username, password, profile_picture_path)
+            print(profile_picture_path)
         else:
             QMessageBox.warning(
                 self,

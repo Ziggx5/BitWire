@@ -1,8 +1,7 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
-from client_modules.data_manipulation import save_server_data
-from client_modules.load_servers import server_loader
+from client_modules.data_manipulation import save_server_data, server_loader
 from client_modules.networking import ChatHandler
 
 class AddServerUi(QWidget):
@@ -211,7 +210,6 @@ class AddServerUi(QWidget):
 
         if self.name and self.ip_address:
             self.stacked.setCurrentWidget(self.register_page)
-            server_loader()
         else:
             QMessageBox.warning(
                 self,
