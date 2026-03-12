@@ -1,1 +1,1 @@
-End-to-end encryption messaging app that connects to hosted servers. Work in progress.
+Messaging app with TLS, that connects to hosted servers. Work in progress.
