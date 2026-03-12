@@ -1,6 +1,7 @@
 import socket
 import threading
 import json
+import ssl
 
 host = "192.168.1.7"
 port = 50505
@@ -8,6 +9,8 @@ port = 50505
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((host, port))
 server.listen()
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 
 clients = []
 users = {}
