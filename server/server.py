@@ -57,18 +57,16 @@ def client_handler(client, address):
                 if not line.strip():
                     continue
 
-            data = json.loads(line)
+                data = json.loads(line)
             if data["type"] == "register":
                 username = data["username"]
                 password = data["password"]
-        
-                if username in users:
-                    send_json(client, {"type": "register", "status": "fail"})
-                    
-                else:
-                    users[username] = password
+
+                if register_user(username, password):
                     send_json(client, {"type": "register", "status": "ok"})
-                    
+                else:
+                    send_json(client, {"type": "register", "status": "fail"})
+         
             elif data["type"] == "login":
                 username = data["username"]
                 password = data["password"]
@@ -99,6 +97,24 @@ def receive_connection():
 
 def send_json(client, data):
     client.send((json.dumps(data) + "\n").encode("utf-8"))
+
+def register_user(username, password):
+    database_path = database_file()
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "INSERT INTO users (username, password) VALUES (?, ?)",
+            (username, password)
+        )
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError as e:
+        print(f"str{e}")
+        return False
+    finally:
+        conn.close()
 
 print("server running...")
 init_database()
