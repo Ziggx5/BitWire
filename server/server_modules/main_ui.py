@@ -31,12 +31,12 @@ class MainUi(QWidget):
         certificate_file_label = QLabel("Certificate file:")
         self.certificate_file_input = QLineEdit()
         certificate_file_button = QPushButton("Browse...")
-        certificate_file_button.clicked.connect(self.send_file_path)
+        certificate_file_button.clicked.connect(lambda: self.send_file_path(".crt"))
 
         key_file_label = QLabel("Key file:")
         self.key_file_input = QLineEdit()
         key_file_button = QPushButton("Browse...")
-        key_file_button.clicked.connect(self.send_file_path)
+        key_file_button.clicked.connect(lambda: self.send_file_path(".key"))
 
         import_database_button = QPushButton("Import Database")
         export_database_button = QPushButton("Export Database")
@@ -89,12 +89,18 @@ class MainUi(QWidget):
         layout.addWidget(database_box)
         layout.addWidget(server_control_box)
 
-    def send_file_path(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select file", "", "SSL files (*.crt *.key)")
-        copied_file_path, extension = copy_to_data_dir(file_path)
+    def send_file_path(self, file_type):
+        if file_type == ".crt":
+            file_path, _ = QFileDialog.getOpenFileName(self, "Select file", "", "Certificate files (*.crt)")
+        elif file_type == ".key":
+            file_path, _ = QFileDialog.getOpenFileName(self, "Select file", "", "Key files (*.key)")
 
-        if extension == ".crt":
+        if not file_path:
+            return
+
+        copied_file_path = copy_to_data_dir(file_path)
+
+        if file_type == ".crt":
             self.certificate_file_input.setText(copied_file_path)
-        elif extension == ".key":
+        else:
             self.key_file_input.setText(copied_file_path)
-        
