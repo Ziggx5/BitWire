@@ -19,3 +19,9 @@ def copy_to_data_dir(file_path):
             shutil.copy(file_path, destination_path)
 
         return destination_path
+
+def database_file():
+    data_dir = local_data_file()
+    database_path = os.path.join(data_dir, "users.db")
+
+    return database_path

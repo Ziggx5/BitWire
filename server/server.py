@@ -2,6 +2,8 @@ import socket
 import threading
 import json
 import ssl
+import sqlite3
+from server_modules.data_manipulation import database_file
 
 host = "192.168.1.7"
 port = 50505
@@ -16,13 +18,27 @@ context.load_cert_chain(certfile = "/home/ziggx/Documents/BitWire/server/server.
 clients = []
 users = {}
 
+def init_database():
+    database_path = database_file()
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            username TEXT PRIMARY KEY,
+            password TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+
 def send_message_to_clients(message):
     for client in clients[:]:
         try:
             client.send((json.dumps(message) + "\n").encode("utf-8"))
         except Exception as e:
             clients.remove(client)
-            print(f"send message to clients {str(e)}")
+            print({str(e)})
 
 def client_handler(client, address):
     logged_user = None
@@ -30,7 +46,6 @@ def client_handler(client, address):
     while True:
         try:
             recv_data = client.recv(1024)
-            print(recv_data)
 
             if not recv_data:
                 break
@@ -42,7 +57,7 @@ def client_handler(client, address):
                 if not line.strip():
                     continue
 
-            data = json.loads(recv_data.decode("utf-8"))
+            data = json.loads(line)
             if data["type"] == "register":
                 username = data["username"]
                 password = data["password"]
@@ -69,7 +84,7 @@ def client_handler(client, address):
             elif data["type"] == "message":
                 send_message_to_clients({"type": "message", "user": logged_user, "content": data['content']})
         except Exception as e:
-            print(f"client handler {str(e)}")
+            print({str(e)})
         
     if client in clients:
         clients.remove(client)
@@ -86,4 +101,5 @@ def send_json(client, data):
     client.send((json.dumps(data) + "\n").encode("utf-8"))
 
 print("server running...")
+init_database()
 receive_connection()
