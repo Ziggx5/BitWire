@@ -17,6 +17,8 @@ context.load_cert_chain(certfile = "/home/ziggx/Documents/BitWire/server/server.
 
 clients = []
 
+stop_event = threading.Event()
+
 def init_database():
     database_path = database_file()
     conn = sqlite3.connect(database_path)
@@ -81,15 +83,24 @@ def client_handler(client, address):
             elif data["type"] == "message":
                 send_message_to_clients({"type": "message", "user": logged_user, "content": data['content']})
         except Exception as e:
-            print({str(e)})
+            print(str(e))
         
     if client in clients:
         clients.remove(client)
     client.close()
 
 def receive_connection():
-    while True:
-        client, address = server.accept()
+    print("server running...")
+    init_database()
+    while not stop_event.is_set():
+        try:
+            server.settimeout(1.0)
+            client, address = server.accept()
+        except socket.timeout:
+            continue
+        except OSError:
+            break
+
         tls_connect = context.wrap_socket(client, server_side = True)
         thread = threading.Thread(target = client_handler, args = (tls_connect, address,))
         thread.start()
@@ -129,7 +140,7 @@ def login_user(username, password):
         result = cursor.fetchone()
         conn.close()
 
-        if result[0] == password:
+        if result and result[0] == password:
             return True
 
         return False
@@ -137,6 +148,10 @@ def login_user(username, password):
     except Exception as e:
         print(f"str{e}")
 
-print("server running...")
-init_database()
-receive_connection()
+def start_receive_connection_thread():
+    threading.Thread(target = receive_connection, daemon = True).start()
+
+def stop_receive_connection_thread():
+    print("Stopping server")
+    stop_event.set()
+    server.close()

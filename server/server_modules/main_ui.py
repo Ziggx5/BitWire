@@ -1,7 +1,9 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
+import threading
 from server_modules.data_manipulation import local_data_file, copy_to_data_dir, files_check
+from server_modules.server import start_receive_connection_thread, stop_receive_connection_thread
 
 class MainUi(QWidget):
     def __init__(self):
@@ -39,12 +41,15 @@ class MainUi(QWidget):
         key_file_button = QPushButton("Browse...")
         key_file_button.clicked.connect(lambda: self.send_file_path(".key"))
 
+        view_database_button = QPushButton("View Database")
         import_database_button = QPushButton("Import Database")
         export_database_button = QPushButton("Export Database")
         clear_database_button = QPushButton("Clear Database")
 
         start_server_button = QPushButton("Start Server")
+        start_server_button.clicked.connect(lambda: self.start_server())
         stop_server_button = QPushButton("Stop Server")
+        stop_server_button.clicked.connect(lambda: self.stop_server())
 
         server_status_label = QLabel("Server Status:")
         server_status_state = QLabel("Stopped")
@@ -65,6 +70,7 @@ class MainUi(QWidget):
 
         ssl_box.setLayout(ssl_box_layout)
 
+        database_box_layout.addWidget(view_database_button)
         database_box_layout.addWidget(import_database_button)
         database_box_layout.addWidget(export_database_button)
         database_box_layout.addWidget(clear_database_button)
@@ -114,3 +120,9 @@ class MainUi(QWidget):
             self.certificate_file_input.setText(copied_file_path)
         else:
             self.key_file_input.setText(copied_file_path)
+
+    def start_server(self):
+        start_receive_connection_thread()
+
+    def stop_server(self):
+        stop_receive_connection_thread()
