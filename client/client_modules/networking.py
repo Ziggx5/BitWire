@@ -25,14 +25,11 @@ class ChatHandler:
                 buffer += self.client.recv(1024).decode("utf-8")
                 while "\n" in buffer:
                     line, buffer = buffer.split("\n", 1)
-                    print(line, buffer)
                     if not line.strip():
                         continue
                     message = json.loads(line)
-                    print(message)
                     complete_message = f"{message['user']}: {message['content']}"
                     self.message_callback(complete_message)
-                    print(complete_message)
             except Exception as e:
                 print(str(e))
     
@@ -56,7 +53,6 @@ class ChatHandler:
 
     def login(self, username, password, ip_address):
         self.connect(ip_address)
-        print(self.client)
         self.send_json_message({
             "type": "login",
             "username": username,
@@ -65,7 +61,6 @@ class ChatHandler:
         try:
             response = json.loads(self.client.recv(1024).decode("utf-8"))
             if response["status"] == "ok":
-                print("dela")
                 self.running = True
                 threading.Thread(target = self.receive_messages, daemon = True).start()
         except:

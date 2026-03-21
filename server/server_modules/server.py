@@ -59,29 +59,29 @@ def client_handler(client, address):
                     continue
 
                 data = json.loads(line)
-            if data["type"] == "register":
-                username = data["username"]
-                password = data["password"]
+                if data["type"] == "register":
+                    username = data["username"]
+                    password = data["password"]
 
-                if register_user(username, password):
-                    send_json(client, {"type": "register", "status": "ok"})
-                else:
-                    send_json(client, {"type": "register", "status": "fail"})
+                    if register_user(username, password):
+                        send_json(client, {"type": "register", "status": "ok"})
+                    else:
+                        send_json(client, {"type": "register", "status": "fail"})
          
-            elif data["type"] == "login":
-                username = data["username"]
-                password = data["password"]
+                elif data["type"] == "login":
+                    username = data["username"]
+                    password = data["password"]
 
-                if login_user(username, password):
-                    send_json(client, {"type": "login", "status": "ok"})
-                    logged_user = username
-                    if client not in clients:
-                        clients.append(client)
-                else:
-                    send_json(client, {"type": "login", "status": "fail"})
+                    if login_user(username, password):
+                        send_json(client, {"type": "login", "status": "ok"})
+                        logged_user = username
+                        if client not in clients:
+                            clients.append(client)
+                    else:
+                        send_json(client, {"type": "login", "status": "fail"})
 
-            elif data["type"] == "message":
-                send_message_to_clients({"type": "message", "user": logged_user, "content": data['content']})
+                elif data["type"] == "message":
+                    send_message_to_clients({"type": "message", "user": logged_user, "content": data['content']})
         except Exception as e:
             print(str(e))
         
