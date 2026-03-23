@@ -1,6 +1,7 @@
 from platformdirs import user_data_dir
 import os
 import shutil
+import json
 
 def local_data_file():
     app_name = "Bitwire_server"
@@ -12,6 +13,8 @@ def local_data_file():
 def server_info_file():
     data_dir = local_data_file()
     file_path = os.path.join(data_dir, "server_info.json")
+
+    return file_path
 
 def copy_to_data_dir(file_path):
     if file_path:
@@ -45,3 +48,29 @@ def files_check():
 def server_info(ip_address, port):
     if not ip_address or not port:
         return False
+
+    server_info_path = server_info_file()
+
+    data = {
+        "ip_address": ip_address,
+        "port": port
+    }
+
+    with open (server_info_path, "w", encoding = "utf-8") as f:
+        json.dump(data, f, indent = 4)
+    
+    return True
+
+def server_info_input_fill():
+    file_path = server_info_file()
+    server_info_list = []
+
+    with open (file_path, "r", encoding = "utf-8") as f:
+        try:
+            server_info_list = json.load(f)
+        except json.JSONDecodeError:
+            server_info_list = []
+        
+    server_info = server_info_list["ip_address"]
+
+    return server_info

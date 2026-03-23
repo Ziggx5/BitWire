@@ -2,7 +2,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 import threading
-from server_modules.data_manipulation import local_data_file, copy_to_data_dir, files_check, server_info
+from server_modules.data_manipulation import local_data_file, copy_to_data_dir, files_check, server_info_input_fill, server_info
 from server_modules.server import start_receive_connection_thread, stop_receive_connection_thread
 
 class MainUi(QWidget):
@@ -13,7 +13,9 @@ class MainUi(QWidget):
         self.setStyleSheet("background-color : #0e1117;")
         self.setFixedSize(400, 500)
         local_data_file()
+        server_address = server_info_input_fill()
         self.files = files_check()
+
 
         layout = QVBoxLayout(self)
 
@@ -38,6 +40,7 @@ class MainUi(QWidget):
 
         server_address_label = QLabel("Address:")
         self.server_address_input = QLineEdit()
+        self.server_address_input.setText(server_address)
 
         server_port_label = QLabel("Port:")
         self.server_port_input = QLineEdit()
