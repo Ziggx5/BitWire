@@ -9,6 +9,10 @@ def local_data_file():
 
     return data_dir
 
+def server_info_file():
+    data_dir = local_data_file()
+    file_path = os.path.join(data_dir, "server_info.json")
+
 def copy_to_data_dir(file_path):
     if file_path:
         data_file_path = local_data_file()
@@ -37,3 +41,7 @@ def files_check():
         files.append(file_path)
     
     return files
+
+def server_info(ip_address, port):
+    if not ip_address or not port:
+        return False
