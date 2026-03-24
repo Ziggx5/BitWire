@@ -4,7 +4,7 @@ import shutil
 import json
 
 def local_data_file():
-    app_name = "Bitwire_server"
+    app_name = "BiteWire_Server"
     data_dir = user_data_dir(app_name)
     os.makedirs(data_dir, exist_ok = True)
 

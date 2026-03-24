@@ -5,7 +5,7 @@ from cryptography.fernet import Fernet
 import base64
 
 def create_local_file():
-    app_name = "BitWire"
+    app_name = "BiteWire"
     data_dir = user_data_dir(app_name)
     os.makedirs(data_dir, exist_ok = True)
 

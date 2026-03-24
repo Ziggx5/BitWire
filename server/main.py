@@ -3,7 +3,7 @@ from PySide6.QtCore import QSharedMemory
 from server_modules.main_ui import MainUi
 import sys
 
-shared_memory = QSharedMemory("Bitwire_server")
+shared_memory = QSharedMemory("BiteWire_Server")
 
 def main():
     if not shared_memory.create(1):

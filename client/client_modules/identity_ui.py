@@ -13,7 +13,7 @@ class AddIdentityUi(QWidget):
         self.rounded = None
         self.picture_path = file_root()
 
-        self.setWindowTitle("BitWire")
+        self.setWindowTitle("BiteWire")
         self.setStyleSheet("background-color: #161b22")
         self.setFixedSize(500, 300)
 

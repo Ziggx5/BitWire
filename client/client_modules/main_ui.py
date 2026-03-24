@@ -13,7 +13,7 @@ class MainUi(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("BitWire")
+        self.setWindowTitle("BiteWire")
         self.setStyleSheet("background-color : #0e1117;")
         self.showMaximized()
 
@@ -56,11 +56,11 @@ class MainUi(QWidget):
 
         self.logo_layout = QHBoxLayout(logo_frame)
 
-        self.bitwire_label = QLabel("BitWire")
-        self.bitwire_label.setFont(QFont("Courier New", 17))
-        self.bitwire_label.setStyleSheet("color: #a5a8ad; border: none")
+        self.BiteWire_label = QLabel("BiteWire")
+        self.BiteWire_label.setFont(QFont("Courier New", 17))
+        self.BiteWire_label.setStyleSheet("color: #a5a8ad; border: none")
         
-        self.logo_layout.addWidget(self.bitwire_label, alignment = Qt.AlignCenter)
+        self.logo_layout.addWidget(self.BiteWire_label, alignment = Qt.AlignCenter)
 
         self.add_server_label = QLabel("All servers")
         self.add_server_label.setFont(QFont("Courier New", 11))

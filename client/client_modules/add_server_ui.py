@@ -8,7 +8,7 @@ class AddServerUi(QWidget):
     def __init__(self, on_cancel):
         super().__init__()
 
-        self.setWindowTitle("BitWire")
+        self.setWindowTitle("BiteWire")
         self.setStyleSheet("background-color: #161b22")
         self.setFixedSize(500, 300)
 

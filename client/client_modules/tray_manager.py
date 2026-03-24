@@ -16,10 +16,10 @@ class TrayManager:
         github_link_action = QAction("Github Repository", self.tray_icon)
         github_link_action.triggered.connect(self.open_link)
 
-        open_action = QAction("Open BitWire", self.tray_icon)
+        open_action = QAction("Open BiteWire", self.tray_icon)
         open_action.triggered.connect(self.parent.show)
 
-        exit_action = QAction("Exit BitWire", self.tray_icon)
+        exit_action = QAction("Exit BiteWire", self.tray_icon)
         exit_action.triggered.connect(self.exit_app)
 
         tray_menu.addAction(github_link_action)
@@ -35,4 +35,4 @@ class TrayManager:
         QApplication.exit()
     
     def open_link(self):
-        webbrowser.open("https://github.com/Ziggx5/BitWire")
+        webbrowser.open("https://github.com/Ziggx5/BiteWire")

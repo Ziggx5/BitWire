@@ -3,7 +3,7 @@ from PySide6.QtCore import QSharedMemory
 from client_modules.loading_ui import LoadingScreen
 import sys
 
-shared_memory = QSharedMemory("Bitwire")
+shared_memory = QSharedMemory("BiteWire")
 
 def main():
     if not shared_memory.create(1):

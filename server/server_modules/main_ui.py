@@ -9,7 +9,7 @@ class MainUi(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Bitwire server")
+        self.setWindowTitle("BiteWire Server")
         self.setStyleSheet("background-color : #0e1117;")
         self.setFixedSize(400, 500)
         local_data_file()
