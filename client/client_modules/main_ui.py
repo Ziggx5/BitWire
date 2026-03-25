@@ -24,6 +24,19 @@ class MainUi(QWidget):
         self.tray = TrayManager(self)
         image_path = file_root()
 
+        self.overlay = QWidget(self)
+        self.overlay.setStyleSheet("background-color: rgba(0, 0, 0, 150);")
+        self.overlay.setGeometry(0, 0, self.width(), self.height())
+
+        self.overlay_layout = QVBoxLayout(self.overlay)
+        self.overlay_layout.setAlignment(Qt.AlignCenter)
+
+        self.overlay_layout.addWidget(self.add_server_window)
+        self.overlay_layout.addWidget(self.identity_window)
+
+        self.add_server_window.hide()
+        self.identity_window.hide()
+
         main_root_layout = QHBoxLayout(self)
         main_root_layout.setSpacing(0)
 
@@ -127,20 +140,14 @@ class MainUi(QWidget):
         main_root_layout.addWidget(main_frame, 7)
 
     def open_add_server(self):
-        self.overlay = QWidget(self)
-        self.overlay.setStyleSheet("background-color: rgba(0, 0, 0, 150);")
-        self.overlay.setGeometry(0, 0, self.width(), self.height())
         self.overlay.raise_()
-
-        self.overlay_layout = QVBoxLayout(self.overlay)
-        self.overlay_layout.setAlignment(Qt.AlignCenter)
-
-        self.add_server_window.setFixedSize(500, 300)
-
-        self.overlay_layout.addWidget(self.add_server_window)
+        self.overlay.setGeometry(0, 0, self.width(), self.height())
+        self.add_server_window.show()
         self.overlay.show()
 
     def add_server_window_show_main_ui(self):
+        self.add_server_window.hide()
+        self.overlay.lower()
         self.overlay.hide()
         self.reload_servers()
 
@@ -249,13 +256,15 @@ class MainUi(QWidget):
         self.reload_servers()
 
     def identity_window_open(self):
+        self.overlay.raise_()
+        self.overlay.setGeometry(0, 0, self.width(), self.height())
         self.identity_window.show()
-        self.hide()
+        self.overlay.show()
 
     def identity_window_show_main_ui(self):
-        self.identity_window.close()
-        self.show()
-
+        self.overlay.lower()
+        self.identity_window.hide()
+        self.overlay.hide()
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):

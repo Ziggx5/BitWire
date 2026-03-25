@@ -12,9 +12,13 @@ class AddIdentityUi(QWidget):
         self.on_cancel = on_cancel
         self.rounded = None
         self.picture_path = file_root()
+        self.stacked = QStackedLayout(self)
 
-        self.setWindowTitle("BiteWire")
-        self.setStyleSheet("background-color: #161b22")
+        self.setStyleSheet("""
+            background-color: #161b22;
+            border-radius: 12px;
+            border: 1px solid #30363d;
+        """)
         self.setFixedSize(500, 300)
 
         input_style = """
@@ -35,8 +39,10 @@ class AddIdentityUi(QWidget):
             font-weight: 600;
         }
         """
-        
-        add_identity_layout = QVBoxLayout(self)
+        main_page = QWidget()
+
+        add_identity_layout = QVBoxLayout(main_page)
+        add_identity_layout.setContentsMargins(10, 10, 10, 10)
         add_identity_layout.setSpacing(0)
 
         add_identity_upper_layout = QHBoxLayout()
@@ -172,6 +178,10 @@ class AddIdentityUi(QWidget):
         add_identity_layout.addWidget(bot_line)
         add_identity_layout.addSpacing(10)
         add_identity_layout.addLayout(add_identity_lower_layout)
+
+        main_page.setLayout(add_identity_layout)
+        self.stacked.addWidget(main_page)
+        self.stacked.setCurrentWidget(main_page)
 
     def select_picture(self, event):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select profile picture", "", "Images (*.png *.jpg *.jpeg)")

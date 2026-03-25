@@ -11,7 +11,7 @@ class AddServerUi(QWidget):
         self.setStyleSheet("""
             background-color: #161b22;
             border-radius: 12px;
-            border: 1px #30363d;
+            border: 1px solid #30363d;
         """)
         self.setFixedSize(500, 300)
 
@@ -21,7 +21,7 @@ class AddServerUi(QWidget):
 
         self.add_server_page = QWidget()
         add_server_layout = QVBoxLayout(self.add_server_page)
-        add_server_layout.setContentsMargins(15, 15, 15, 15)
+        add_server_layout.setContentsMargins(10, 10, 10, 10)
         add_server_layout.setSpacing(0)
 
         add_server_option_buttons = QHBoxLayout()
@@ -137,6 +137,7 @@ class AddServerUi(QWidget):
 
         self.register_page = QWidget()
         register_layout = QVBoxLayout(self.register_page)
+        register_layout.setContentsMargins(10, 10, 10, 10)
         register_layout.setSpacing(0)
 
         register_option_buttons_layout = QHBoxLayout()
