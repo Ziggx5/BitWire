@@ -28,8 +28,8 @@ class MainUi(QWidget):
         certificate_file_layout = QHBoxLayout()
         key_file_layout = QHBoxLayout()
 
-        database_box = QGroupBox("Database Management")
-        database_box_layout = QHBoxLayout()
+        database_box = QGroupBox("Database file")
+        database_file_layout = QHBoxLayout()
 
         server_control_box = QGroupBox("Server Control")
         server_control_box_layout = QVBoxLayout()
@@ -56,10 +56,10 @@ class MainUi(QWidget):
         key_file_button = QPushButton("Browse...")
         key_file_button.clicked.connect(lambda: self.send_file_path(".key"))
 
-        view_database_button = QPushButton("View Database")
-        import_database_button = QPushButton("Import Database")
-        export_database_button = QPushButton("Export Database")
-        clear_database_button = QPushButton("Clear Database")
+        database_file_label = QLabel("Database file:")
+        self.database_file_input = QLineEdit()
+        database_file_button = QPushButton("Browse...")
+        database_file_button.clicked.connect(lambda: self.send_file_path(".db"))
 
         self.start_server_button = QPushButton("Start Server")
         self.start_server_button.clicked.connect(lambda: self.start_server())
@@ -97,12 +97,11 @@ class MainUi(QWidget):
 
         ssl_box.setLayout(ssl_box_layout)
 
-        database_box_layout.addWidget(view_database_button)
-        database_box_layout.addWidget(import_database_button)
-        database_box_layout.addWidget(export_database_button)
-        database_box_layout.addWidget(clear_database_button)
+        database_file_layout.addWidget(database_file_label)
+        database_file_layout.addWidget(self.database_file_input)
+        database_file_layout.addWidget(database_file_button)
 
-        database_box.setLayout(database_box_layout)
+        database_box.setLayout(database_file_layout)
 
         server_status_layout.addWidget(server_status_label)
         server_status_layout.addWidget(self.server_status_state)
@@ -124,20 +123,28 @@ class MainUi(QWidget):
         layout.addWidget(database_box)
         layout.addWidget(server_control_box)
 
-        self.fill_certificate_inputs(self.files)
+        self.fill_inputs(self.files)
 
-    def fill_certificate_inputs(self, files):
+    def fill_inputs(self, files):
         for file_path in files:
             if file_path.endswith(".crt"):
                 self.certificate_file_input.setText(file_path)
+
             elif file_path.endswith(".key"):
                 self.key_file_input.setText(file_path)
+
+            elif file_path.endswith(".db"):
+                self.database_file_input.setText(file_path)
 
     def send_file_path(self, file_type):
         if file_type == ".crt":
             file_path, _ = QFileDialog.getOpenFileName(self, "Select file", "", "Certificate files (*.crt)")
+
         elif file_type == ".key":
             file_path, _ = QFileDialog.getOpenFileName(self, "Select file", "", "Key files (*.key)")
+
+        elif file_type == ".db":
+            file_path, _ = QFileDialog.getOpenFileName(self, "Select file", "", "Database files (*.db)")
 
         if not file_path:
             return
@@ -146,12 +153,17 @@ class MainUi(QWidget):
 
         if file_type == ".crt":
             self.certificate_file_input.setText(copied_file_path)
-        else:
+
+        elif file_type == ".key":
             self.key_file_input.setText(copied_file_path)
+
+        elif file_type == ".db":
+            self.database_file_input.setText(copied_file_path)
 
     def start_server(self):
         if not server_info(self.server_address_input.text(), self.server_port_input.text()):
             return
+
         start_receive_connection_thread(self.update_timer)
         self.server_status_state.setText("Running")
         self.start_server_button.setEnabled(False)
