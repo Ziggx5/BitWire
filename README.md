@@ -39,10 +39,10 @@ openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -d
       <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/1.2.0/bitewire-1.2.0-3.x86_64.rpm">⬇️ Download</a></td>
   </tr>
   <tr>
-  <td>BiteWire Server 1.0.0</td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/1.0.0/BiteWire.Server.exe">⬇️ Download</a></td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/1.0.0/bitewire-server_1.0.0_amd64.deb">⬇️ Download</a></td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/1.0.0/bitewire-server-1.0.0-1.x86_64.rpm">⬇️ Download</a></td>
+  <td>BiteWire Server 1.1.0</td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.1.0/BiteWire.Server.exe">⬇️ Download</a></td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.1.0/bitewire-server_1.1.0-2_amd64.deb">⬇️ Download</a></td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.1.0/bitewire-server-1.1.0-2.x86_64.rpm">⬇️ Download</a></td>
   </tr>
 </table>
 
