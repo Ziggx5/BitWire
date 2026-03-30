@@ -20,7 +20,8 @@ Example of a self-signed certificate:
 openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 365
 ```
 
-<img width="530" height="658" alt="image" src="https://github.com/user-attachments/assets/9bcda007-8efb-43c4-9da7-d4d6174b464d" />
+<img width="530" height="658" alt="image" src="https://github.com/user-attachments/assets/76866ef6-95a6-44a2-b5f4-91d5b6b0695b" />
+
 
 ## 📦 Downloads
 
