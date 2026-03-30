@@ -9,7 +9,7 @@ class TrayManager:
 
         picture_path = file_root()
 
-        self.tray_icon = QSystemTrayIcon(QIcon(f"{picture_path}/tray.png"), parent)
+        self.tray_icon = QSystemTrayIcon(QIcon(f"{picture_path}/tray.png"), self.parent)
         self.tray_icon.setToolTip("BiteWire")
 
         tray_menu = QMenu()
@@ -34,7 +34,7 @@ class TrayManager:
 
     def exit_app(self):
         self.tray_icon.hide()
-        QApplication.exit()
+        QApplication.quit()
     
     def open_link(self):
         webbrowser.open("https://github.com/Ziggx5/BiteWire")

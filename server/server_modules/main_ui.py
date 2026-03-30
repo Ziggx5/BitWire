@@ -4,6 +4,7 @@ from PySide6.QtGui import QFont
 import threading
 from server_modules.data_manipulation import local_data_file, copy_to_data_dir, files_check, server_info_input_fill, server_info
 from server_modules.server import start_receive_connection_thread, stop_receive_connection_thread
+from server_modules.system_tray import TrayManager
 
 class MainUi(QWidget):
     def __init__(self):
@@ -12,6 +13,7 @@ class MainUi(QWidget):
         self.setWindowTitle("BiteWire Server")
         self.setStyleSheet("background-color : #0e1117;")
         self.setFixedSize(400, 500)
+        self.tray = TrayManager(self)
         local_data_file()
         server_address = server_info_input_fill()
         self.files = files_check()
@@ -62,9 +64,9 @@ class MainUi(QWidget):
         database_file_button.clicked.connect(lambda: self.send_file_path(".db"))
 
         self.start_server_button = QPushButton("Start Server")
-        self.start_server_button.clicked.connect(lambda: self.start_server())
+        self.start_server_button.clicked.connect(self.start_server)
         self.stop_server_button = QPushButton("Stop Server")
-        self.stop_server_button.clicked.connect(lambda: self.stop_server())
+        self.stop_server_button.clicked.connect(self.stop_server)
         self.stop_server_button.setEnabled(False)
 
         server_status_label = QLabel("Server Status:")
@@ -177,3 +179,7 @@ class MainUi(QWidget):
     
     def update_timer(self, seconds):
         self.server_uptime_time.setText(str(seconds))
+
+    def closeEvent(self, event):
+        event.ignore()
+        self.hide()
