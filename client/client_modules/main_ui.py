@@ -48,17 +48,25 @@ class MainUi(QWidget):
 
         main_root_layout = QHBoxLayout(self)
         main_root_layout.setSpacing(0)
+        main_root_layout.setContentsMargins(0, 0, 0, 0)
 
         left_container = QVBoxLayout()
 
         server_frame = QFrame(self)
-        server_frame.setStyleSheet("background: #1a1a24; border-right: 1px solid #30363d")
+        server_frame.setStyleSheet("background: #1a1a24; border: 1px solid #30363d")
 
         self.server_layout = QVBoxLayout(server_frame)
         self.server_layout.setAlignment(Qt.AlignTop)
         self.server_layout.setSpacing(3)
 
         user_frame = QFrame(self)
+        user_frame.setObjectName("container")
+        user_frame.setStyleSheet("""
+            QFrame#container {
+                background: transparent;
+                border: 1px solid #737373;
+            }
+        """)
         self.user_frame_layout = QHBoxLayout(user_frame)
 
         main_frame = QFrame(self)
@@ -69,27 +77,24 @@ class MainUi(QWidget):
         self.main_layout.setSpacing(8)
 
         upper_frame = QFrame(self)
-        upper_frame.setStyleSheet("background: #232338; border-right: 1px solid #30363d")
+        upper_frame.setStyleSheet("background: #232338; border: 1px solid #30363d")
 
         self.upper_layout = QHBoxLayout(upper_frame)
 
         logo_frame = QFrame(self)
-        logo_frame.setStyleSheet("background: transparent; border-right: 1px solid #30363d")
+        logo_frame.setStyleSheet("background: transparent; border: 1px solid #30363d")
 
         self.logo_layout = QHBoxLayout(logo_frame)
 
         self.BiteWire_label = QLabel("BiteWire")
-        self.BiteWire_label.setFont(QFont("Courier New", 17))
-        self.BiteWire_label.setStyleSheet("color: #a5a8ad; border: none")
+        self.BiteWire_label.setStyleSheet("color: #a5a8ad; border: none; font-size: 30px;")
         
         self.logo_layout.addWidget(self.BiteWire_label, alignment = Qt.AlignCenter)
 
         self.add_server_label = QLabel("All servers")
-        self.add_server_label.setFont(QFont("Courier New", 11))
-        self.add_server_label.setStyleSheet("color: white; border: none")
+        self.add_server_label.setStyleSheet("color: white; border: none; font-size: 17px;")
 
         self.add_button = QPushButton("+")
-        self.add_button.setFont(QFont("Courier New", 15))
         self.add_button.setStyleSheet("""
             QPushButton {
             color: white;
@@ -97,6 +102,7 @@ class MainUi(QWidget):
             border-radius: 10px;
             font-weight: 700;
             border: 2px solid #ffffff;
+            font-size: 20px;
             }
             
             QPushButton:hover {
@@ -109,7 +115,7 @@ class MainUi(QWidget):
             }
             
         """)
-        self.add_button.setFixedSize(40, 32)
+        self.add_button.setFixedSize(35, 35)
         self.add_button.clicked.connect(lambda: self.show_popup(self.add_server_window))
         self.reload_servers()
 
@@ -146,7 +152,7 @@ class MainUi(QWidget):
         left_container.addWidget(user_frame)
 
         main_root_layout.addLayout(left_container, 1)
-        main_root_layout.addWidget(main_frame, 7)
+        main_root_layout.addWidget(main_frame, 5)
 
     def add_server_window_show_main_ui(self):
         self.add_server_window.hide()
@@ -200,6 +206,7 @@ class MainUi(QWidget):
                 color: #e6edf3;
                 padding: 10px;
                 font-size: 14px;
+                border: none;
             }
             QScrollBar:vertical {
                 background: transparent;
@@ -271,6 +278,10 @@ class MainUi(QWidget):
         self.overlay.raise_()
         self.overlay.show()
         widget.show()
+    
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Return:
+            print("dela")
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
