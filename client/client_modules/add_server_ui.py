@@ -12,7 +12,7 @@ class AddServerUi(QWidget):
         self.setStyleSheet("background-color: transparent;")
         self.on_cancel = on_cancel
         self.stacked = QStackedLayout(self)
-        self.chat_handler = ChatHandler(self)
+        self.chat_handler = ChatHandler()
 
         self.add_server_page = QWidget()
         add_server_layout = QVBoxLayout(self.add_server_page)

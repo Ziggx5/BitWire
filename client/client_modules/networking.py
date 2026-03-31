@@ -2,12 +2,15 @@ import socket
 import threading
 import json
 import ssl
+from PySide6.QtCore import QObject, Signal
 
-class ChatHandler:
-    def __init__(self, message_callback):
+class ChatHandler(QObject):
+    message_received = Signal(str)
+
+    def __init__(self):
+        super().__init__()
         self.client = None
-        self.running = None
-        self.message_callback = message_callback
+        self.running = False
         self.context = ssl.create_default_context()
         self.context.check_hostname = False
         self.context.verify_mode = ssl.CERT_NONE
@@ -29,7 +32,7 @@ class ChatHandler:
                         continue
                     message = json.loads(line)
                     complete_message = f"{message['user']}: {message['content']}"
-                    self.message_callback(complete_message)
+                    self.message_received.emit(complete_message)
             except Exception as e:
                 print(str(e))
     

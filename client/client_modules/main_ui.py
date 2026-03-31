@@ -18,11 +18,12 @@ class MainUi(QWidget):
         self.showMaximized()
 
         self.add_server_window = AddServerUi(self.add_server_window_show_main_ui)
-        self.chat_handler = ChatHandler(self.client_display_message)
+        self.chat_handler = ChatHandler()
+        self.chat_handler.message_received.connect(self.client_display_message)
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
         self.identity_window = AddIdentityUi(self.identity_window_show_main_ui)
         self.tray = TrayManager(self)
-        image_path = file_root()
+        self.image_path = file_root()
 
         self.overlay = QWidget(self)
         self.overlay.setStyleSheet("background-color: rgba(0, 0, 0, 150);")
@@ -131,14 +132,14 @@ class MainUi(QWidget):
         self.new_user_button.clicked.connect(lambda: self.show_popup(self.identity_window))
 
         self.settings_button = QPushButton()
-        self.settings_button.setIcon(QIcon(f"{image_path}/settings.png"))
+        self.settings_button.setIcon(QIcon(f"{self.image_path}/settings.png"))
         self.settings_button.setIconSize(QSize(18, 18))
         self.settings_button.setFixedSize(30, 30)
 
         self.user_picture = QLabel()
         self.user_picture.setFixedSize(30, 30)
         self.user_picture.setStyleSheet("background-color: white; border-radius: 15px")
-        self.pixmap = QPixmap(f"{image_path}/user_picture_placeholder.png").scaled(30, 30, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        self.pixmap = QPixmap(f"{self.image_path}/user_picture_placeholder.png").scaled(30, 30, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
         self.user_picture.setPixmap(self.pixmap)
         self.user_frame_layout.addWidget(self.user_picture)
         self.user_frame_layout.addWidget(self.username_label)
@@ -175,10 +176,10 @@ class MainUi(QWidget):
             server_button = ServerButton(server["name"], server["ip_address"], self.login_page_popup, self.server_delete_data)
             self.server_layout.addWidget(server_button)
 
-    def client_display_message(self, message):
-        message = MessageWidget()
-        self.chat_layout.addWidget(message)
-
+    def client_display_message(self, data):
+        username, message = data.split(":", 1)
+        message_widget = MessageWidget(username, message, f"{self.image_path}/user_picture_placeholder.png")
+        self.chat_layout.addWidget(message_widget)
 
     def client_send_message(self):
         message = self.message_input.toPlainText().strip()
@@ -262,7 +263,7 @@ class MainUi(QWidget):
         input_layout = QHBoxLayout()
         input_layout.addWidget(self.message_input)
 
-        self.main_layout.addWidget(self.chat_container)
+        self.main_layout.addWidget(scroll)
         self.main_layout.addLayout(input_layout)
         self.message_input.setFocus()
 
@@ -374,9 +375,9 @@ class MessageWidget(QWidget):
         icon = QLabel()
         pixmap = QPixmap(image).scaled(40, 40, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
         icon.setPixmap(pixmap)
-        icon.setFixedSize(40)
+        icon.setFixedSize(40, 40)
 
-        right_layout = QHBoxLayout()
+        right_layout = QVBoxLayout()
 
         top_row = QHBoxLayout()
 
@@ -390,12 +391,12 @@ class MessageWidget(QWidget):
         top_row.addWidget(time)
 
         message = QLabel(message)
-        #message.setWordWrap(True)
+        message.setWordWrap(True)
         message.setStyleSheet("color: #e6edf3;")
 
         right_layout.addLayout(top_row)
         right_layout.addWidget(message)
 
         layout.addWidget(icon)
-        layout.addLayout(right)
+        layout.addLayout(right_layout)
         
