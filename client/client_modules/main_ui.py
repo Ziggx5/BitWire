@@ -138,8 +138,7 @@ class MainUi(QWidget):
         self.user_picture = QLabel()
         self.user_picture.setFixedSize(30, 30)
         self.user_picture.setStyleSheet("background-color: white; border-radius: 15px")
-        self.pixmap = QPixmap(f"{image_path}/user_picture_placeholder.png")
-        self.pixmap = self.pixmap.scaled(30, 30, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        self.pixmap = QPixmap(f"{image_path}/user_picture_placeholder.png").scaled(30, 30, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
         self.user_picture.setPixmap(self.pixmap)
         self.user_frame_layout.addWidget(self.user_picture)
         self.user_frame_layout.addWidget(self.username_label)
@@ -177,7 +176,9 @@ class MainUi(QWidget):
             self.server_layout.addWidget(server_button)
 
     def client_display_message(self, message):
-        self.chat_view.append(message)
+        message = MessageWidget()
+        self.chat_layout.addWidget(message)
+
 
     def client_send_message(self):
         message = self.message_input.toPlainText().strip()
@@ -198,6 +199,15 @@ class MainUi(QWidget):
         self.show_popup(self.login_server_window)
     
     def on_success_login(self, username, ip_address):
+        self.chat_container = QWidget()
+        self.chat_layout = QVBoxLayout(self.chat_container)
+        self.chat_layout.setAlignment(Qt.AlignTop)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(self.chat_container)
+
+        '''
         self.chat_view = QTextBrowser()
         self.chat_view.verticalScrollBar().setSingleStep(10)
         self.chat_view.setStyleSheet("""
@@ -228,6 +238,7 @@ class MainUi(QWidget):
                 border: transparent;
             }
         """)
+        '''
 
         self.message_input = QTextEdit()
         self.message_input.setFixedHeight(50)
@@ -251,7 +262,7 @@ class MainUi(QWidget):
         input_layout = QHBoxLayout()
         input_layout.addWidget(self.message_input)
 
-        self.main_layout.addWidget(self.chat_view)
+        self.main_layout.addWidget(self.chat_container)
         self.main_layout.addLayout(input_layout)
         self.message_input.setFocus()
 
@@ -353,3 +364,38 @@ class ServerButton(QFrame):
 
     def delete_button_clicked(self):
         self.on_delete(self)
+
+class MessageWidget(QWidget):
+    def __init__(self, username, message, image):
+        super().__init__()
+
+        layout = QHBoxLayout(self)
+
+        icon = QLabel()
+        pixmap = QPixmap(image).scaled(40, 40, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        icon.setPixmap(pixmap)
+        icon.setFixedSize(40)
+
+        right_layout = QHBoxLayout()
+
+        top_row = QHBoxLayout()
+
+        username = QLabel(username)
+        username.setStyleSheet("color: #58a6ff; font-weight: 500; font-size: 15px;")
+
+        time = QLabel("Time placeholder")
+        time.setStyleSheet("color: #58a6ff; font-weight: 500; font-size: 10px;")
+
+        top_row.addWidget(username)
+        top_row.addWidget(time)
+
+        message = QLabel(message)
+        #message.setWordWrap(True)
+        message.setStyleSheet("color: #e6edf3;")
+
+        right_layout.addLayout(top_row)
+        right_layout.addWidget(message)
+
+        layout.addWidget(icon)
+        layout.addLayout(right)
+        
