@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import *
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QFont, QIcon, QPixmap, QFontMetrics
+from PySide6.QtCore import *
+from PySide6.QtGui import *
 from client_modules.add_server_ui import AddServerUi
 from client_modules.data_manipulation import delete_server, server_loader
 from client_modules.networking import ChatHandler
@@ -230,14 +230,16 @@ class MainUi(QWidget):
         """)
 
         self.message_input = QTextEdit()
-        self.message_input.setFixedHeight(40)
+        self.message_input.setFixedHeight(50)
         self.message_input.setPlaceholderText("Type a message...")
+        self.message_input.installEventFilter(self)
         self.message_input.setStyleSheet("""
             QTextEdit {
                 border-radius: 10px;
                 background-color: #1a1e24;
                 color: #e6edf3;
-                padding: 5px 5px;
+                padding-top: 10px;
+                padding-bottom: 10px;
                 border: 1px solid #3b4657;
             }
 
@@ -246,13 +248,8 @@ class MainUi(QWidget):
             }
         """)
 
-        self.send_message = QPushButton(">")
-        self.send_message.setFixedSize(30, 30)
-        self.send_message.clicked.connect(self.client_send_message)
-
         input_layout = QHBoxLayout()
         input_layout.addWidget(self.message_input)
-        input_layout.addWidget(self.send_message)
 
         self.main_layout.addWidget(self.chat_view)
         self.main_layout.addLayout(input_layout)
@@ -279,9 +276,12 @@ class MainUi(QWidget):
         self.overlay.show()
         widget.show()
     
-    def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Return:
-            print("dela")
+    def eventFilter(self, obj, event):
+        if obj == self.message_input and event.type() == QEvent.KeyPress:
+            if event.key() == Qt.Key_Return:
+                self.client_send_message()
+                return True
+        return False     
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
