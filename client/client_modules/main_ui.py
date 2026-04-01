@@ -202,44 +202,14 @@ class MainUi(QWidget):
     def on_success_login(self, username, ip_address):
         self.chat_container = QWidget()
         self.chat_layout = QVBoxLayout(self.chat_container)
+        self.chat_layout.setSpacing(20)
+        self.chat_layout.setContentsMargins(0, 0, 0, 0)
         self.chat_layout.setAlignment(Qt.AlignTop)
 
         scroll = QScrollArea()
+        scroll.setStyleSheet("border: none;")
         scroll.setWidgetResizable(True)
         scroll.setWidget(self.chat_container)
-
-        '''
-        self.chat_view = QTextBrowser()
-        self.chat_view.verticalScrollBar().setSingleStep(10)
-        self.chat_view.setStyleSheet("""
-            QTextBrowser {
-                background-color: #0d1117;
-                color: #e6edf3;
-                padding: 10px;
-                font-size: 14px;
-                border: none;
-            }
-            QScrollBar:vertical {
-                background: transparent;
-                width: 15px;
-                border-radius: 6px;
-            }
-
-            QScrollBar:handle:vertical {
-                background-color: #333e4f;
-                border-radius: 6px;
-            }
-
-            QScrollBar:handle:vertical:hover {
-                background-color: #4d5d75;
-            }
-
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                background-color: transparent;
-                border: transparent;
-            }
-        """)
-        '''
 
         self.message_input = QTextEdit()
         self.message_input.setFixedHeight(50)
@@ -368,16 +338,37 @@ class ServerButton(QFrame):
 
 class MessageWidget(QWidget):
     def __init__(self, username, message, image):
-        super().__init__()
+        super().__init__() 
+        self.setObjectName("message_container")
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setStyleSheet("""
+            #message_container {
+                background-color: rgba(255, 255, 255, 0.05);
+                border-radius: 8px;
+                padding: 5px;
+            }
+        """)
 
         layout = QHBoxLayout(self)
-
+        layout.setSpacing(0)
+        
         icon = QLabel()
+        icon.setStyleSheet("background-color: white; border-radius: 15px;")
         pixmap = QPixmap(image).scaled(40, 40, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        mask = QBitmap(40, 40)
+        mask.fill(Qt.color0)
+        painter = QPainter(mask)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setBrush(Qt.color1)
+        painter.drawEllipse(0, 0, 40, 40)
+        painter.end()
+        pixmap.setMask(mask)
         icon.setPixmap(pixmap)
         icon.setFixedSize(40, 40)
 
         right_layout = QVBoxLayout()
+
+        left_layout = QVBoxLayout()
 
         top_row = QHBoxLayout()
 
@@ -387,9 +378,6 @@ class MessageWidget(QWidget):
         time = QLabel("Time placeholder")
         time.setStyleSheet("color: #58a6ff; font-weight: 500; font-size: 10px;")
 
-        top_row.addWidget(username)
-        top_row.addWidget(time)
-
         message = QLabel(message)
         message.setWordWrap(True)
         message.setStyleSheet("color: #e6edf3;")
@@ -397,6 +385,11 @@ class MessageWidget(QWidget):
         right_layout.addLayout(top_row)
         right_layout.addWidget(message)
 
-        layout.addWidget(icon)
+        left_layout.addWidget(icon, alignment = Qt.AlignTop)
+
+        top_row.addWidget(username)
+        top_row.addWidget(time)
+
+        layout.addLayout(left_layout)
+        layout.addSpacing(10)
         layout.addLayout(right_layout)
-        
