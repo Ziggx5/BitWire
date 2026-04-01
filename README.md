@@ -9,7 +9,7 @@
 BiteWire is a simple, secure chat application that allows users to connect to hosted servers, communicate in real-time, and manage their own server through a dedicated server application.
 
 ---
-<img width="2050" height="1166" alt="image" src="https://github.com/user-attachments/assets/739d7fd9-0331-481a-b9bb-69e7f64af4ca" />
+<img width="2050" height="1166" alt="image" src="https://github.com/user-attachments/assets/06c55982-12e6-46bc-acea-e09e5c11dc08" />
 
 ## ⚙️ Server Setup
 
@@ -33,10 +33,10 @@ openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -d
     <th>Red Hat (.rpm)</th>
   </tr>
   <tr>
-    <td>BiteWire 1.2.0</td>
-    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/1.2.0/BiteWire.exe">⬇️ Download</a></td>
-    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/1.2.0/bitewire_1.2.0-3_amd64.deb">⬇️ Download</a></td>
-      <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/1.2.0/bitewire-1.2.0-3.x86_64.rpm">⬇️ Download</a></td>
+    <td>BiteWire 1.3.0</td>
+    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.3.0/BiteWire.exe">⬇️ Download</a></td>
+    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.3.0/bitewire_1.3.0_amd64.deb">⬇️ Download</a></td>
+      <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.3.0/bitewire-1.3.0-1.x86_64.rpm">⬇️ Download</a></td>
   </tr>
   <tr>
   <td>BiteWire Server 1.1.0</td>
