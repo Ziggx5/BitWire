@@ -29,7 +29,7 @@ class TrayManager:
         tray_menu.addAction(exit_action)
 
         self.tray_icon.setContextMenu(tray_menu)
-        self.tray_icon.activated.connect(self.parent.show)
+        self.tray_icon.activated.connect(self.tray_clicked)
         self.tray_icon.show()
 
     def exit_app(self):
@@ -38,3 +38,9 @@ class TrayManager:
     
     def open_link(self):
         webbrowser.open("https://github.com/Ziggx5/BiteWire")
+
+    def tray_clicked(self, reason):
+        if reason != QSystemTrayIcon.Trigger:
+            return
+
+        self.parent.show()
