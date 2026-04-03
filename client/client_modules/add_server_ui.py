@@ -8,7 +8,7 @@ class AddServerUi(QWidget):
     def __init__(self, on_cancel):
         super().__init__()
         
-        self.setFixedSize(500, 300)
+        self.setFixedSize(500, 350)
         self.setStyleSheet("background-color: transparent;")
         self.on_cancel = on_cancel
         self.stacked = QStackedLayout(self)
@@ -171,6 +171,29 @@ class AddServerUi(QWidget):
         self.password_input.setStyleSheet(input_style)
         self.password_input.setEchoMode(QLineEdit.Password)
 
+        self.already_registered_button = QPushButton("Already registered?")
+        self.already_registered_button.setFixedSize(200, 30)
+        self.already_registered_button.setStyleSheet("""
+            QPushButton {
+                background: #161b22;
+                color: #58a6ff;
+                border: none;
+                font-size: 13px;
+                text-align: left;
+            }
+
+            QPushButton:hover {
+                color: #79c0ff;
+                text-decoration: underline;
+            }
+
+            QPushButton:pressed {
+                color: #1f6feb;
+            }
+        """)
+        self.already_registered_button.clicked.connect(self.add_server_no_register)
+        self.already_registered_button.setCursor(Qt.PointingHandCursor)
+
         self.cancel_register = QPushButton("Cancel")
         self.cancel_register.setStyleSheet(cancel_button_style)
         self.cancel_register.clicked.connect(self.reset)
@@ -196,11 +219,21 @@ class AddServerUi(QWidget):
         register_layout.addSpacing(10)
         register_layout.addWidget(password_label)
         register_layout.addWidget(self.password_input)
+        register_layout.addSpacing(10)
+        register_layout.addWidget(self.already_registered_button)
+        register_layout.addSpacing(10)
         register_layout.addStretch()
         register_layout.addWidget(register_bot_line)
         register_layout.addSpacing(10)
         register_layout.addLayout(register_option_buttons_layout)
         self.stacked.addWidget(self.register_page)
+
+    def add_server_no_register(self):
+        self.name = self.server_name_input.text()
+        self.ip_address = self.ip_address_input.text()
+
+        save_server_data(self.name, self.ip_address)
+        self.reset()
 
     def add_server_check_entries(self):
         self.name = self.server_name_input.text()
@@ -208,6 +241,7 @@ class AddServerUi(QWidget):
 
         if self.name and self.ip_address:
             self.stacked.setCurrentWidget(self.register_page)
+
         else:
             QMessageBox.warning(
                 self,
@@ -218,33 +252,37 @@ class AddServerUi(QWidget):
     def register_check_entries(self):
         username = self.username_input.text()
         password = self.password_input.text()
+
         if username and password:
             try:
                 return_message = self.chat_handler.register(username, password, self.ip_address)
+
             except Exception as e:
                 QMessageBox.warning(
                     self,
                     "Error",
-                    f"Server is not online. \n{str(e)}"
+                    f"Server is not available. \n{str(e)}"
                 )
                 return
+
             if return_message["type"] == "register" and return_message["status"] == "ok":
                 save_server_data(self.name, self.ip_address)
                 self.reset()
-                self.stacked.setCurrentWidget(self.add_server_page)
-                self.close()
+
             elif return_message["type"] == "register" and return_message["status"] == "fail":
                 QMessageBox.warning(
                 self,
                 "Error",
                 "Username already taken, try another one."
                 )
+
             else:
                 QMessageBox.warning(
                 self,
                 "Error",
                 f"Something went wrong, try again.\n {return_message}"
                 )
+
         else:
             QMessageBox.warning(
                 self,

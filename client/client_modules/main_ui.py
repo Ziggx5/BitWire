@@ -290,13 +290,13 @@ class ServerButton(QFrame):
         layout = QHBoxLayout(self)
 
         self.label = QLabel()
-        self.label.setFont(QFont("Courier New", 13))
         self.label.setFixedWidth(180)
         self.label.setStyleSheet("""
             QLabel {
                 color: #a5a8ad;
                 border: none;
-                background: transparent
+                background: transparent;
+                font-size: 15px;
             }
         """)
 
@@ -307,14 +307,12 @@ class ServerButton(QFrame):
         self.delete_button.setStyleSheet("""
             QPushButton {
                 border: none;
-                color: #1e1e2f;
-                background: transparent
+                color: #8c8c8c;
+                background: transparent;
             }
 
             QPushButton:hover {
-                color: white;
-                border: 1px solid white;
-                border-radius: 5px
+                color: #bababa;
             }
         """)
 
