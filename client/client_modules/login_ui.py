@@ -140,7 +140,7 @@ class Login(QWidget):
                 )
                 return
             if return_message["type"] == "login" and return_message["status"] == "ok":
-                self.on_success(username, self.ip_address)
+                self.on_success(username)
                 self.on_cancel()
                 self.close()
             elif return_message["type"] == "login" and return_message["status"] == "fail":

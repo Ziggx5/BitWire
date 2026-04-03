@@ -126,15 +126,48 @@ class MainUi(QWidget):
 
         self.username_label = QLabel("User")
 
-        self.new_user_button = QPushButton("+")
+        self.new_user_button = QPushButton()
         self.new_user_button.setFixedSize(30, 30)
-        self.new_user_button.setStyleSheet("font-weight: 500; font-size: 15px")
-        self.new_user_button.clicked.connect(lambda: self.show_popup(self.identity_window))
+        self.new_user_button.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                border: none;
+                border-radius: 6px;
+            }
 
+            QPushButton:hover {
+                background-color: rgba(255, 255, 255, 0.08)
+            }
+
+            QPushButton:pressed {
+                background-color: rgba(255, 255, 255, 0.15)
+            }
+        """)
+        self.new_user_button.clicked.connect(lambda: self.show_popup(self.identity_window))
+        self.new_user_button.setIcon(QIcon(f"{self.image_path}/identity.png"))
+        self.new_user_button.setIconSize(QSize(27, 27))
+        self.new_user_button.setCursor(Qt.PointingHandCursor)
         self.settings_button = QPushButton()
         self.settings_button.setIcon(QIcon(f"{self.image_path}/settings.png"))
+        self.settings_button.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                border: none;
+                border-radius: 6px;
+            }
+
+            QPushButton:hover {
+                background-color: rgba(255, 255, 255, 0.08)
+            }
+
+            QPushButton:pressed {
+                background-color: rgba(255, 255, 255, 0.15)
+            }
+        """)
+
         self.settings_button.setIconSize(QSize(18, 18))
         self.settings_button.setFixedSize(30, 30)
+        self.settings_button.setCursor(Qt.PointingHandCursor)
 
         self.user_picture = QLabel()
         self.user_picture.setFixedSize(30, 30)
@@ -199,7 +232,8 @@ class MainUi(QWidget):
         self.login_server_window.get_ip_address(self.server_address)
         self.show_popup(self.login_server_window)
     
-    def on_success_login(self, username, ip_address):
+    def on_success_login(self, username):
+        self.username_label.setText(username)
         self.chat_container = QWidget()
         self.chat_layout = QVBoxLayout(self.chat_container)
         self.chat_layout.setSpacing(20)
