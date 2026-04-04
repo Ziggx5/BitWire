@@ -101,11 +101,13 @@ class AddServerUi(QWidget):
         self.cancel_add_server_button.setStyleSheet(cancel_button_style)
         self.cancel_add_server_button.clicked.connect(self.reset)
         self.cancel_add_server_button.setFixedSize(110, 35)
+        self.cancel_add_server_button.setCursor(Qt.PointingHandCursor)
 
         self.confirm_add_server_button = QPushButton("Confirm")
         self.confirm_add_server_button.setFixedSize(110, 35)
         self.confirm_add_server_button.setStyleSheet(confirm_button_style)
         self.confirm_add_server_button.clicked.connect(self.add_server_check_entries)
+        self.confirm_add_server_button.setCursor(Qt.PointingHandCursor)
 
         add_server_option_buttons.addStretch()
         add_server_option_buttons.addWidget(self.cancel_add_server_button)
@@ -198,11 +200,13 @@ class AddServerUi(QWidget):
         self.cancel_register.setStyleSheet(cancel_button_style)
         self.cancel_register.clicked.connect(self.reset)
         self.cancel_register.setFixedSize(110, 35)
+        self.cancel_register.setCursor(Qt.PointingHandCursor)
 
         self.confirm_register = QPushButton("Confirm")
         self.confirm_register.setStyleSheet(confirm_button_style)
         self.confirm_register.clicked.connect(self.register_check_entries)
         self.confirm_register.setFixedSize(110, 35)
+        self.confirm_register.setCursor(Qt.PointingHandCursor)
 
         register_option_buttons_layout.addStretch()
         register_option_buttons_layout.addWidget(self.cancel_register)

@@ -114,10 +114,10 @@ class MainUi(QWidget):
             background-color: #1a5fd1;
             border-color: #1a5fd1;
             }
-            
         """)
         self.add_button.setFixedSize(35, 35)
         self.add_button.clicked.connect(lambda: self.show_popup(self.add_server_window))
+        self.add_button.setCursor(Qt.PointingHandCursor)
         self.reload_servers()
 
         self.upper_layout.addWidget(self.add_server_label)
@@ -145,7 +145,7 @@ class MainUi(QWidget):
         """)
         self.new_user_button.clicked.connect(lambda: self.show_popup(self.identity_window))
         self.new_user_button.setIcon(QIcon(f"{self.image_path}/identity.png"))
-        self.new_user_button.setIconSize(QSize(27, 27))
+        self.new_user_button.setIconSize(QSize(30, 30))
         self.new_user_button.setCursor(Qt.PointingHandCursor)
         self.settings_button = QPushButton()
         self.settings_button.setIcon(QIcon(f"{self.image_path}/settings.png"))
@@ -309,6 +309,7 @@ class ServerButton(QFrame):
         self.on_delete = on_delete
 
         self.setFixedHeight(40)
+        self.setCursor(Qt.PointingHandCursor)
         self.setStyleSheet("""
             QFrame {
                 background-color: #1e1e2f;

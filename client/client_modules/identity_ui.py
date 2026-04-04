@@ -65,6 +65,7 @@ class AddIdentityUi(QWidget):
         self.profile_picture = QLabel()
         self.profile_picture.setPixmap(QPixmap(f"{self.picture_path}/camera.png").scaled(80, 80))
         self.profile_picture.setStyleSheet("border: None; background-color: transparent;")
+        self.profile_picture.setCursor(Qt.PointingHandCursor)
 
         self.profile_picture_subtitle = QLabel("Select photo")
         self.profile_picture_subtitle.setStyleSheet("border: None; background-color: transparent;")
