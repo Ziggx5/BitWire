@@ -9,7 +9,7 @@ class TrayManager:
 
         picture_path = file_root()
 
-        self.tray_icon = QSystemTrayIcon(QIcon(f"{picture_path}/tray.png"), self.parent)
+        self.tray_icon = QSystemTrayIcon(QIcon(f"{picture_path}/icon.png"), self.parent)
         self.tray_icon.setToolTip("BiteWire")
 
         tray_menu = QMenu()
