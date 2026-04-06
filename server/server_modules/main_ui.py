@@ -50,18 +50,18 @@ class MainUi(QWidget):
 
         certificate_file_label = QLabel("Certificate file:")
         self.certificate_file_input = QLineEdit()
-        certificate_file_button = QPushButton("Browse...")
-        certificate_file_button.clicked.connect(lambda: self.send_file_path(".crt"))
+        self.certificate_file_button = QPushButton("Browse...")
+        self.certificate_file_button.clicked.connect(lambda: self.send_file_path(".crt"))
 
         key_file_label = QLabel("Key file:")
         self.key_file_input = QLineEdit()
-        key_file_button = QPushButton("Browse...")
-        key_file_button.clicked.connect(lambda: self.send_file_path(".key"))
+        self.key_file_button = QPushButton("Browse...")
+        self.key_file_button.clicked.connect(lambda: self.send_file_path(".key"))
 
         database_file_label = QLabel("Database file:")
         self.database_file_input = QLineEdit()
-        database_file_button = QPushButton("Browse...")
-        database_file_button.clicked.connect(lambda: self.send_file_path(".db"))
+        self.database_file_button = QPushButton("Browse...")
+        self.database_file_button.clicked.connect(lambda: self.send_file_path(".db"))
 
         self.start_server_button = QPushButton("Start Server")
         self.start_server_button.clicked.connect(self.start_server)
@@ -88,11 +88,11 @@ class MainUi(QWidget):
 
         certificate_file_layout.addWidget(certificate_file_label)
         certificate_file_layout.addWidget(self.certificate_file_input)
-        certificate_file_layout.addWidget(certificate_file_button)
+        certificate_file_layout.addWidget(self.certificate_file_button)
 
         key_file_layout.addWidget(key_file_label)
         key_file_layout.addWidget(self.key_file_input)
-        key_file_layout.addWidget(key_file_button)
+        key_file_layout.addWidget(self.key_file_button)
 
         ssl_box_layout.addLayout(certificate_file_layout)
         ssl_box_layout.addLayout(key_file_layout)
@@ -101,7 +101,7 @@ class MainUi(QWidget):
 
         database_file_layout.addWidget(database_file_label)
         database_file_layout.addWidget(self.database_file_input)
-        database_file_layout.addWidget(database_file_button)
+        database_file_layout.addWidget(self.database_file_button)
 
         database_box.setLayout(database_file_layout)
 
@@ -170,12 +170,26 @@ class MainUi(QWidget):
         self.server_status_state.setText("Running")
         self.start_server_button.setEnabled(False)
         self.stop_server_button.setEnabled(True)
+        self.server_address_input.setEnabled(False)
+        self.certificate_file_input.setEnabled(False)
+        self.key_file_input.setEnabled(False)
+        self.database_file_input.setEnabled(False)
+        self.key_file_button.setEnabled(False)
+        self.database_file_button.setEnabled(False)
+        self.certificate_file_button.setEnabled(False)
 
     def stop_server(self):
         stop_receive_connection_thread()
         self.server_status_state.setText("Stopped")
         self.start_server_button.setEnabled(True)
         self.stop_server_button.setEnabled(False)
+        self.server_address_input.setEnabled(True)
+        self.certificate_file_input.setEnabled(True)
+        self.key_file_input.setEnabled(True)
+        self.database_file_input.setEnabled(True)
+        self.key_file_button.setEnabled(True)
+        self.database_file_button.setEnabled(True)
+        self.certificate_file_button.setEnabled(True)
     
     def update_timer(self, seconds):
         self.server_uptime_time.setText(str(seconds))
