@@ -11,7 +11,7 @@ def main():
     if not shared_memory.create(1):
         sys.exit(0)
         
-    app = QApplication(sys.argv)
+    app = QApplication()
     app.setWindowIcon(QIcon(app_icon()))
     window = LoadingScreen()
     window.show()
