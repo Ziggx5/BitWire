@@ -33,10 +33,10 @@ openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -d
     <th>Red Hat (.rpm)</th>
   </tr>
   <tr>
-    <td>BiteWire 1.3.0</td>
-    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.3.0/BiteWire.exe">⬇️ Download</a></td>
-    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.3.0/bitewire_1.3.0_amd64.deb">⬇️ Download</a></td>
-      <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.3.0/bitewire-1.3.0-1.x86_64.rpm">⬇️ Download</a></td>
+    <td>BiteWire 1.4.0</td>
+    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.4.0/BiteWire.exe">⬇️ Download</a></td>
+    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.4.0/bitewire_1.3.0_amd64.deb">⬇️ Download</a></td>
+      <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.4.0/bitewire-1.4.0-1.x86_64.rpm">⬇️ Download</a></td>
   </tr>
   <tr>
   <td>BiteWire Server 1.1.0</td>
