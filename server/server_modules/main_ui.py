@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import *
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
 import threading
 from server_modules.data_manipulation import local_data_file, copy_to_data_dir, files_check, server_info_input_fill, server_info
@@ -169,7 +169,8 @@ class MainUi(QWidget):
         start_receive_connection_thread(self.update_timer)
         self.server_status_state.setText("Running")
         self.start_server_button.setEnabled(False)
-        self.stop_server_button.setEnabled(True)
+        QTimer.singleShot(2000, lambda: self.stop_server_button.setEnabled(True))
+
         self.server_address_input.setEnabled(False)
         self.certificate_file_input.setEnabled(False)
         self.key_file_input.setEnabled(False)
@@ -182,8 +183,9 @@ class MainUi(QWidget):
     def stop_server(self):
         stop_receive_connection_thread()
         self.server_status_state.setText("Stopped")
-        self.start_server_button.setEnabled(True)
         self.stop_server_button.setEnabled(False)
+        QTimer.singleShot(2000, lambda: self.start_server_button.setEnabled(True))
+
         self.server_address_input.setEnabled(True)
         self.certificate_file_input.setEnabled(True)
         self.key_file_input.setEnabled(True)
@@ -192,6 +194,8 @@ class MainUi(QWidget):
         self.database_file_button.setEnabled(True)
         self.certificate_file_button.setEnabled(True)
         self.tray.set_server_status("Stopped")
+
+        self.update_timer(0, 0, 0)
     
     def update_timer(self, hours, minutes, seconds):
         self.server_uptime_time.setText(f"{hours:02}:{minutes:02}:{seconds:02}")
