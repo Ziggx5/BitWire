@@ -177,6 +177,7 @@ class MainUi(QWidget):
         self.key_file_button.setEnabled(False)
         self.database_file_button.setEnabled(False)
         self.certificate_file_button.setEnabled(False)
+        self.tray.set_server_status("Running")
 
     def stop_server(self):
         stop_receive_connection_thread()
@@ -190,10 +191,12 @@ class MainUi(QWidget):
         self.key_file_button.setEnabled(True)
         self.database_file_button.setEnabled(True)
         self.certificate_file_button.setEnabled(True)
+        self.tray.set_server_status("Stopped")
     
-    def update_timer(self, seconds):
-        self.server_uptime_time.setText(str(seconds))
-
+    def update_timer(self, hours, minutes, seconds):
+        self.server_uptime_time.setText(f"{hours:02}:{minutes:02}:{seconds:02}")
+        self.tray.set_server_uptime(hours, minutes, seconds)
+        
     def closeEvent(self, event):
         event.ignore()
         self.hide()

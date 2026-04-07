@@ -172,8 +172,9 @@ def server_uptime(stop_event, callback):
     start_time = time.time()
     while not stop_event.is_set():
         end_time = time.time()
-        elapsed_time = int(end_time) - int(start_time)
-        print(elapsed_time)
+        elapsed_time = int(end_time - start_time)
+        hours, remainder = divmod(elapsed_time, 3600)
+        minutes, seconds = divmod(remainder, 60)
 
-        callback(elapsed_time)
+        callback(hours, minutes, seconds)
         time.sleep(1)

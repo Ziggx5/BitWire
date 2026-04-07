@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QSystemTrayIcon, QMenu, QApplication
+from PySide6.QtWidgets import QSystemTrayIcon, QMenu, QApplication, QLabel
 from PySide6.QtGui import QIcon, QAction
 from server_modules.images_path import file_root
 import webbrowser
@@ -23,8 +23,16 @@ class TrayManager:
         close_action = QAction("Close BiteWire Server", self.tray_icon)
         close_action.triggered.connect(self.exit_app)
 
+        self.server_status = QAction("Stopped", self.tray_icon)
+        self.server_status.setEnabled(False)
+
+        self.server_uptime = QAction("00:00:00", self.tray_icon)
+        self.server_uptime.setEnabled(False)
+
         menu.addAction(github_link_action)
         menu.addSeparator()
+        menu.addAction(self.server_status)
+        menu.addAction(self.server_uptime)
         menu.addAction(open_action)
         menu.addAction(close_action)
         
@@ -38,3 +46,9 @@ class TrayManager:
     def exit_app(self):
         self.tray_icon.hide()
         QApplication.quit()
+
+    def set_server_status(self, status):
+        self.server_status.setText(status)
+    
+    def set_server_uptime(self, hours, minutes, seconds):
+        self.server_uptime.setText(f"{hours:02}:{minutes:02}:{seconds:02}")
