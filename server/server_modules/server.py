@@ -4,9 +4,10 @@ import json
 import ssl
 import sqlite3
 import time
+from datetime import datetime
 from server_modules.data_manipulation import database_file, files_check
 
-host = "192.168.1.7"
+host = "0.0.0.0"
 port = 50505
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -44,6 +45,7 @@ def send_message_to_clients(message):
     for client in clients[:]:
         try:
             client.send((json.dumps(message) + "\n").encode("utf-8"))
+            print(message)
         except Exception as e:
             clients.remove(client)
             print({str(e)})
@@ -88,7 +90,9 @@ def client_handler(client, address):
                         send_json(client, {"type": "login", "status": "fail"})
 
                 elif data["type"] == "message":
-                    send_message_to_clients({"type": "message", "user": logged_user, "content": data['content']})
+                    time = datetime.now()
+                    formatted_time = time.strftime("%H:%M:%S")
+                    send_message_to_clients({"type": "message", "user": logged_user, "content": data['content'], "time": formatted_time})
         except Exception as e:
             print(str(e))
         
