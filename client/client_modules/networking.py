@@ -5,7 +5,7 @@ import ssl
 from PySide6.QtCore import QObject, Signal
 
 class ChatHandler(QObject):
-    message_received = Signal(str)
+    message_received = Signal(str, str, str)
 
     def __init__(self):
         super().__init__()
@@ -31,8 +31,11 @@ class ChatHandler(QObject):
                     if not line.strip():
                         continue
                     message = json.loads(line)
-                    complete_message = f"{message['user']}: {message['content']}"
-                    self.message_received.emit(complete_message)
+                    username = message['user']
+                    content = message['content']
+                    time = message['time']
+                    self.message_received.emit(username, content, time)
+                    
             except Exception as e:
                 print(str(e))
     

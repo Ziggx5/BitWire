@@ -209,9 +209,8 @@ class MainUi(QWidget):
             server_button = ServerButton(server["name"], server["ip_address"], self.login_page_popup, self.server_delete_data)
             self.server_layout.addWidget(server_button)
 
-    def client_display_message(self, data):
-        username, message = data.split(":", 1)
-        message_widget = MessageWidget(username, message, f"{self.image_path}/user_picture_placeholder.png")
+    def client_display_message(self, username, content, time):
+        message_widget = MessageWidget(username, content, time, f"{self.image_path}/user_picture_placeholder.png")
         self.chat_layout.addWidget(message_widget)
 
     def client_send_message(self):
@@ -370,7 +369,7 @@ class ServerButton(QFrame):
         self.on_delete(self)
 
 class MessageWidget(QWidget):
-    def __init__(self, username, message, image):
+    def __init__(self, username, message, time, image):
         super().__init__() 
         self.setObjectName("message_container")
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -408,7 +407,7 @@ class MessageWidget(QWidget):
         username = QLabel(username)
         username.setStyleSheet("color: #58a6ff; font-weight: 500; font-size: 15px;")
 
-        time = QLabel("Time placeholder")
+        time = QLabel(time)
         time.setStyleSheet("color: #58a6ff; font-weight: 500; font-size: 10px;")
 
         message = QLabel(message)

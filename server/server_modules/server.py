@@ -45,7 +45,6 @@ def send_message_to_clients(message):
     for client in clients[:]:
         try:
             client.send((json.dumps(message) + "\n").encode("utf-8"))
-            print(message)
         except Exception as e:
             clients.remove(client)
             print({str(e)})
@@ -105,7 +104,6 @@ def receive_connection(callback):
         return
     stop_event.clear()
     context.load_cert_chain(certfile = certfile, keyfile = keyfile)
-    print("server running...")
     threading.Thread(target = server_uptime, args = (stop_event, callback,), daemon = True).start()
     init_database()
     while not stop_event.is_set():
@@ -168,7 +166,6 @@ def start_receive_connection_thread(callback):
     threading.Thread(target = receive_connection, args = (callback,), daemon = True).start()
 
 def stop_receive_connection_thread():
-    print("Stopping server")
     stop_event.set()
     server.close()
 
