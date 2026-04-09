@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QSystemTrayIcon, QMenu, QApplication, QLabel
 from PySide6.QtGui import QIcon, QAction
-from server_modules.images_path import file_root
+from server_modules.load_assets import file_root
 import webbrowser
 
 class TrayManager:
@@ -9,7 +9,7 @@ class TrayManager:
 
         picture_path = file_root()
 
-        self.tray_icon = QSystemTrayIcon(QIcon(f"{picture_path}/tray_icon.png"), self.parent)
+        self.tray_icon = QSystemTrayIcon(QIcon(f"{picture_path}/icon.png"), self.parent)
         self.tray_icon.setToolTip("BiteWire Server")
 
         menu = QMenu()
