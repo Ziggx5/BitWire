@@ -20,7 +20,7 @@ Example of a self-signed certificate:
 openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 365
 ```
 
-<img width="530" height="658" alt="image" src="https://github.com/user-attachments/assets/76866ef6-95a6-44a2-b5f4-91d5b6b0695b" />
+<img width="530" height="658" alt="image" src="https://github.com/user-attachments/assets/1300fe65-f33d-4a3d-9f5d-33c32b26db1a" />
 
 
 ## 📦 Downloads
@@ -39,10 +39,10 @@ openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -d
       <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.4.0/bitewire-1.4.0-1.x86_64.rpm">⬇️ Download</a></td>
   </tr>
   <tr>
-  <td>BiteWire Server 1.1.0</td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.1.0/BiteWire.Server.exe">⬇️ Download</a></td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.1.0/bitewire-server_1.1.0-2_amd64.deb">⬇️ Download</a></td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.1.0/bitewire-server-1.1.0-2.x86_64.rpm">⬇️ Download</a></td>
+  <td>BiteWire Server 1.2.0</td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.2.0/BiteWire.Server.exe">⬇️ Download</a></td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.2.0/bitewire-server_1.2.0_amd64.deb">⬇️ Download</a></td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.2.0/bitewire-server-1.2.0-1.x86_64.rpm">⬇️ Download</a></td>
   </tr>
 </table>
 
