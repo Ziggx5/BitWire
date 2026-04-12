@@ -73,9 +73,12 @@ class MainUi(QWidget):
         main_frame = QFrame(self)
         main_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
 
-        self.main_layout = QVBoxLayout(main_frame)
-        self.main_layout.setContentsMargins(10, 10, 10, 10)
-        self.main_layout.setSpacing(8)
+        self.main_layout_horizontal = QHBoxLayout(main_frame)
+        self.main_layout_horizontal.setContentsMargins(0, 0, 0, 0)
+
+        self.main_layout_vertical = QVBoxLayout()
+        self.main_layout_vertical.setSpacing(8)
+        self.main_layout_horizontal.addLayout(self.main_layout_vertical)
 
         upper_frame = QFrame(self)
         upper_frame.setStyleSheet("background: #232338; border: 1px solid #30363d")
@@ -234,15 +237,22 @@ class MainUi(QWidget):
     def on_success_login(self, username):
         self.username_label.setText(username)
         self.chat_container = QWidget()
+
         self.chat_layout = QVBoxLayout(self.chat_container)
         self.chat_layout.setSpacing(20)
         self.chat_layout.setContentsMargins(0, 0, 0, 0)
-        self.chat_layout.setAlignment(Qt.AlignTop)
+        self.chat_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         scroll = QScrollArea()
         scroll.setStyleSheet("border: none;")
         scroll.setWidgetResizable(True)
         scroll.setWidget(self.chat_container)
+
+        chat_wrapper = QWidget()
+        chat_wrapper_layout = QVBoxLayout(chat_wrapper)
+        chat_wrapper_layout.setContentsMargins(10, 10, 10, 10)
+
+        chat_wrapper_layout.addWidget(scroll)
 
         self.message_input = QTextEdit()
         self.message_input.setFixedHeight(50)
@@ -266,8 +276,21 @@ class MainUi(QWidget):
         input_layout = QHBoxLayout()
         input_layout.addWidget(self.message_input)
 
-        self.main_layout.addWidget(scroll)
-        self.main_layout.addLayout(input_layout)
+        chat_wrapper_layout.addLayout(input_layout)
+
+        self.all_users_container = QWidget()
+        all_users_layout = QVBoxLayout(self.all_users_container)
+        all_users_layout.setSpacing(5)
+        all_users_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        all_users_scroll = QScrollArea()
+        all_users_scroll.setStyleSheet("border: none;")
+        all_users_scroll.setWidget(self.all_users_container)
+        all_users_scroll.setWidgetResizable(True)
+        all_users_scroll.setAlignment(Qt.AlignTop)
+
+        self.main_layout_horizontal.addWidget(chat_wrapper, 6)
+        self.main_layout_horizontal.addWidget(all_users_scroll, 1)
         self.message_input.setFocus()
 
     def server_delete_data(self, item):
