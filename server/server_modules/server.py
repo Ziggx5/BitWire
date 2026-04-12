@@ -83,7 +83,7 @@ def client_handler(client, address):
                     if login_user(username, password):
                         send_json(client, {"type": "login", "status": "ok"})
                         logged_user = username
-                        return_users()
+                        return_users(client)
                         if client not in clients:
                             clients.append(client)
                     else:
@@ -183,7 +183,7 @@ def server_uptime(stop_event, callback):
         callback(hours, minutes, seconds)
         time.sleep(1)
     
-def return_users():
+def return_users(client):
     database_path = database_file()
     conn = sqlite3.connect(database_path)
     cursor = conn.cursor()
@@ -197,7 +197,7 @@ def return_users():
 
         users = [user for (user,) in result]
 
-        return users
+        send_json(client, {"type": "users", "content": users})
         
     except Exception as e:
         print(f"str{e}")

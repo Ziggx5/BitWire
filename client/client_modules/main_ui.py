@@ -20,6 +20,7 @@ class MainUi(QWidget):
         self.add_server_window = AddServerUi(self.add_server_window_show_main_ui)
         self.chat_handler = ChatHandler()
         self.chat_handler.message_received.connect(self.client_display_message)
+        self.chat_handler.users_received.connect(self.add_users)
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
         self.identity_window = AddIdentityUi(self.identity_window_show_main_ui)
         self.tray = TrayManager(self)
@@ -279,9 +280,9 @@ class MainUi(QWidget):
         chat_wrapper_layout.addLayout(input_layout)
 
         self.all_users_container = QWidget()
-        all_users_layout = QVBoxLayout(self.all_users_container)
-        all_users_layout.setSpacing(5)
-        all_users_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.all_users_layout = QVBoxLayout(self.all_users_container)
+        self.all_users_layout.setSpacing(5)
+        self.all_users_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         all_users_scroll = QScrollArea()
         all_users_scroll.setStyleSheet("border: none;")
@@ -313,6 +314,11 @@ class MainUi(QWidget):
         self.overlay.raise_()
         self.overlay.show()
         widget.show()
+
+    def add_users(self, users):
+        for user in users:
+            user_label = QLabel(user)
+            self.all_users_layout.addWidget(user_label)
     
     def eventFilter(self, obj, event):
         if obj == self.message_input and event.type() == QEvent.KeyPress:

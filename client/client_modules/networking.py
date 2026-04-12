@@ -6,6 +6,7 @@ from PySide6.QtCore import QObject, Signal
 
 class ChatHandler(QObject):
     message_received = Signal(str, str, str)
+    users_received = Signal(list)
 
     def __init__(self):
         super().__init__()
@@ -31,10 +32,15 @@ class ChatHandler(QObject):
                     if not line.strip():
                         continue
                     message = json.loads(line)
-                    username = message['user']
-                    content = message['content']
-                    time = message['time']
-                    self.message_received.emit(username, content, time)
+                    if message['type'] == "message":
+                        username = message['user']
+                        content = message['content']
+                        time = message['time']
+                        self.message_received.emit(username, content, time)
+                    
+                    elif message['type'] == "users":
+                        users = message['content']
+                        self.users_received.emit(users)
                     
             except Exception as e:
                 print(str(e))
