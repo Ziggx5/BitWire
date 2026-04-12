@@ -12,13 +12,31 @@ BiteWire is a simple, secure chat application that allows users to connect to ho
 <img width="2050" height="1166" alt="image" src="https://github.com/user-attachments/assets/06c55982-12e6-46bc-acea-e09e5c11dc08" />
 
 ## ⚙️ Server Setup
-
+### 1. Generate SSL certificate
 To host a BiteWire server, an SSL certificate is required for encrypted connections.
-Example of a self-signed certificate:
+Example of a self signed certificate:
+
+### Windows
+
+
+### Linux
+Most Linux distributions already have ```openssl``` installed.
+Open terminal and generate self signed certificate:
 
 ```bash
 openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 365
 ```
+During setup you may be asked questions which can be skipped by pressing enter.
+After certificate generation two files will be created:
+```server.key```
+```server.crt```
+
+In server app select these files, they will be automatically copied to the app data directory.
+
+### 2. Port forward
+Make sure port ```50505``` is open on your router.
+- for local (LAN) usage, this step is not required
+- for external connections, port forwarding is necessary
 
 <img width="530" height="658" alt="image" src="https://github.com/user-attachments/assets/1300fe65-f33d-4a3d-9f5d-33c32b26db1a" />
 
