@@ -83,6 +83,7 @@ def client_handler(client, address):
                     if login_user(username, password):
                         send_json(client, {"type": "login", "status": "ok"})
                         logged_user = username
+                        return_users()
                         if client not in clients:
                             clients.append(client)
                     else:
@@ -152,7 +153,6 @@ def login_user(username, password):
         )
     
         result = cursor.fetchone()
-        conn.close()
 
         if result and result[0] == password:
             return True
@@ -161,6 +161,9 @@ def login_user(username, password):
 
     except Exception as e:
         print(f"str{e}")
+    
+    finally:
+        conn.close()
 
 def start_receive_connection_thread(callback):
     threading.Thread(target = receive_connection, args = (callback,), daemon = True).start()
@@ -179,3 +182,25 @@ def server_uptime(stop_event, callback):
 
         callback(hours, minutes, seconds)
         time.sleep(1)
+    
+def return_users():
+    database_path = database_file()
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "SELECT username FROM users"
+        )
+
+        result = cursor.fetchall()
+
+        users = [user for (user,) in result]
+
+        return users
+        
+    except Exception as e:
+        print(f"str{e}")
+
+    finally:
+        conn.close()
