@@ -316,7 +316,7 @@ class MainUi(QWidget):
 
     def add_users(self, users):
         for user in users:
-            user_widget = UserWidget(user, f"{self.image_path}/qwdd.png")
+            user_widget = UserWidget(user, f"{self.image_path}/user_picture_placeholder.png")
             self.all_users_layout.addWidget(user_widget)
     
     def eventFilter(self, obj, event):
