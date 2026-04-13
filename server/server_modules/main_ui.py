@@ -136,7 +136,7 @@ class MainUi(QWidget):
             self.database_file_input.setText(copied_file_path)
 
     def start_server(self):
-        if not self.certificate_file_input.text() or not self.key_file_input.text() or not self.database_file_input.text():
+        if not self.certificate_file_input.text() or not self.key_file_input.text():
             return
 
         start_receive_connection_thread(self.update_timer)

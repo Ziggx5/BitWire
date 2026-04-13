@@ -4,6 +4,7 @@ import json
 import ssl
 import sqlite3
 import time
+import os
 from datetime import datetime
 from server_modules.data_manipulation import database_file, files_check
 
@@ -29,6 +30,10 @@ stop_event = threading.Event()
 
 def init_database():
     database_path = database_file()
+
+    if os.path.exists(database_path):
+        return
+        
     conn = sqlite3.connect(database_path)
     cursor = conn.cursor()
 
