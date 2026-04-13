@@ -288,7 +288,6 @@ class MainUi(QWidget):
         all_users_scroll.setStyleSheet("border: none;")
         all_users_scroll.setWidget(self.all_users_container)
         all_users_scroll.setWidgetResizable(True)
-        all_users_scroll.setAlignment(Qt.AlignTop)
 
         self.main_layout_horizontal.addWidget(chat_wrapper, 6)
         self.main_layout_horizontal.addWidget(all_users_scroll, 1)
@@ -317,8 +316,8 @@ class MainUi(QWidget):
 
     def add_users(self, users):
         for user in users:
-            user_label = QLabel(user)
-            self.all_users_layout.addWidget(user_label)
+            user_widget = UserWidget(user, f"{self.image_path}/qwdd.png")
+            self.all_users_layout.addWidget(user_widget)
     
     def eventFilter(self, obj, event):
         if obj == self.message_input and event.type() == QEvent.KeyPress:
@@ -411,7 +410,6 @@ class MessageWidget(QWidget):
         """)
 
         layout = QHBoxLayout(self)
-        layout.setSpacing(0)
         
         icon = QLabel()
         icon.setStyleSheet("background-color: white; border-radius: 15px;")
@@ -454,3 +452,54 @@ class MessageWidget(QWidget):
         layout.addLayout(left_layout)
         layout.addSpacing(10)
         layout.addLayout(right_layout)
+
+class UserWidget(QWidget):
+    def __init__(self, username, image):
+        super().__init__()
+
+        self.setObjectName("userwidget")
+        self.setAttribute(Qt.WA_StyledBackground, True)
+
+        self.setStyleSheet("""
+            #userwidget {
+                background-color: rgba(255, 255, 255, 0.05);
+                border-radius: 8px;
+                padding: 5px;            
+            }
+        """)
+
+        layout = QHBoxLayout(self)
+        layout.setSpacing(10)
+        layout.setContentsMargins(10, 10, 10, 10)
+
+        icon = QLabel("icon")
+        icon.setStyleSheet("background-color: white; border-radius: 15px;")
+        icon.setFixedSize(30, 30)
+
+        pixmap = QPixmap(image).scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
+        mask = QBitmap(30, 30)
+        mask.fill(Qt.color0)
+
+        painter = QPainter(mask)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setBrush(Qt.color1)
+        painter.drawEllipse(0, 0, 30, 30)
+        painter.end()
+
+        pixmap.setMask(mask)
+
+        icon.setPixmap(pixmap)
+
+        username_label = QLabel(username)
+        username_label.setStyleSheet("font-size: 15px;")
+        username_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        icon_layout = QVBoxLayout()
+        username_label_layout = QVBoxLayout()
+        username_label_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        icon_layout.addWidget(icon)
+        username_label_layout.addWidget(username_label)
+
+        layout.addLayout(icon_layout)
+        layout.addLayout(username_label_layout)
