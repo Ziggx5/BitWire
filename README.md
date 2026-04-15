@@ -51,16 +51,16 @@ Make sure port ```50505``` is open on your router.
     <th>Red Hat (.rpm)</th>
   </tr>
   <tr>
-    <td>BiteWire 1.4.0</td>
-    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.4.0/BiteWire.exe">⬇️ Download</a></td>
-    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.4.0/bitewire_1.4.0_amd64.deb">⬇️ Download</a></td>
-      <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.4.0/bitewire-1.4.0-1.x86_64.rpm">⬇️ Download</a></td>
+    <td>BiteWire 1.5.0</td>
+    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.5.0/BiteWire.exe">⬇️ Download</a></td>
+    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.5.0/bitewire_1.5.0_amd64.deb">⬇️ Download</a></td>
+      <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.5.0/bitewire-1.5.0-1.x86_64.rpm">⬇️ Download</a></td>
   </tr>
   <tr>
-  <td>BiteWire Server 1.2.0</td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.2.0/BiteWire.Server.exe">⬇️ Download</a></td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.2.0/bitewire-server_1.2.0_amd64.deb">⬇️ Download</a></td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.2.0/bitewire-server-1.2.0-1.x86_64.rpm">⬇️ Download</a></td>
+  <td>BiteWire Server 1.3.0</td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.3.0/BiteWire.Server.exe">⬇️ Download</a></td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.3.0/bitewire-server_1.3.0_amd64.deb">⬇️ Download</a></td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.3.0/bitewire-server-1.3.0-1.x86_64.rpm">⬇️ Download</a></td>
   </tr>
 </table>
 
