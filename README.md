@@ -1,5 +1,5 @@
 # 💬 BiteWire
-![Version](https://img.shields.io/badge/version-1.4.0-blue)
+![Version](https://img.shields.io/badge/version-1.5.0-blue)
 ![License](https://img.shields.io/badge/license-GPL--3.0-green)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey)
 ![Downloads](https://img.shields.io/github/downloads/Ziggx5/BiteWire/total)
@@ -12,8 +12,8 @@ BiteWire is a simple, secure chat application that allows users to connect to ho
 <img width="2050" height="1166" alt="image" src="https://github.com/user-attachments/assets/06c55982-12e6-46bc-acea-e09e5c11dc08" />
 
 ## ⚙️ Server Setup
-### 1. Generate SSL certificate
-To host a BiteWire server, an SSL certificate is required for encrypted connections.
+### 1. Generate TLS certificate
+To host a BiteWire server, an TLS certificate is required for encrypted connections.
 Example of a self signed certificate:
 
 ### Windows
