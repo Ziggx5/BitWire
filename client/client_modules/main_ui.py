@@ -231,29 +231,51 @@ class MainUi(QWidget):
         self.hide()
 
     def login_page_popup(self, item):
-        self.server_address = item.ip
-        self.login_server_window.get_ip_address(self.server_address)
+        server_address = item.ip
+        server_name = item.name
+        self.login_server_window.get_server_info(server_address, server_name)
         self.show_popup(self.login_server_window)
     
-    def on_success_login(self, username):
+    def on_success_login(self, username, server_name):
         self.username_label.setText(username)
-        self.chat_container = QWidget()
+
+        header = QFrame()
+        header.setStyleSheet("""
+            background-color: #161b22;
+            border: none;
+        """)
+        header.setFixedHeight(45)
+
+        header_layout = QHBoxLayout(header)
+
+        self.server_name_label = QLabel(server_name)
+        self.server_name_label.setStyleSheet("""
+            color: #e6edf3;
+            font-size: 16px;
+            font-weight: 600;
+        """)
+
+        header_layout.addWidget(self.server_name_label)
+        header_layout.addStretch()
+
+        self.chat_container = QFrame()
 
         self.chat_layout = QVBoxLayout(self.chat_container)
         self.chat_layout.setSpacing(20)
         self.chat_layout.setContentsMargins(0, 0, 0, 0)
-        self.chat_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-
+        self.chat_layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        
         scroll = QScrollArea()
         scroll.setStyleSheet("border: none;")
         scroll.setWidgetResizable(True)
         scroll.setWidget(self.chat_container)
 
-        chat_wrapper = QWidget()
-        chat_wrapper_layout = QVBoxLayout(chat_wrapper)
-        chat_wrapper_layout.setContentsMargins(10, 10, 10, 10)
+        scroll_container = QWidget()
+        scroll_container.setStyleSheet("border: none;")
+        scroll_layout = QVBoxLayout(scroll_container)
+        scroll_layout.setContentsMargins(10, 10, 10, 10)
 
-        chat_wrapper_layout.addWidget(scroll)
+        scroll_layout.addWidget(scroll)
 
         self.message_input = QTextEdit()
         self.message_input.setFixedHeight(50)
@@ -275,8 +297,17 @@ class MainUi(QWidget):
         """)
 
         input_layout = QHBoxLayout()
+        input_layout.setContentsMargins(5, 5, 5, 5)
         input_layout.addWidget(self.message_input)
 
+        chat_wrapper = QFrame()
+
+        chat_wrapper_layout = QVBoxLayout(chat_wrapper)
+        chat_wrapper_layout.setContentsMargins(0, 0, 0, 0)
+        chat_wrapper_layout.setSpacing(0)
+        
+        chat_wrapper_layout.addWidget(header)
+        chat_wrapper_layout.addWidget(scroll_container)
         chat_wrapper_layout.addLayout(input_layout)
 
         self.all_users_container = QWidget()
@@ -289,7 +320,7 @@ class MainUi(QWidget):
         all_users_scroll.setWidget(self.all_users_container)
         all_users_scroll.setWidgetResizable(True)
 
-        self.main_layout_horizontal.addWidget(chat_wrapper, 6)
+        self.main_layout_horizontal.addWidget(chat_wrapper, 5)
         self.main_layout_horizontal.addWidget(all_users_scroll, 1)
         self.message_input.setFocus()
 
@@ -413,17 +444,17 @@ class MessageWidget(QWidget):
         
         icon = QLabel()
         icon.setStyleSheet("background-color: white; border-radius: 15px;")
-        pixmap = QPixmap(image).scaled(40, 40, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-        mask = QBitmap(40, 40)
+        pixmap = QPixmap(image).scaled(35, 35, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        mask = QBitmap(35, 35)
         mask.fill(Qt.color0)
         painter = QPainter(mask)
         painter.setRenderHint(QPainter.Antialiasing)
         painter.setBrush(Qt.color1)
-        painter.drawEllipse(0, 0, 40, 40)
+        painter.drawEllipse(0, 0, 35, 35)
         painter.end()
         pixmap.setMask(mask)
         icon.setPixmap(pixmap)
-        icon.setFixedSize(40, 40)
+        icon.setFixedSize(35, 35)
 
         right_layout = QVBoxLayout()
 

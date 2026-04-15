@@ -140,7 +140,7 @@ class Login(QWidget):
                 )
                 return
             if return_message["type"] == "login" and return_message["status"] == "ok":
-                self.on_success(username)
+                self.on_success(username, self.server_name)
                 self.on_cancel()
                 self.close()
             elif return_message["type"] == "login" and return_message["status"] == "fail":
@@ -162,8 +162,9 @@ class Login(QWidget):
             "Please enter username and password."
         )
 
-    def get_ip_address(self, ip_address):
+    def get_server_info(self, ip_address, server_name):
         self.ip_address = ip_address
+        self.server_name = server_name
     
     def reset(self):
         self.username_input.clear()
