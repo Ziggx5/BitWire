@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import *
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QFont
 import threading
 from server_modules.data_manipulation import local_data_file, copy_to_data_dir, files_check
-from server_modules.server import start_receive_connection_thread, stop_receive_connection_thread
+from server_modules.server import ChatServer
 from server_modules.system_tray import TrayManager
 
 class MainUi(QWidget):
@@ -14,6 +14,8 @@ class MainUi(QWidget):
         self.setStyleSheet("background-color : #0e1117;")
         self.setFixedSize(400, 500)
         self.tray = TrayManager(self)
+        self.chat_server = ChatServer()
+        self.chat_server.uptime_signal.connect(self.update_timer)
         local_data_file()
         self.files = files_check()
 
@@ -139,7 +141,8 @@ class MainUi(QWidget):
         if not self.certificate_file_input.text() or not self.key_file_input.text():
             return
 
-        start_receive_connection_thread(self.update_timer)
+        threading.Thread(target = self.chat_server.start, daemon = True).start()
+
         self.server_status_state.setText("Running")
         self.start_server_button.setEnabled(False)
         QTimer.singleShot(2000, lambda: self.stop_server_button.setEnabled(True))
@@ -153,7 +156,7 @@ class MainUi(QWidget):
         self.tray.set_server_status("Running")
 
     def stop_server(self):
-        stop_receive_connection_thread()
+        self.chat_server.stop()
         self.server_status_state.setText("Stopped")
         self.stop_server_button.setEnabled(False)
         QTimer.singleShot(2000, lambda: self.start_server_button.setEnabled(True))

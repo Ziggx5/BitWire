@@ -7,6 +7,7 @@ import time
 import os
 from datetime import datetime
 from server_modules.data_manipulation import database_file, files_check
+from PySide6.QtCore import Signal, QObject
 
 class Client:
     def __init__(self, conn, address):
@@ -21,10 +22,14 @@ class Client:
         except Exception as e:
             print(e)
 
-class ChatServer:
-    def __init__(self, host = "0.0.0.0", port = 50505):
-        self.host = host
-        self.port = port
+class ChatServer(QObject):
+    uptime_signal = Signal(int, int, int)
+
+    def __init__(self):
+        super().__init__()
+
+        self.host = "0.0.0.0"
+        self.port = 50505
         self.clients = []
         self.stop_event = threading.Event()
         self.clients_lock = threading.Lock()
@@ -159,13 +164,14 @@ class ChatServer:
         client.conn.close()
 
 
-    def start(self, callback):
+    def start(self):
         if not self.certfile or not self.keyfile or not self.database:
             return
-
+        
+        self.stop_event.clear()
         self.context.load_cert_chain(self.certfile, self.keyfile)
 
-        threading.Thread(target = self.server_uptime, args = (callback,), daemon = True).start()
+        threading.Thread(target = self.server_uptime, daemon = True).start()
 
         self.init_database()
 
@@ -190,7 +196,10 @@ class ChatServer:
 
     def stop(self):
         self.stop_event.set()
-        self.server.close()
+        try:
+            self.server.close()
+        except:
+            pass
 
     def remove_client(self, client):
         with self.clients_lock:
@@ -224,7 +233,7 @@ class ChatServer:
         finally:
             conn.close()
 
-    def server_uptime(self, callback):
+    def server_uptime(self):
         start_time = time.time()
 
         while not self.stop_event.is_set():
@@ -232,5 +241,5 @@ class ChatServer:
             hours, remainder = divmod(elapsed_time, 3600)
             minutes, seconds = divmod(remainder, 60)
 
-            callback(hours, minutes, seconds)
+            self.uptime_signal.emit(hours, minutes, seconds)
             time.sleep(1)
