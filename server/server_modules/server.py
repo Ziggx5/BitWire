@@ -8,12 +8,26 @@ import os
 from datetime import datetime
 from server_modules.data_manipulation import database_file, files_check
 
+class Client:
+    def __init__(self, conn, address):
+        self.conn = conn
+        self.address = address
+        self.username = None
+        self.buffer = ""
+    
+    def send(self, data):
+        try:
+            self.conn.send((json.dumps(data) + "\n").encode("utf-8"))
+        except Exception as e:
+            print(e)
+
 class ChatServer:
     def __init__(self, host = "0.0.0.0", port = 50505):
         self.host = host
         self.port = port
         self.clients = []
-        stop_event = threading.Event()
+        self.stop_event = threading.Event()
+        self.clients_lock = threading.Lock()
 
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((self.host, self.port))
@@ -37,9 +51,6 @@ class ChatServer:
                 self.database = file_path
 
     def init_database(self):
-        if os.path.exists(self.database):
-            return
-
         conn = sqlite3.connect(self.database)
         cursor = conn.cursor()
 
@@ -89,206 +100,137 @@ class ChatServer:
         finally:
             conn.close()
 
-"""
-host = "0.0.0.0"
-port = 50505
+    def process_message(self, client, data):
+        message_type = data.get("type")
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind((host, port))
-server.listen()
+        if message_type == "register":
+            if self.register_user(data["username"], data["password"]):
+                client.send({"type": "register", "status": "ok"})
+            else:
+                client.send({"type": "register", "status": "fail"})
 
-all_files = files_check()
-for file_path in all_files:
-    if file_path.endswith(".crt"):
-        certfile = file_path
-    elif file_path.endswith(".key"):
-        keyfile = file_path
-
-context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-
-clients = []
-
-stop_event = threading.Event()
-
-def init_database():
-    database_path = database_file()
-
-    if os.path.exists(database_path):
-        return
+        elif message_type == "login":
+            if self.login_user(data["username"], data["password"]):
+                client.username = data["username"]
+                client.send({"type": "login", "status": "ok"})
+                self.add_client(client)
+                self.send_users_list(client)
+            else:
+                client.send({"type": "login", "status": "fail"})
         
-    conn = sqlite3.connect(database_path)
-    cursor = conn.cursor()
+        elif message_type == "message":
+            if not client.username:
+                return
 
-    cursor.execute(""""""
-        CREATE TABLE IF NOT EXISTS users (
-            username TEXT PRIMARY KEY,
-            password TEXT
-        )
-    """""")
-    conn.commit()
-    conn.close()
+            current_time = datetime.now().strftime("%H:%M:%S")
+            self.broadcast({
+                "type": "message",
+                "user": client.username,
+                "content": data["content"],
+                "time": current_time
+            })
 
-def send_message_to_clients(message):
-    for client in clients[:]:
-        try:
-            client.send((json.dumps(message) + "\n").encode("utf-8"))
-        except Exception as e:
-            clients.remove(client)
-            print({str(e)})
+    def client_handler(self, client):
+        while True:
+            try:
+                data = client.conn.recv(1024)
+                if not data:
+                    break
 
-def client_handler(client, address):
-    logged_user = None
-    buffer = ""
-    while True:
-        try:
-            recv_data = client.recv(1024)
+                client.buffer += data.decode("utf-8")
 
-            if not recv_data:
+                while "\n" in client.buffer:
+                    line, client.buffer = client.buffer.split("\n", 1)
+
+                    if not line.strip():
+                        continue
+
+                    try:
+                        data = json.loads(line)
+                    except:
+                        continue
+                    
+                    self.process_message(client, data)
+            except Exception as e:
+                print(e)
+                break
+        
+        self.remove_client(client)
+        client.conn.close()
+
+
+    def start(self, callback):
+        if not self.certfile or not self.keyfile or not self.database:
+            return
+
+        self.context.load_cert_chain(self.certfile, self.keyfile)
+
+        threading.Thread(target = self.server_uptime, args = (callback,), daemon = True).start()
+
+        self.init_database()
+
+        while not self.stop_event.is_set():
+            try:
+                self.server.settimeout(1.0)
+                conn, address = self.server.accept()
+            except socket.timeout:
+                continue
+            except OSError:
                 break
 
-            buffer += recv_data.decode("utf-8")
-            while "\n" in buffer:
-                line, buffer = buffer.split("\n", 1)
+            try:
+                tls_conn = self.context.wrap_socket(conn, server_side = True)
+                client = Client(tls_conn, address)
+            except Exception as e:
+                print(e)
+                conn.close()
+                continue
 
-                if not line.strip():
-                    continue
+            threading.Thread(target = self.client_handler, args = (client,), daemon = True).start()
 
-                data = json.loads(line)
-                if data["type"] == "register":
-                    username = data["username"]
-                    password = data["password"]
+    def stop(self):
+        self.stop_event.set()
+        self.server.close()
 
-                    if register_user(username, password):
-                        send_json(client, {"type": "register", "status": "ok"})
-                    else:
-                        send_json(client, {"type": "register", "status": "fail"})
-         
-                elif data["type"] == "login":
-                    username = data["username"]
-                    password = data["password"]
+    def remove_client(self, client):
+        with self.clients_lock:
+            if client in self.clients:
+                self.clients.remove(client)
 
-                    if login_user(username, password):
-                        send_json(client, {"type": "login", "status": "ok"})
-                        logged_user = username
-                        return_users(client)
-                        if client not in clients:
-                            clients.append(client)
-                    else:
-                        send_json(client, {"type": "login", "status": "fail"})
+    def add_client(self, client):
+        with self.clients_lock:
+            if client not in self.clients:
+                self.clients.append(client)
 
-                elif data["type"] == "message":
-                    time = datetime.now()
-                    formatted_time = time.strftime("%H:%M:%S")
-                    send_message_to_clients({"type": "message", "user": logged_user, "content": data['content'], "time": formatted_time})
-        except Exception as e:
-            print(str(e))
-        
-    if client in clients:
-        clients.remove(client)
-    client.close()
+    def broadcast(self, message):
+        with self.clients_lock:
+            for client in self.clients[:]:
+                try:
+                    client.send(message)
+                except:
+                    self.clients.remove(client)
 
-def receive_connection(callback):
-    if not certfile or not keyfile:
-        return
-    stop_event.clear()
-    context.load_cert_chain(certfile = certfile, keyfile = keyfile)
-    threading.Thread(target = server_uptime, args = (stop_event, callback,), daemon = True).start()
-    init_database()
-    while not stop_event.is_set():
+    def send_users_list(self, client):
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+
         try:
-            server.settimeout(1.0)
-            client, address = server.accept()
-        except socket.timeout:
-            continue
-        except OSError:
-            break
+            cursor.execute(
+                "SELECT username FROM users"
+            )
+            result = cursor.fetchall()
+            users = [user for (user,) in result]
+            client.send({"type": "users", "content": users})
+        finally:
+            conn.close()
 
-        tls_connect = context.wrap_socket(client, server_side = True)
-        thread = threading.Thread(target = client_handler, args = (tls_connect, address,))
-        thread.start()
+    def server_uptime(self, callback):
+        start_time = time.time()
 
-def send_json(client, data):
-    client.send((json.dumps(data) + "\n").encode("utf-8"))
+        while not self.stop_event.is_set():
+            elapsed_time = int(time.time() - start_time)
+            hours, remainder = divmod(elapsed_time, 3600)
+            minutes, seconds = divmod(remainder, 60)
 
-def register_user(username, password):
-    database_path = database_file()
-    conn = sqlite3.connect(database_path)
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute(
-            "INSERT INTO users (username, password) VALUES (?, ?)",
-            (username, password)
-        )
-        conn.commit()
-        return True
-    except sqlite3.IntegrityError as e:
-        print(f"str{e}")
-        return False
-    finally:
-        conn.close()
-
-def login_user(username, password):
-    database_path = database_file()
-    conn = sqlite3.connect(database_path)
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute(
-            "SELECT password FROM users WHERE username = ?",
-            (username,)
-        )
-    
-        result = cursor.fetchone()
-
-        if result and result[0] == password:
-            return True
-
-        return False
-
-    except Exception as e:
-        print(f"str{e}")
-    
-    finally:
-        conn.close()
-
-def start_receive_connection_thread(callback):
-    threading.Thread(target = receive_connection, args = (callback,), daemon = True).start()
-
-def stop_receive_connection_thread():
-    stop_event.set()
-    server.close()
-
-def server_uptime(stop_event, callback):
-    start_time = time.time()
-    while not stop_event.is_set():
-        end_time = time.time()
-        elapsed_time = int(end_time - start_time)
-        hours, remainder = divmod(elapsed_time, 3600)
-        minutes, seconds = divmod(remainder, 60)
-
-        callback(hours, minutes, seconds)
-        time.sleep(1)
-    
-def return_users(client):
-    database_path = database_file()
-    conn = sqlite3.connect(database_path)
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute(
-            "SELECT username FROM users"
-        )
-
-        result = cursor.fetchall()
-
-        users = [user for (user,) in result]
-
-        send_json(client, {"type": "users", "content": users})
-        
-    except Exception as e:
-        print(f"str{e}")
-
-    finally:
-        conn.close()
-"""
+            callback(hours, minutes, seconds)
+            time.sleep(1)
