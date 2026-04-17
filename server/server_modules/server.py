@@ -8,6 +8,88 @@ import os
 from datetime import datetime
 from server_modules.data_manipulation import database_file, files_check
 
+class ChatServer:
+    def __init__(self, host = "0.0.0.0", port = 50505):
+        self.host = host
+        self.port = port
+        self.clients = []
+        stop_event = threading.Event()
+
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind((self.host, self.port))
+        self.server.listen()
+
+        self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+
+        self.certfile = None
+        self.keyfile = None
+        self.database = None
+
+        self.load_files()
+
+    def load_files(self):
+        for file_path in files_check():
+            if file_path.endswith(".crt"):
+                self.certfile = file_path
+            elif file_path.endswith(".key"):
+                self.keyfile = file_path
+            elif file_path.endswith(".db"):
+                self.database = file_path
+
+    def init_database(self):
+        if os.path.exists(self.database):
+            return
+
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                username TEXT PRIMARY KEY,
+                password TEXT
+            )
+        """)
+        conn.commit()
+        conn.close()
+
+    def register_user(self, username, password):
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute(
+                "INSERT INTO users (username, password) VALUES (?, ?)",
+                (username, password)
+            )
+            conn.commit()
+            return True
+
+        except sqlite3.IntegrityError:
+            return False
+
+        finally:
+            conn.close()
+    
+    def login_user(self, username, password):
+        conn = sqlite3.connect(self.database)
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute(
+                "SELECT password FROM users WHERE username = ?",
+                (username,)
+            )
+
+            result = cursor.fetchone()
+
+            if result and result [0] == password:
+                return True
+            return False
+
+        finally:
+            conn.close()
+
+"""
 host = "0.0.0.0"
 port = 50505
 
@@ -37,12 +119,12 @@ def init_database():
     conn = sqlite3.connect(database_path)
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(""""""
         CREATE TABLE IF NOT EXISTS users (
             username TEXT PRIMARY KEY,
             password TEXT
         )
-    """)
+    """""")
     conn.commit()
     conn.close()
 
@@ -209,3 +291,4 @@ def return_users(client):
 
     finally:
         conn.close()
+"""
