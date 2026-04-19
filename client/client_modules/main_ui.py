@@ -21,6 +21,8 @@ class MainUi(QWidget):
         self.chat_handler = ChatHandler()
         self.chat_handler.message_received.connect(self.client_display_message)
         self.chat_handler.users_received.connect(self.add_users)
+        self.chat_handler.server_status.connect(self.server_close_message)
+
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
         self.identity_window = AddIdentityUi(self.identity_window_show_main_ui)
         self.tray = TrayManager(self)
@@ -356,6 +358,10 @@ class MainUi(QWidget):
                 self.client_send_message()
                 return True
         return False     
+
+    def server_close_message(self, message):
+        QMessageBox.warning(self, "Server Message", message)
+        self.message_input.setEnabled(False)
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):

@@ -7,6 +7,7 @@ from PySide6.QtCore import QObject, Signal
 class ChatHandler(QObject):
     message_received = Signal(str, str, str)
     users_received = Signal(list)
+    server_status = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -41,6 +42,10 @@ class ChatHandler(QObject):
                     elif message['type'] == "users":
                         users = message['content']
                         self.users_received.emit(users)
+                    
+                    elif message['type'] == "server_status":
+                        self.server_status.emit(message['status'])
+                        self.handle_disconnect()
                     
             except Exception as e:
                 print(str(e))
@@ -84,3 +89,13 @@ class ChatHandler(QObject):
             "type": "message",
             "content": message
         })
+    
+    def handle_disconnect(self):
+        self.running = False
+
+        try:
+            self.client.close()
+        except:
+            pass
+
+        self.client = None

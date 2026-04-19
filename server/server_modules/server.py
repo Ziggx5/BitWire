@@ -197,7 +197,7 @@ class ChatServer(QObject):
     def stop(self):
         self.stop_event.set()
 
-        self.remove_all_clients()
+        self.disconnect_all_clients()
         try:
             self.server.close()
         except:
@@ -213,7 +213,9 @@ class ChatServer(QObject):
             if client not in self.clients:
                 self.clients.append(client)
 
-    def remove_all_clients(self):
+    def disconnect_all_clients(self):
+        self.broadcast({"type": "server_status", "status": "Server has been closed."})
+        
         with self.clients_lock:
             copy_clients = self.clients[:]
             self.clients.clear()
