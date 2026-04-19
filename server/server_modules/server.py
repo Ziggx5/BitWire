@@ -6,7 +6,7 @@ import sqlite3
 import time
 import os
 from datetime import datetime
-from server_modules.data_manipulation import database_file, files_check
+from server_modules.data_manipulation import files_check
 from PySide6.QtCore import Signal, QObject
 
 class Client:
@@ -33,10 +33,6 @@ class ChatServer(QObject):
         self.clients = []
         self.stop_event = threading.Event()
         self.clients_lock = threading.Lock()
-
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((self.host, self.port))
-        self.server.listen()
 
         self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 
@@ -167,6 +163,10 @@ class ChatServer(QObject):
     def start(self):
         if not self.certfile or not self.keyfile or not self.database:
             return
+
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind((self.host, self.port))
+        self.server.listen()
         
         self.stop_event.clear()
         self.context.load_cert_chain(self.certfile, self.keyfile)
@@ -196,6 +196,8 @@ class ChatServer(QObject):
 
     def stop(self):
         self.stop_event.set()
+
+        self.remove_all_clients()
         try:
             self.server.close()
         except:
@@ -210,6 +212,22 @@ class ChatServer(QObject):
         with self.clients_lock:
             if client not in self.clients:
                 self.clients.append(client)
+
+    def remove_all_clients(self):
+        with self.clients_lock:
+            copy_clients = self.clients[:]
+            self.clients.clear()
+
+        for client in copy_clients:
+            try:
+                client.conn.shutdown(socket.SHUT_RDWR)
+            except:
+                pass
+
+            try:
+                client.conn.close()
+            except:
+                pass
 
     def broadcast(self, message):
         with self.clients_lock:
