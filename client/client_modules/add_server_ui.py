@@ -258,16 +258,7 @@ class AddServerUi(QWidget):
         password = self.password_input.text()
 
         if username and password:
-            try:
-                return_message = self.chat_handler.register(username, password, self.ip_address)
-
-            except Exception as e:
-                QMessageBox.warning(
-                    self,
-                    "Error",
-                    f"Server is not available. \n{str(e)}"
-                )
-                return
+            return_message = self.chat_handler.register(username, password, self.ip_address)
 
             if return_message["type"] == "register" and return_message["status"] == "ok":
                 save_server_data(self.name, self.ip_address)
@@ -278,6 +269,13 @@ class AddServerUi(QWidget):
                 self,
                 "Error",
                 "Username already taken, try another one."
+                )
+            
+            elif return_message["type"] == "error":
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    return_message["message"]
                 )
 
             else:

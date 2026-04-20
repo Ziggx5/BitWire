@@ -54,18 +54,25 @@ class ChatHandler(QObject):
         self.client.send((json.dumps(message) + "\n").encode("utf-8"))
 
     def register(self, username, password, ip_address):
-        self.connect(ip_address)
-        self.send_json_message({
-            "type": "register",
-            "username": username,
-            "password": password
-        })
         try:
+            self.connect(ip_address)
+            self.send_json_message({
+                "type": "register",
+                "username": username,
+                "password": password
+            })
             response = json.loads(self.client.recv(1024).decode("utf-8"))
-        except:
-            pass
-            
-        self.client.close()
+        except Exception as e:
+            return {"type": "error", "message": str(e)}
+        finally:
+            if self.client:
+                try:
+                    self.client.close()
+                except:
+                    pass
+
+                self.client = None
+
         return response
 
     def login(self, username, password, ip_address):
