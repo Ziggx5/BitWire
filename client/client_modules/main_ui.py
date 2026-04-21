@@ -40,7 +40,7 @@ class MainUi(QWidget):
             QWidget#container {
                     background-color: #161b22;
                     border-radius: 12px;
-                    border: 1px solid #30363d;
+                    border: 1px solid rgba(255, 255, 255, 0.05);
             }
         """)
         self.popup_background_container_layout = QVBoxLayout(popup_background_container)
@@ -57,7 +57,7 @@ class MainUi(QWidget):
         left_container = QVBoxLayout()
 
         server_frame = QFrame(self)
-        server_frame.setStyleSheet("background: #1a1a24; border: 1px solid #30363d")
+        server_frame.setStyleSheet("background-color: #111827; border: none;")
 
         self.server_layout = QVBoxLayout(server_frame)
         self.server_layout.setAlignment(Qt.AlignTop)
@@ -68,13 +68,13 @@ class MainUi(QWidget):
         user_frame.setStyleSheet("""
             QFrame#container {
                 background: transparent;
-                border: 1px solid #737373;
+                border: 1px solid #30363d;
             }
         """)
         self.user_frame_layout = QHBoxLayout(user_frame)
 
         main_frame = QFrame(self)
-        main_frame.setStyleSheet("background: transparent; border: 1px solid #737373")
+        main_frame.setStyleSheet("background: transparent; border: none;")
 
         self.main_layout_horizontal = QHBoxLayout(main_frame)
         self.main_layout_horizontal.setContentsMargins(0, 0, 0, 0)
@@ -84,12 +84,12 @@ class MainUi(QWidget):
         self.main_layout_horizontal.addLayout(self.main_layout_vertical)
 
         upper_frame = QFrame(self)
-        upper_frame.setStyleSheet("background: #232338; border: 1px solid #30363d")
+        upper_frame.setStyleSheet("background-color: #111827; border: none;")
 
         self.upper_layout = QHBoxLayout(upper_frame)
 
         logo_frame = QFrame(self)
-        logo_frame.setStyleSheet("background: transparent; border: 1px solid #30363d")
+        logo_frame.setStyleSheet("background: #111827; border: none;")
 
         self.logo_layout = QHBoxLayout(logo_frame)
 
@@ -104,21 +104,20 @@ class MainUi(QWidget):
         self.add_button = QPushButton("+")
         self.add_button.setStyleSheet("""
             QPushButton {
-            color: white;
-            background-color: #1f6feb;
-            border-radius: 10px;
-            font-weight: 700;
-            border: 2px solid #ffffff;
-            font-size: 20px;
+                color: white;
+                background-color: #3b82f6;
+                border-radius: 8px;
+                font-weight: 700;
+                border: 2px solid #ffffff;
+                font-size: 20px;
             }
             
             QPushButton:hover {
-                border-color: #58a6ff;
+                background-color: #2563eb;
             }
 
             QPushButton:pressed {
-            background-color: #1a5fd1;
-            border-color: #1a5fd1;
+                background-color: #1d4ed8;
             }
         """)
         self.add_button.setFixedSize(35, 35)
@@ -244,7 +243,7 @@ class MainUi(QWidget):
         header = QFrame()
         header.setStyleSheet("""
             background-color: #161b22;
-            border: none;
+            border-bottom: 1px solid white;
         """)
         header.setFixedHeight(45)
 
@@ -255,6 +254,7 @@ class MainUi(QWidget):
             color: #e6edf3;
             font-size: 16px;
             font-weight: 600;
+            border: none;
         """)
 
         header_layout.addWidget(self.server_name_label)
@@ -263,7 +263,7 @@ class MainUi(QWidget):
         self.chat_container = QFrame()
 
         self.chat_layout = QVBoxLayout(self.chat_container)
-        self.chat_layout.setSpacing(20)
+        self.chat_layout.setSpacing(12)
         self.chat_layout.setContentsMargins(0, 0, 0, 0)
         self.chat_layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
         
@@ -275,7 +275,7 @@ class MainUi(QWidget):
         scroll_container = QWidget()
         scroll_container.setStyleSheet("border: none;")
         scroll_layout = QVBoxLayout(scroll_container)
-        scroll_layout.setContentsMargins(10, 10, 10, 10)
+        scroll_layout.setContentsMargins(12, 12, 12, 12)
 
         scroll_layout.addWidget(scroll)
 
@@ -286,15 +286,14 @@ class MainUi(QWidget):
         self.message_input.setStyleSheet("""
             QTextEdit {
                 border-radius: 10px;
-                background-color: #1a1e24;
+                border: 1px solid #1e293b;
+                background-color: #0f172a;
                 color: #e6edf3;
-                padding-top: 10px;
-                padding-bottom: 10px;
-                border: 1px solid #3b4657;
+                padding: 10px;
             }
 
             QTextEdit:focus {
-                border: 1px solid #505f75;
+                border: 1px solid #3b82f6;
             }
         """)
 
@@ -318,7 +317,7 @@ class MainUi(QWidget):
         self.all_users_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         all_users_scroll = QScrollArea()
-        all_users_scroll.setStyleSheet("border: none;")
+        all_users_scroll.setStyleSheet("border-left: 1px solid white;")
         all_users_scroll.setWidget(self.all_users_container)
         all_users_scroll.setWidgetResizable(True)
 
@@ -440,9 +439,8 @@ class MessageWidget(QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setStyleSheet("""
             #message_container {
-                background-color: rgba(255, 255, 255, 0.05);
-                border-radius: 8px;
-                padding: 5px;
+                background-color: #1f2933;
+                border-radius: 10px;
             }
         """)
 
@@ -501,7 +499,12 @@ class UserWidget(QWidget):
             #userwidget {
                 background-color: rgba(255, 255, 255, 0.05);
                 border-radius: 8px;
-                padding: 5px;            
+                padding: 5px; 
+                border: none;           
+            }
+
+            #userwidget:hover {
+                background-color: #1f2933;
             }
         """)
 
@@ -510,7 +513,7 @@ class UserWidget(QWidget):
         layout.setContentsMargins(10, 10, 10, 10)
 
         icon = QLabel("icon")
-        icon.setStyleSheet("background-color: white; border-radius: 15px;")
+        icon.setStyleSheet("background-color: white; border-radius: 15px; border: none;")
         icon.setFixedSize(30, 30)
 
         pixmap = QPixmap(image).scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
@@ -528,7 +531,7 @@ class UserWidget(QWidget):
         icon.setPixmap(pixmap)
 
         username_label = QLabel(username)
-        username_label.setStyleSheet("font-size: 15px;")
+        username_label.setStyleSheet("font-size: 15px; border: none;")
         username_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         icon_layout = QVBoxLayout()
