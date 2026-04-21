@@ -14,7 +14,25 @@ class MainUi(QWidget):
         super().__init__()
 
         self.setWindowTitle("BiteWire")
-        self.setStyleSheet("background-color : #0e1117;")
+        self.setStyleSheet("""
+        QWidget {
+            background-color: #0e1117;
+        }
+        
+        QScrollBar:vertical {
+            background-color: transparent;
+            width: 6px;
+        }
+
+        QScrollBar::handle:vertical {
+            background-color: #374151;     
+            border-radius: 3px;      
+        }
+
+        QScrollBar::handle:vertical:hover {
+            background-color: #4b5563;
+        }
+        """)
         self.showMaximized()
 
         self.add_server_window = AddServerUi(self.add_server_window_show_main_ui)
@@ -84,7 +102,7 @@ class MainUi(QWidget):
         self.main_layout_horizontal.addLayout(self.main_layout_vertical)
 
         upper_frame = QFrame(self)
-        upper_frame.setStyleSheet("background-color: #111827; border: none;")
+        upper_frame.setStyleSheet("background-color: #111827; border-bottom: 1px solid rgba(255, 255, 255, 0.05);")
 
         self.upper_layout = QHBoxLayout(upper_frame)
 
@@ -439,8 +457,8 @@ class MessageWidget(QWidget):
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setStyleSheet("""
             #message_container {
-                background-color: #1f2933;
-                border-radius: 10px;
+                background-color: #111827;
+                border-radius: 12px;
             }
         """)
 
