@@ -235,6 +235,7 @@ class MainUi(QWidget):
     def client_display_message(self, username, content, time):
         message_widget = MessageWidget(username, content, time, f"{self.image_path}/user_picture_placeholder.png")
         self.chat_layout.addWidget(message_widget)
+        QTimer.singleShot(1, lambda: self.scroll.ensureWidgetVisible(message_widget))
 
     def client_send_message(self):
         message = self.message_input.toPlainText().strip()
@@ -261,7 +262,7 @@ class MainUi(QWidget):
         header = QFrame()
         header.setStyleSheet("""
             background-color: #161b22;
-            border-bottom: 1px solid white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         """)
         header.setFixedHeight(45)
 
@@ -285,17 +286,17 @@ class MainUi(QWidget):
         self.chat_layout.setContentsMargins(0, 0, 0, 0)
         self.chat_layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
         
-        scroll = QScrollArea()
-        scroll.setStyleSheet("border: none;")
-        scroll.setWidgetResizable(True)
-        scroll.setWidget(self.chat_container)
+        self.scroll = QScrollArea()
+        self.scroll.setStyleSheet("border: none;")
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.chat_container)
 
         scroll_container = QWidget()
         scroll_container.setStyleSheet("border: none;")
         scroll_layout = QVBoxLayout(scroll_container)
         scroll_layout.setContentsMargins(12, 12, 12, 12)
 
-        scroll_layout.addWidget(scroll)
+        scroll_layout.addWidget(self.scroll)
 
         self.message_input = QTextEdit()
         self.message_input.setFixedHeight(50)
@@ -335,7 +336,7 @@ class MainUi(QWidget):
         self.all_users_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         all_users_scroll = QScrollArea()
-        all_users_scroll.setStyleSheet("border-left: 1px solid white;")
+        all_users_scroll.setStyleSheet("border-left: 1px solid rgba(255, 255, 255, 0.05);")
         all_users_scroll.setWidget(self.all_users_container)
         all_users_scroll.setWidgetResizable(True)
 
