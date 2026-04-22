@@ -1,5 +1,5 @@
 # 💬 BiteWire
-![Version](https://img.shields.io/badge/version-1.5.0-blue)
+![Version](https://img.shields.io/badge/version-1.6.0-blue)
 ![License](https://img.shields.io/badge/license-GPL--3.0-green)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey)
 ![Downloads](https://img.shields.io/github/downloads/Ziggx5/BiteWire/total)
@@ -52,16 +52,16 @@ Make sure port ```50505``` is open on your router.
     <th>Red Hat (.rpm)</th>
   </tr>
   <tr>
-    <td>BiteWire 1.5.0</td>
-    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.5.0/BiteWire.exe">⬇️ Download</a></td>
-    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.5.0/bitewire_1.5.0_amd64.deb">⬇️ Download</a></td>
-      <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.5.0/bitewire-1.5.0-1.x86_64.rpm">⬇️ Download</a></td>
+    <td>BiteWire 1.6.0</td>
+    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.6.0/BiteWire.exe">⬇️ Download</a></td>
+    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.6.0/bitewire_1.6.0_amd64.deb">⬇️ Download</a></td>
+      <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.6.0/bitewire-1.6.0-1.x86_64.rpm">⬇️ Download</a></td>
   </tr>
   <tr>
-  <td>BiteWire Server 1.3.0</td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.3.0/BiteWire.Server.exe">⬇️ Download</a></td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.3.0/bitewire-server_1.3.0_amd64.deb">⬇️ Download</a></td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.3.0/bitewire-server-1.3.0-1.x86_64.rpm">⬇️ Download</a></td>
+  <td>BiteWire Server 1.4.0</td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.4.0/BiteWire.Server.exe">⬇️ Download</a></td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.4.0/bitewire-server_1.4.0_amd64.deb">⬇️ Download</a></td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.4.0/bitewire-server-1.4.0-1.x86_64.rpm">⬇️ Download</a></td>
   </tr>
 </table>
 
