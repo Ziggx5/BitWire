@@ -9,7 +9,7 @@
 BiteWire is a simple, secure chat application that allows users to connect to hosted servers, communicate in real-time, and manage their own server through a dedicated server application.
 
 ---
-<img width="2050" height="1166" alt="image" src="https://github.com/user-attachments/assets/59dc7d54-0cf8-4e62-a513-7ef24167322e" />
+<img width="2050" height="1166" alt="image" src="https://github.com/user-attachments/assets/40062185-d25f-4c88-9646-11b805791332" />
 
 
 ## ⚙️ Server Setup
