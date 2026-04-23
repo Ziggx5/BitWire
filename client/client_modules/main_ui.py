@@ -330,18 +330,47 @@ class MainUi(QWidget):
         chat_wrapper_layout.addWidget(scroll_container)
         chat_wrapper_layout.addLayout(input_layout)
 
-        self.all_users_container = QWidget()
-        self.all_users_layout = QVBoxLayout(self.all_users_container)
+        all_users_wrapper = QFrame()
+        all_users_wrapper.setObjectName("all_users_wrapper")
+        all_users_wrapper.setStyleSheet("""
+            QFrame#all_users_wrapper {
+                border-left: 1px solid rgba(255, 255, 255, 0.05);
+            }
+        """)
+
+        all_users_wrapper_layout = QVBoxLayout(all_users_wrapper)
+
+        all_users_container = QWidget()
+
+        self.all_users_layout = QVBoxLayout(all_users_container)
         self.all_users_layout.setSpacing(5)
         self.all_users_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
+        all_users_label_container = QWidget()
+        all_users_label_layout = QHBoxLayout(all_users_label_container)
+        all_users_label_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        all_users_label = QLabel("All members")
+        all_users_label.setStyleSheet("""
+            QLabel {
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 1px;
+            }
+        """)
+
+        all_users_label_layout.addWidget(all_users_label)
+
         all_users_scroll = QScrollArea()
-        all_users_scroll.setStyleSheet("border-left: 1px solid rgba(255, 255, 255, 0.05);")
-        all_users_scroll.setWidget(self.all_users_container)
+        all_users_scroll.setWidget(all_users_container)
         all_users_scroll.setWidgetResizable(True)
 
+        all_users_wrapper_layout.addWidget(all_users_label_container, 1)
+        all_users_wrapper_layout.addWidget(all_users_scroll, 30)
+
         self.main_layout_horizontal.addWidget(chat_wrapper, 5)
-        self.main_layout_horizontal.addWidget(all_users_scroll, 1)
+        self.main_layout_horizontal.addWidget(all_users_wrapper, 1)
         self.message_input.setFocus()
 
     def server_delete_data(self, item):
@@ -513,6 +542,7 @@ class UserWidget(QWidget):
 
         self.setObjectName("userwidget")
         self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         self.setStyleSheet("""
             #userwidget {
@@ -529,7 +559,7 @@ class UserWidget(QWidget):
 
         layout = QHBoxLayout(self)
         layout.setSpacing(10)
-        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setContentsMargins(8, 8, 8, 8)
 
         icon = QLabel("icon")
         icon.setStyleSheet("background-color: white; border-radius: 15px; border: none;")
@@ -551,14 +581,6 @@ class UserWidget(QWidget):
 
         username_label = QLabel(username)
         username_label.setStyleSheet("font-size: 15px; border: none;")
-        username_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        icon_layout = QVBoxLayout()
-        username_label_layout = QVBoxLayout()
-        username_label_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
-
-        icon_layout.addWidget(icon)
-        username_label_layout.addWidget(username_label)
-
-        layout.addLayout(icon_layout)
-        layout.addLayout(username_label_layout)
+        layout.addWidget(icon)
+        layout.addWidget(username_label)
