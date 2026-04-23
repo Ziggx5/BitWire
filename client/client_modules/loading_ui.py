@@ -9,34 +9,75 @@ class LoadingScreen(QWidget):
 
         self.setFixedSize(200, 250)
         self.setWindowFlags(Qt.FramelessWindowHint)
-        self.setStyleSheet("background-color : #0e1117;")
+        self.setObjectName("root")
+        self.setStyleSheet("""
+            QWidget#root {
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #0e1117,
+                    stop:0.5 #151a22,
+                    stop:1 #1a1f2b
+                );
+            }
+        """)
 
         self.value = 0
-
+        
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
         layout.setSpacing(12)
 
+        lower_layout = QHBoxLayout()
+
+        version_label = QLabel("Version 1.6.0")
+        version_label.setStyleSheet("color: #a5a8ad; font: 10px;")
+        creator_label = QLabel("Created by Ziggx5")
+        creator_label.setStyleSheet("color: #a5a8ad; font: 10px;")
+
+        lower_layout.addWidget(version_label)
+        lower_layout.addStretch()
+        lower_layout.addWidget(creator_label)
+
         title = QLabel("BiteWire")
-        title.setStyleSheet("color: #a5a8ad; font: 30px;")
+        title.setStyleSheet("""
+            QLabel {
+                color: #e6edf3;
+                font-size: 28px;
+                font-weight: 600;
+                letter-spacing: 1px;
+            }
+        """)
 
         line = QLabel()
         line.setFixedSize(120, 2)
-        line.setStyleSheet("background-color: #2554a1;")
+        line.setStyleSheet("background-color: #3b82f6; border-radius: 1px;")
 
         self.progress = QProgressBar()
         self.progress.setFixedSize(80, 5)
         self.progress.setRange(0, 100)
         self.progress.setTextVisible(False)
-        self.progress.setStyleSheet("background-color: #1c1f26; border-radius: 4px;")
+        self.progress.setStyleSheet("""
+            QProgressBar {
+                background-color: #1c1f26;
+                border-radius: 2px;
+            }
+
+            QProgressBar::chunk {
+                background-color: #3b82f6;
+                border-radius: 2px;
+            }
+        """)
 
         self.label = QLabel("Loading...")
         self.label.setStyleSheet("color: #a5a8ad; font: 12px;")
 
+        layout.addStretch()
         layout.addWidget(title, alignment = Qt.AlignCenter)
         layout.addWidget(line, alignment = Qt.AlignCenter)
         layout.addWidget(self.progress, alignment = Qt.AlignCenter)
         layout.addWidget(self.label, alignment = Qt.AlignCenter)
+        layout.addStretch()
+        layout.addLayout(lower_layout)
         self.setLayout(layout)
 
         self.timer = QTimer(self)
