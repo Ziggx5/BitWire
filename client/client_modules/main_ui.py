@@ -282,6 +282,7 @@ class MainUi(QWidget):
         self.disconnect_button.setIconSize(QSize(20, 20))
         self.disconnect_button.setFixedSize(30, 30)
         self.disconnect_button.setCursor(Qt.PointingHandCursor)
+        self.disconnect_button.clicked.connect(self.disconnect_button_handler)
         self.disconnect_button.setStyleSheet("""
         QPushButton {
                 background-color: transparent;
@@ -297,8 +298,25 @@ class MainUi(QWidget):
         }
         """)
 
+        self.connection_status_label = QLabel("Connected")
+        self.connection_status_label.setStyleSheet("""
+            QLabel {
+                color: #e6edf3;
+                font-size: 12px;
+                font-weight: 400;
+            }
+        """)
+
+        self.status_icon = QLabel()
+        pixmap = QPixmap(f"{self.image_path}/online.png").scaled(20, 20, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        self.status_icon.setPixmap(pixmap)
+        self.status_icon.setFixedSize(20, 20)
+
         header_layout.addWidget(self.server_name_label)
         header_layout.addStretch()
+        header_layout.addWidget(self.status_icon)
+        header_layout.addWidget(self.connection_status_label)
+        header_layout.addSpacing(30)
         header_layout.addWidget(self.disconnect_button)
 
         self.chat_container = QFrame()
@@ -431,6 +449,13 @@ class MainUi(QWidget):
     def server_close_message(self, message):
         QMessageBox.warning(self, "Server Message", message)
         self.message_input.setEnabled(False)
+
+    def disconnect_button_handler(self):
+        self.chat_handler.handle_disconnect()
+        self.message_input.setEnabled(False)
+        pixmap = QPixmap(f"{self.image_path}/offline.png").scaled(20, 20, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        self.status_icon.setPixmap(pixmap)
+        self.connection_status_label.setText("Offline")
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
