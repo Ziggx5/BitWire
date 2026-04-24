@@ -119,15 +119,14 @@ class MainUi(QWidget):
         self.add_server_label = QLabel("All servers")
         self.add_server_label.setStyleSheet("color: white; border: none; font-size: 17px;")
 
-        self.add_button = QPushButton("+")
+        self.add_button = QPushButton()
+        self.add_button.setIcon(QIcon(f"{self.image_path}/plus.png"))
+        self.add_button.setIconSize(QSize(15, 15))
         self.add_button.setStyleSheet("""
             QPushButton {
-                color: white;
                 background-color: #3b82f6;
                 border-radius: 8px;
-                font-weight: 700;
                 border: 2px solid #ffffff;
-                font-size: 20px;
             }
             
             QPushButton:hover {
@@ -260,9 +259,12 @@ class MainUi(QWidget):
         self.username_label.setText(username)
 
         header = QFrame()
+        header.setObjectName("header_container")
         header.setStyleSheet("""
-            background-color: #161b22;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            QFrame#header_container {
+                background-color: #161b22;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
         """)
         header.setFixedHeight(45)
 
@@ -273,11 +275,31 @@ class MainUi(QWidget):
             color: #e6edf3;
             font-size: 16px;
             font-weight: 600;
-            border: none;
+        """)
+
+        self.disconnect_button = QPushButton()
+        self.disconnect_button.setIcon(QIcon(f"{self.image_path}/leave_server.png"))
+        self.disconnect_button.setIconSize(QSize(20, 20))
+        self.disconnect_button.setFixedSize(30, 30)
+        self.disconnect_button.setCursor(Qt.PointingHandCursor)
+        self.disconnect_button.setStyleSheet("""
+        QPushButton {
+                background-color: transparent;
+                border-radius: 8px;
+            }
+        
+        QPushButton:hover {
+            background-color: #dc2626;
+        }
+
+        QPushButton:pressed {
+            background-color: #991b1b;
+        }
         """)
 
         header_layout.addWidget(self.server_name_label)
         header_layout.addStretch()
+        header_layout.addWidget(self.disconnect_button)
 
         self.chat_container = QFrame()
 
