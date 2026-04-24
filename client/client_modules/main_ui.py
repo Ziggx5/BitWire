@@ -453,9 +453,9 @@ class MainUi(QWidget):
     def disconnect_button_handler(self):
         self.chat_handler.handle_disconnect()
         self.message_input.setEnabled(False)
-        pixmap = QPixmap(f"{self.image_path}/offline.png").scaled(20, 20, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        pixmap = QPixmap(f"{self.image_path}/disconnected.png").scaled(20, 20, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
         self.status_icon.setPixmap(pixmap)
-        self.connection_status_label.setText("Offline")
+        self.connection_status_label.setText("Disconnected")
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
