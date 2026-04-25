@@ -49,9 +49,16 @@ class ChatHandler(QObject):
                     
             except Exception as e:
                 print(str(e))
+                self.handle_disconnect()
+                break
     
     def send_json_message(self, message):
-        self.client.send((json.dumps(message) + "\n").encode("utf-8"))
+        if not self.client:
+            return
+        try:
+            self.client.send((json.dumps(message) + "\n").encode("utf-8"))
+        except:
+            self.handle_disconnect()
 
     def register(self, username, password, ip_address):
         try:
@@ -98,7 +105,15 @@ class ChatHandler(QObject):
         })
     
     def handle_disconnect(self):
+        if not self.client:
+            return
+            
         self.running = False
+
+        try:
+            self.client.shutdown(socket.SHUT_RDWR)
+        except:
+            pass
 
         try:
             self.client.close()
