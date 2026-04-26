@@ -19,6 +19,7 @@ class ChatHandler(QObject):
 
     def connect(self, ip_address, port = 50505):
         raw_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        raw_socket.settimeout(2)
         tls_socket = self.context.wrap_socket(raw_socket, server_hostname = ip_address)
         tls_socket.connect((ip_address, port))
         self.client = tls_socket
@@ -69,33 +70,33 @@ class ChatHandler(QObject):
                 "password": password
             })
             response = json.loads(self.client.recv(1024).decode("utf-8"))
+
         except Exception as e:
+            self.handle_disconnect()
             return {"type": "error", "message": str(e)}
-        finally:
-            if self.client:
-                try:
-                    self.client.close()
-                except:
-                    pass
 
-                self.client = None
-
+        self.handle_disconnect()
         return response
 
     def login(self, username, password, ip_address):
-        self.connect(ip_address)
-        self.send_json_message({
-            "type": "login",
-            "username": username,
-            "password": password
-        })
         try:
+            self.connect(ip_address)
+            self.send_json_message({
+                "type": "login",
+                "username": username,
+                "password": password
+            })
             response = json.loads(self.client.recv(1024).decode("utf-8"))
+            
             if response["status"] == "ok":
                 self.running = True
                 threading.Thread(target = self.receive_messages, daemon = True).start()
-        except:
-            pass
+            else:
+                self.handle_disconnect()
+        except Exception as e:
+            return {"type": "error", "message": str(e)}
+            self.handle_disconnect()
+
         return response
 
     def send_message(self, message):

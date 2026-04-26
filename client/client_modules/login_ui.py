@@ -149,6 +149,12 @@ class Login(QWidget):
                     "Error",
                     "Incorrect username or password."
                 )
+            elif return_message["type"] == "error":
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    return_message["message"]
+                )
             else:
                 QMessageBox.warning(
                     self,
