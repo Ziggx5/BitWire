@@ -47,7 +47,8 @@ class ChatHandler(QObject):
                     elif message['type'] == "server_status":
                         self.server_status.emit(message['status'])
                         self.handle_disconnect()
-                    
+            except socket.timeout:
+                continue
             except Exception as e:
                 print(str(e))
                 self.handle_disconnect()
@@ -70,7 +71,6 @@ class ChatHandler(QObject):
                 "password": password
             })
             response = json.loads(self.client.recv(1024).decode("utf-8"))
-
         except Exception as e:
             self.handle_disconnect()
             return {"type": "error", "message": str(e)}
@@ -93,6 +93,9 @@ class ChatHandler(QObject):
                 threading.Thread(target = self.receive_messages, daemon = True).start()
             else:
                 self.handle_disconnect()
+
+        except socket.timeout:
+            return {"type": "error", "message": "Server not responding."}
         except Exception as e:
             return {"type": "error", "message": str(e)}
             self.handle_disconnect()
