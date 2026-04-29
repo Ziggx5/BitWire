@@ -449,6 +449,9 @@ class MainUi(QWidget):
     def server_close_message(self, message):
         QMessageBox.warning(self, "Server Message", message)
         self.message_input.setEnabled(False)
+        pixmap = QPixmap(f"{self.image_path}/disconnected.png").scaled(20, 20, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        self.status_icon.setPixmap(pixmap)
+        self.connection_status_label.setText("Disconnected")
 
     def disconnect_button_handler(self):
         self.chat_handler.handle_disconnect()
@@ -497,6 +500,7 @@ class ServerButton(QFrame):
 
         self.delete_button = QPushButton("X")
         self.delete_button.setFixedSize(20, 20)
+        self.delete_button.setVisible(False)
         self.delete_button.setStyleSheet("""
             QPushButton {
                 border: none;
@@ -526,6 +530,12 @@ class ServerButton(QFrame):
 
     def delete_button_clicked(self):
         self.on_delete(self)
+
+    def enterEvent(self, event):
+        self.delete_button.setVisible(True)
+
+    def leaveEvent(self, event):
+        self.delete_button.setVisible(False)
 
 class MessageWidget(QWidget):
     def __init__(self, username, message, time, image):
