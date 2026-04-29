@@ -575,7 +575,8 @@ class MessageWidget(QWidget):
         username.setStyleSheet("color: #58a6ff; font-weight: 500; font-size: 15px;")
 
         time = QLabel(time)
-        time.setStyleSheet("color: #58a6ff; font-weight: 500; font-size: 10px;")
+        time.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        time.setStyleSheet("color: #58a6ff; font-weight: 500; font-size: 11px;")
 
         message = QLabel(message)
         message.setWordWrap(True)
@@ -586,8 +587,9 @@ class MessageWidget(QWidget):
 
         left_layout.addWidget(icon, alignment = Qt.AlignTop)
 
-        top_row.addWidget(username)
-        top_row.addWidget(time)
+        top_row.addWidget(username, alignment = Qt.AlignmentFlag.AlignCenter)
+        top_row.addWidget(time, alignment = Qt.AlignmentFlag.AlignCenter)
+        top_row.addStretch()
 
         layout.addLayout(left_layout)
         layout.addSpacing(10)

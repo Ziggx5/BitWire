@@ -143,7 +143,7 @@ class ChatServer(QObject):
             if len(content) > 300:
                 return
 
-            current_time = datetime.now().strftime("%H:%M:%S")
+            current_time = datetime.now().strftime("%l:%M %p, %m/%d/%y")
             self.broadcast({
                 "type": "message",
                 "user": client.username,
