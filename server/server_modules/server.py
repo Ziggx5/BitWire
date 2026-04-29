@@ -105,14 +105,26 @@ class ChatServer(QObject):
         message_type = data.get("type")
 
         if message_type == "register":
-            if self.register_user(data["username"], data["password"]):
+            username = data.get("username")
+            password = data.get("password")
+
+            if not isinstance(username, str) or not isinstance(password, str):
+                return
+
+            if self.register_user(username, password):
                 client.send({"type": "register", "status": "ok"})
             else:
                 client.send({"type": "register", "status": "fail"})
 
         elif message_type == "login":
-            if self.login_user(data["username"], data["password"]):
-                client.username = data["username"]
+            username = data.get("username")
+            password = data.get("password")
+
+            if not isinstance(username, str) or not isinstance(password, str):
+                return
+
+            if self.login_user(username, password):
+                client.username = username
                 client.send({"type": "login", "status": "ok"})
                 self.add_client(client)
                 self.send_users_list(client)
@@ -123,13 +135,24 @@ class ChatServer(QObject):
             if not client.username:
                 return
 
+            content = data.get("content")
+
+            if not isinstance(content, str):
+                return
+
+            if len(content) > 300:
+                return
+
             current_time = datetime.now().strftime("%H:%M:%S")
             self.broadcast({
                 "type": "message",
                 "user": client.username,
-                "content": data["content"],
+                "content": content,
                 "time": current_time
             })
+        
+        else:
+            self.remove_client(client)
 
     def client_handler(self, client):
         while True:
@@ -150,6 +173,9 @@ class ChatServer(QObject):
                         data = json.loads(line)
                     except:
                         continue
+
+                    if not isinstance(data, dict):
+                        break
                     
                     self.process_message(client, data)
             except Exception as e:
