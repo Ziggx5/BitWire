@@ -6,7 +6,7 @@ import sqlite3
 import time
 import os
 from datetime import datetime
-from server_modules.data_manipulation import files_check
+from server_modules.data_manipulation import files_check, database_files
 from PySide6.QtCore import Signal, QObject
 
 class Client:
@@ -41,6 +41,7 @@ class ChatServer(QObject):
         self.database = None
 
         self.load_files()
+        self.users_database_path, self.messages_database_path = database_files()
 
     def load_files(self):
         for file_path in files_check():
@@ -52,15 +53,31 @@ class ChatServer(QObject):
                 self.database = file_path
 
     def init_database(self):
-        conn = sqlite3.connect(self.database)
+        conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
-                username TEXT PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE,
                 password TEXT
             )
         """)
+        conn.commit()
+        conn.close()
+
+        conn = sqlite3.connect(self.messages_database_path)
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                sender TEXT,
+                content TEXT,
+                created_at TEXT
+            )
+        """)
+
         conn.commit()
         conn.close()
 
@@ -187,7 +204,7 @@ class ChatServer(QObject):
 
 
     def start(self):
-        if not self.certfile or not self.keyfile or not self.database:
+        if not self.certfile or not self.keyfile:
             return
 
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -17,7 +17,7 @@ class MainUi(QWidget):
         self.tray = TrayManager(self)
         self.chat_server = ChatServer()
         self.chat_server.uptime_signal.connect(self.update_timer)
-        local_data_file()
+        self.local_file = local_data_file()
         image_path = file_root()
         self.files = files_check()
 
@@ -43,23 +43,15 @@ class MainUi(QWidget):
 
         certificate_file_label = QLabel("Certificate file:")
         self.certificate_file_input = QLineEdit()
-        #self.certificate_file_button = QPushButton("Browse...")
-        #self.certificate_file_button.clicked.connect(lambda: self.send_file_path("certificate"))
 
         key_file_label = QLabel("Key file:")
         self.key_file_input = QLineEdit()
-        #self.key_file_button = QPushButton("Browse...")
-        #self.key_file_button.clicked.connect(lambda: self.send_file_path("key"))
 
         users_database_file_label = QLabel("Users database file:")
         self.users_database_file_input = QLineEdit()
-        #self.users_database_file_button = QPushButton("Browse...")
-        #self.users_database_file_button.clicked.connect(lambda: self.send_file_path("users_database"))
 
         messages_database_file_label = QLabel("Messages database file:")
         self.messages_database_file_input = QLineEdit()
-        #self.messages_database_file_button = QPushButton("Browse...")
-        #self.messages_database_file_button.clicked.connect(lambda: self.send_file_path("messages_database"))
 
         self.start_server_button = QPushButton("Start Server")
         self.start_server_button.clicked.connect(self.start_server)
@@ -77,14 +69,13 @@ class MainUi(QWidget):
         server_folder_button.setIcon(QIcon(f"{image_path}/folder.png"))
         server_folder_button.setIconSize(QSize(15, 15))
         server_folder_button.setFixedSize(35, 35)
+        server_folder_button.clicked.connect(self.open_server_folder)
 
         certificate_file_layout.addWidget(certificate_file_label)
         certificate_file_layout.addWidget(self.certificate_file_input)
-        #certificate_file_layout.addWidget(self.certificate_file_button)
 
         key_file_layout.addWidget(key_file_label)
         key_file_layout.addWidget(self.key_file_input)
-        #key_file_layout.addWidget(self.key_file_button)
 
         ssl_box_layout.addLayout(certificate_file_layout)
         ssl_box_layout.addLayout(key_file_layout)
@@ -93,11 +84,9 @@ class MainUi(QWidget):
 
         users_database_layout.addWidget(users_database_file_label)
         users_database_layout.addWidget(self.users_database_file_input)
-        #users_database_layout.addWidget(self.users_database_file_button)
 
         messages_database_layout.addWidget(messages_database_file_label)
         messages_database_layout.addWidget(self.messages_database_file_input)
-        #messages_database_layout.addWidget(self.messages_database_file_button)
 
         database_files_layout.addLayout(users_database_layout)
         database_files_layout.addLayout(messages_database_layout)
@@ -137,35 +126,11 @@ class MainUi(QWidget):
             elif file_path.endswith(".key"):
                 self.key_file_input.setText(file_path)
 
-            elif file_path.endswith(".db"):
+            elif file_path.endswith("users.db"):
                 self.users_database_file_input.setText(file_path)
-
-    def send_file_path(self, file_type):
-        if file_type == "certificate":
-            file_path, _ = QFileDialog.getOpenFileName(self, "Select file", "", "Certificate files (*.crt)")
-
-        elif file_type == "key":
-            file_path, _ = QFileDialog.getOpenFileName(self, "Select file", "", "Key files (*.key)")
-
-        elif file_type == "users_database":
-            file_path, _ = QFileDialog.getOpenFileName(self, "Select file", "", "Database files (*.db)")
-
-        elif file_type == "messages_database":
-            file_path, _ = QFileDialog.getOpenFileName(self, "Select file", "", "Database files (*.db)")
-
-        if not file_path:
-            return
-
-        copied_file_path = copy_to_data_dir(file_path)
-
-        if file_type == ".crt":
-            self.certificate_file_input.setText(copied_file_path)
-
-        elif file_type == ".key":
-            self.key_file_input.setText(copied_file_path)
-
-        elif file_type == ".db":
-            self.database_file_input.setText(copied_file_path)
+                
+            elif file_path.endswith("messages.db"):
+                self.messages_database_file_input.setText(file_path)
 
     def start_server(self):
         if not self.certificate_file_input.text() or not self.key_file_input.text():
@@ -179,10 +144,7 @@ class MainUi(QWidget):
 
         self.certificate_file_input.setEnabled(False)
         self.key_file_input.setEnabled(False)
-        self.database_file_input.setEnabled(False)
-        #self.key_file_button.setEnabled(False)
-        #self.database_file_button.setEnabled(False)
-        #self.certificate_file_button.setEnabled(False)
+        self.users_database_file_input.setEnabled(False)
         self.tray.set_server_status("Running")
 
     def stop_server(self):
@@ -193,10 +155,7 @@ class MainUi(QWidget):
 
         self.certificate_file_input.setEnabled(True)
         self.key_file_input.setEnabled(True)
-        self.database_file_input.setEnabled(True)
-        #self.key_file_button.setEnabled(True)
-        #self.database_file_button.setEnabled(True)
-        #self.certificate_file_button.setEnabled(True)
+        self.users_database_file_input.setEnabled(True)
         self.tray.set_server_status("Stopped")
 
         self.update_timer(0, 0, 0)
@@ -208,3 +167,6 @@ class MainUi(QWidget):
     def closeEvent(self, event):
         event.ignore()
         self.hide()
+
+    def open_server_folder(self):
+        QDesktopServices.openUrl(QUrl.fromLocalFile(self.local_file))

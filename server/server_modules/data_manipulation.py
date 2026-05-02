@@ -21,11 +21,12 @@ def copy_to_data_dir(file_path):
 
         return destination_path
 
-def database_file():
+def database_files():
     data_dir = local_data_file()
-    database_path = os.path.join(data_dir, "users.db")
+    users_database_path = os.path.join(data_dir, "users.db")
+    messages_database_path = os.path.join(data_dir, "messages.db")
 
-    return database_path
+    return users_database_path, messages_database_path
 
 def files_check():
     data_dir = local_data_file()
