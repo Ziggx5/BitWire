@@ -40,7 +40,6 @@ class TrayManager:
         webbrowser.open("https://github.com/Ziggx5/BiteWire")
 
     def tray_clicked(self, reason):
-        if reason != QSystemTrayIcon.Trigger:
-            return
-
-        self.parent.show()
+        if reason == QSystemTrayIcon.Trigger:
+            self.parent.show()
+            self.parent.activateWindow()

@@ -37,7 +37,7 @@ class TrayManager:
         menu.addAction(close_action)
         
         self.tray_icon.setContextMenu(menu)
-        self.tray_icon.activated.connect(self.parent.show)
+        self.tray_icon.activated.connect(self.tray_clicked)
         self.tray_icon.show()
 
     def open_link(self):
@@ -52,3 +52,8 @@ class TrayManager:
     
     def set_server_uptime(self, hours, minutes, seconds):
         self.server_uptime.setText(f"{hours:02}:{minutes:02}:{seconds:02}")
+
+    def tray_clicked(self, reason):
+        if reason == QSystemTrayIcon.Trigger:
+            self.parent.show()
+            self.parent.activateWindow()
