@@ -161,6 +161,8 @@ class ChatServer(QObject):
                 return
 
             current_time = datetime.now().strftime("%l:%M %p, %m/%d/%y")
+
+            self.save_message_to_database(client.username, content, current_time)
             self.broadcast({
                 "type": "message",
                 "user": client.username,
@@ -306,3 +308,15 @@ class ChatServer(QObject):
 
             self.uptime_signal.emit(hours, minutes, seconds)
             time.sleep(1)
+
+    def save_message_to_database(self, username, content, time):
+        conn = sqlite3.connect(self.messages_database_path)
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            INSERT INTO messages (sender, content, created_at)
+            VALUES (?, ?, ?)
+        """, (username, content, time))
+
+        conn.commit()
+        conn.close()
