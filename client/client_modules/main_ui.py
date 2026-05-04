@@ -328,6 +328,7 @@ class MainUi(QWidget):
         
         self.scroll = QScrollArea()
         self.scroll.setStyleSheet("border: none;")
+        self.scroll.verticalScrollBar().valueChanged.connect(self.on_scroll)
         self.scroll.setWidgetResizable(True)
         self.scroll.setWidget(self.chat_container)
 
@@ -459,6 +460,12 @@ class MainUi(QWidget):
         pixmap = QPixmap(f"{self.image_path}/disconnected.png").scaled(20, 20, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
         self.status_icon.setPixmap(pixmap)
         self.connection_status_label.setText("Disconnected")
+
+    def on_scroll(self):
+        scrollbar = self.scroll.verticalScrollBar()
+
+        if scrollbar.value() == scrollbar.minimum():
+            print("send message history")
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
