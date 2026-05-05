@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name = "description" content= "BiteWire is a lightweight, secure chat app for Self-Hosted servers. Chat in real-time and manage your own server.">
-    <title>BiteWire - Secure Self-Hosted Chat Application</title>
+    <meta name = "description" content= "BiteWire is an open-source self-hosted chat app for Windows and Linux. Secure realtime messaging, private servers, TLS encryption and lightweight desktop client.">
+    <title>BiteWire - Open Source Self Hosted Chat App For Windows And Linux</title>
     <link rel="icon" type="image/x-icon" href="images/icon.png">
     <link rel = "stylesheet" href = "style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 
     <header class = "header">
         <h1>💬 BiteWire</h1>
-        <p class = "version">Latest version 1.6.0</p>
+        <p class = "version">Latest version 1.7.0</p>
         <div class = "header-right">
             <div class = "donate_container">
                 <a href = "https://ko-fi.com/ziggx5"><button class = "Kofi_donate_button"><img src = "images/kofi_logo.png" alt = "Kofi logo"></button></a>
@@ -28,7 +28,7 @@
     </header>
 
     <div class = "download_button_section">
-        <a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.6.0/BiteWire.exe"><button class ="download_button"><img src = "images/download.png" alt = "Download button">Download</button></a>
+        <a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.7.0/BiteWire.exe"><button class ="download_button"><img src = "images/download.png" alt = "Download button">Download</button></a>
         <a href = "https://github.com/Ziggx5/BiteWire"><button class = "github_button"><img src = "images/github_logo.png" alt = "github button">github repository</button></a>
     </div>
     <div class="container">
@@ -45,7 +45,7 @@
             <h1>Linux</h1>
             <p>Most Linux distributions already have <b>openssl</b> installed.</p>
             <p>Open terminal and generate self signed certificate:</p>
-            <p>openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 365</p>
+            <p>openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 365 -nodes</p>
             <p>During setup you may be asked questions which can be skipped by pressing enter.</p>
             <p>After certificate generation two files will be created: <b>server.key</b> and <b>server.crt</b></p>
             <p>In server app select these files, they will be automatically copied to the app data directory.</p>
@@ -65,24 +65,16 @@
         <div class = "right_column">
             <div class = "setup">
                 <h2>Setup</h2>
-                <p>Windows</p>
-                <ul>
-                    <li>/</li>
-                </ul>
-                <p>Linux</p>
-                <ul>
-                    <li>/</li>
-                </ul>
             </div>
 
             <div class = "windows_container">
                 <h2><img src="images/windows_logo.png" alt = "windows_logo"></a>Windows</h2>
                 <ul>
                     <li>
-                        <h4>BiteWire 1.6.0.exe<a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.6.0/BiteWire.exe"><button>Download</button></a></h4>
+                        <h4>BiteWire 1.7.0.exe<a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.7.0/BiteWire.exe"><button>Download</button></a></h4>
                     </li>
                     <li>
-                        <h4>BiteWire Server 1.4.0.exe<a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.4.0/BiteWire.Server.exe"><button>Download</button></a></h4>
+                        <h4>BiteWire Server 1.5.0.exe<a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.5.0/BiteWire.Server.exe"><button>Download</button></a></h4>
                     </li>
                 </ul>
             </div>
@@ -90,16 +82,16 @@
                 <h2><img src="images/linux_logo.png" alt = "linux_logo"></a>Linux</h2>
                 <ul>
                     <li>
-                        <h4>bitewire 1.6.0.rpm<a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.6.0/bitewire-1.6.0-1.x86_64.rpm"><button>Download</button></a></h4>
+                        <h4>bitewire 1.7.0.rpm<a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.7.0/bitewire-1.7.0-1.x86_64.rpm"><button>Download</button></a></h4>
                     </li>
                     <li>
-                        <h4>BiteWire 1.6.0.deb<a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.6.0/bitewire_1.6.0_amd64.deb"><button>Download</button></a></h4>
+                        <h4>BiteWire 1.7.0.deb<a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.7.0/bitewire_1.7.0_amd64.deb"><button>Download</button></a></h4>
                     </li>
                     <li>
-                        <h4>BiteWire Server 1.4.0.rpm<a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.4.0/bitewire-server-1.4.0-1.x86_64.rpm"><button>Download</button></a></h4>
+                        <h4>BiteWire Server 1.5.0.rpm<a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.5.0/bitewire-server-1.5.0-1.x86_64.rpm"><button>Download</button></a></h4>
                     </li>
                     <li>
-                        <h4>BiteWire Server 1.4.0.deb<a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.4.0/bitewire-server_1.4.0_amd64.deb"><button>Download</button></a></h4>
+                        <h4>BiteWire Server 1.5.0.deb<a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.5.0/bitewire-server_1.5.0_amd64.deb"><button>Download</button></a></h4>
                     </li>
                 </ul>
             </div>
