@@ -308,8 +308,7 @@ class ChatServer(QObject):
             cursor.execute("SELECT username FROM users")
             result = cursor.fetchall()
             users = [user for (user, ) in result]
-
-            self.broadcast({"type": "user_list", "content": users})
+            self.broadcast({"type": "users_list", "content": users})
         finally:
             conn.close()
 
