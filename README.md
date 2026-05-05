@@ -25,7 +25,7 @@ Most Linux distributions already have ```openssl``` installed.
 Open terminal and generate self signed certificate:
 
 ```bash
-openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 365
+openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 365 -nodes
 ```
 During setup you may be asked questions which can be skipped by pressing enter.
 After certificate generation two files will be created:
