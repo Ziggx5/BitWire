@@ -82,7 +82,7 @@ class ChatServer(QObject):
         conn.close()
 
     def register_user(self, username, password):
-        conn = sqlite3.connect(self.database)
+        conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
 
         try:
@@ -100,7 +100,7 @@ class ChatServer(QObject):
             conn.close()
     
     def login_user(self, username, password):
-        conn = sqlite3.connect(self.database)
+        conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
 
         try:
@@ -130,6 +130,8 @@ class ChatServer(QObject):
 
             if self.register_user(username, password):
                 client.send({"type": "register", "status": "ok"})
+                self.send_users_list_all_clients()
+
             else:
                 client.send({"type": "register", "status": "fail"})
 
@@ -285,7 +287,7 @@ class ChatServer(QObject):
                     self.clients.remove(client)
 
     def send_users_list(self, client):
-        conn = sqlite3.connect(self.database)
+        conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
 
         try:
@@ -294,7 +296,20 @@ class ChatServer(QObject):
             )
             result = cursor.fetchall()
             users = [user for (user,) in result]
-            client.send({"type": "users", "content": users})
+            client.send({"type": "users_list", "content": users})
+        finally:
+            conn.close()
+
+    def send_users_list_all_clients(self):
+        conn = sqlite3.connect(self.users_database_path)
+        cursor = conn.cursor()
+        
+        try:
+            cursor.execute("SELECT username FROM users")
+            result = cursor.fetchall()
+            users = [user for (user, ) in result]
+
+            self.broadcast({"type": "user_list", "content": users})
         finally:
             conn.close()
 

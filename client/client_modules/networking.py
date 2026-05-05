@@ -40,7 +40,7 @@ class ChatHandler(QObject):
                         time = message['time']
                         self.message_received.emit(username, content, time)
                     
-                    elif message['type'] == "users":
+                    elif message['type'] == "users_list":
                         users = message['content']
                         self.users_received.emit(users)
                     
