@@ -436,6 +436,12 @@ class MainUi(QWidget):
         widget.show()
 
     def add_users(self, users):
+        while self.all_users_layout.count():
+            item = self.all_users_layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+                
         for user in users:
             user_widget = UserWidget(user, f"{self.image_path}/user_picture_placeholder.png")
             self.all_users_layout.addWidget(user_widget)

@@ -43,7 +43,7 @@ class ChatHandler(QObject):
                     elif message['type'] == "users_list":
                         users = message['content']
                         self.users_received.emit(users)
-
+                        
                     elif message['type'] == "server_status":
                         self.server_status.emit(message['status'])
                         self.handle_disconnect()
