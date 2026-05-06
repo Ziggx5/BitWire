@@ -116,6 +116,11 @@ class MainUi(QWidget):
         layout.addWidget(server_control_box)
         layout.addLayout(server_folder_layout)
 
+        self.certificate_file_input.setEnabled(False)
+        self.key_file_input.setEnabled(False)
+        self.users_database_file_input.setEnabled(False)
+        self.messages_database_file_input.setEnabled(False)
+
         self.fill_inputs(self.files)
 
     def fill_inputs(self, files):
@@ -142,9 +147,6 @@ class MainUi(QWidget):
         self.start_server_button.setEnabled(False)
         QTimer.singleShot(2000, lambda: self.stop_server_button.setEnabled(True))
 
-        self.certificate_file_input.setEnabled(False)
-        self.key_file_input.setEnabled(False)
-        self.users_database_file_input.setEnabled(False)
         self.tray.set_server_status("Running")
 
     def stop_server(self):
@@ -153,9 +155,6 @@ class MainUi(QWidget):
         self.stop_server_button.setEnabled(False)
         QTimer.singleShot(2000, lambda: self.start_server_button.setEnabled(True))
 
-        self.certificate_file_input.setEnabled(True)
-        self.key_file_input.setEnabled(True)
-        self.users_database_file_input.setEnabled(True)
         self.tray.set_server_status("Stopped")
 
         self.update_timer(0, 0, 0)
