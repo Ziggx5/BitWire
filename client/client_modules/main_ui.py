@@ -661,9 +661,12 @@ class UserWidget(QWidget):
             }
         """)
 
-        layout = QHBoxLayout(self)
-        layout.setSpacing(10)
-        layout.setContentsMargins(8, 8, 8, 8)
+        main_layout = QHBoxLayout(self)
+        main_layout.setSpacing(10)
+        main_layout.setContentsMargins(8, 8, 8, 8)
+
+        text_layout = QVBoxLayout()
+        text_layout.setSpacing(0)
 
         icon = QLabel("icon")
         icon.setStyleSheet("background-color: white; border-radius: 15px; border: none;")
@@ -686,5 +689,10 @@ class UserWidget(QWidget):
         username_label = QLabel(username)
         username_label.setStyleSheet("font-size: 15px; border: none;")
 
-        layout.addWidget(icon)
-        layout.addWidget(username_label)
+        status_label = QLabel("Online")
+
+        text_layout.addWidget(username_label)
+        text_layout.addWidget(status_label)
+
+        main_layout.addWidget(icon)
+        main_layout.addLayout(text_layout)

@@ -289,13 +289,22 @@ class ChatServer(QObject):
     def send_users_list(self, client):
         conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
+        online_users = []
+        users = []
 
         try:
             cursor.execute(
                 "SELECT username FROM users"
             )
             result = cursor.fetchall()
-            users = [user for (user,) in result]
+
+            for client in self.clients:
+                if client.username:
+                    online_users.append(client.username)
+                        
+            for (user,) in result:
+                users.append({"username": user, "status": user in online_users})
+            
             client.send({"type": "users_list", "content": users})
         finally:
             conn.close()
