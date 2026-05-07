@@ -147,6 +147,7 @@ class ChatServer(QObject):
                 client.send({"type": "login", "status": "ok"})
                 self.add_client(client)
                 self.send_users_list(client)
+                self.send_users_list_all_clients()
             else:
                 client.send({"type": "login", "status": "fail"})
         
@@ -206,7 +207,6 @@ class ChatServer(QObject):
         self.remove_client(client)
         client.conn.close()
 
-
     def start(self):
         if not self.certfile or not self.keyfile:
             return
@@ -254,6 +254,7 @@ class ChatServer(QObject):
         with self.clients_lock:
             if client in self.clients:
                 self.clients.remove(client)
+        self.send_users_list_all_clients()
 
     def add_client(self, client):
         with self.clients_lock:
@@ -293,9 +294,7 @@ class ChatServer(QObject):
         users = []
 
         try:
-            cursor.execute(
-                "SELECT username FROM users"
-            )
+            cursor.execute("SELECT username FROM users")
             result = cursor.fetchall()
 
             for client in self.clients:
@@ -312,11 +311,20 @@ class ChatServer(QObject):
     def send_users_list_all_clients(self):
         conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
+        online_users = []
+        users = []
         
         try:
             cursor.execute("SELECT username FROM users")
             result = cursor.fetchall()
-            users = [user for (user, ) in result]
+
+            for client in self.clients:
+                if client.username:
+                    online_users.append(client.username)
+                        
+            for (user,) in result:
+                users.append({"username": user, "status": user in online_users})
+
             self.broadcast({"type": "users_list", "content": users})
         finally:
             conn.close()

@@ -471,7 +471,11 @@ class MainUi(QWidget):
                 widget.deleteLater()
                 
         for user in users:
-            user_widget = UserWidget(user, f"{self.image_path}/user_picture_placeholder.png")
+            if user['status']:
+                user_widget = UserWidget(user['username'], f"{self.image_path}/user_picture_placeholder.png", "Online")
+            else:
+                user_widget = UserWidget(user['username'], f"{self.image_path}/user_picture_placeholder.png", "Offline")
+
             self.all_users_layout.addWidget(user_widget)
     
     def eventFilter(self, obj, event):
@@ -641,7 +645,7 @@ class MessageWidget(QWidget):
         layout.addLayout(right_layout)
 
 class UserWidget(QWidget):
-    def __init__(self, username, image):
+    def __init__(self, username, image, status):
         super().__init__()
 
         self.setObjectName("userwidget")
@@ -689,7 +693,7 @@ class UserWidget(QWidget):
         username_label = QLabel(username)
         username_label.setStyleSheet("font-size: 15px; border: none;")
 
-        status_label = QLabel("Online")
+        status_label = QLabel(status)
 
         text_layout.addWidget(username_label)
         text_layout.addWidget(status_label)
