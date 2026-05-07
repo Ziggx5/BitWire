@@ -8,6 +8,7 @@ from client_modules.tray_manager import TrayManager
 from client_modules.path_finder import file_root
 from client_modules.login_ui import Login
 from client_modules.identity_ui import AddIdentityUi
+from client_modules.update_checker import UpdateChecker
 
 class MainUi(QWidget):
     def __init__(self):
@@ -40,11 +41,12 @@ class MainUi(QWidget):
         self.chat_handler.message_received.connect(self.client_display_message)
         self.chat_handler.users_received.connect(self.add_users)
         self.chat_handler.server_status.connect(self.server_close_message)
-
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
         self.identity_window = AddIdentityUi(self.identity_window_show_main_ui)
         self.tray = TrayManager(self)
         self.image_path = file_root()
+        self.update_checker = UpdateChecker()
+        self.update_checker.update_found.connect(self.update_button_updater)
 
         self.overlay = QWidget(self)
         self.overlay.setStyleSheet("background-color: rgba(0, 0, 0, 150);")
@@ -169,6 +171,7 @@ class MainUi(QWidget):
         self.new_user_button.setIcon(QIcon(f"{self.image_path}/identity.png"))
         self.new_user_button.setIconSize(QSize(30, 30))
         self.new_user_button.setCursor(Qt.PointingHandCursor)
+
         self.settings_button = QPushButton()
         self.settings_button.setIcon(QIcon(f"{self.image_path}/settings.png"))
         self.settings_button.setStyleSheet("""
@@ -179,25 +182,50 @@ class MainUi(QWidget):
             }
 
             QPushButton:hover {
-                background-color: rgba(255, 255, 255, 0.08)
+                background-color: rgba(255, 255, 255, 0.08);
             }
 
             QPushButton:pressed {
-                background-color: rgba(255, 255, 255, 0.15)
+                background-color: rgba(255, 255, 255, 0.15);
             }
         """)
 
         self.settings_button.setIconSize(QSize(18, 18))
         self.settings_button.setFixedSize(30, 30)
-        self.settings_button.setCursor(Qt.PointingHandCursor)
+        self.settings_button.setCursor(Qt.CursorShape.PointingHandCursor)
 
         self.user_picture = QLabel()
         self.user_picture.setFixedSize(30, 30)
         self.user_picture.setStyleSheet("background-color: white; border-radius: 15px")
-        self.pixmap = QPixmap(f"{self.image_path}/user_picture_placeholder.png").scaled(30, 30, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
-        self.user_picture.setPixmap(self.pixmap)
+        self.user_pixmap = QPixmap(f"{self.image_path}/user_picture_placeholder.png").scaled(30, 30, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        self.user_picture.setPixmap(self.user_pixmap)
+
+        self.update_client_button = QPushButton()
+        self.update_client_button.setFixedSize(30, 30)
+        self.update_client_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.update_client_button.setIcon(QIcon(f"{self.image_path}/update.png"))
+        self.update_client_button.setIconSize(QSize(18, 18))
+        self.update_client_button.setVisible(False)
+        self.update_client_button.setStyleSheet("""
+            QPushButton {
+                background-color: #f59e0b;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 8px;
+            }
+
+            QPushButton:hover {
+                background-color: #d97706;
+            }
+
+            QPushButton:pressed {
+                background-color: #b45309;
+            }
+        """)
+        self.update_checker.check_update()
+
         self.user_frame_layout.addWidget(self.user_picture)
         self.user_frame_layout.addWidget(self.username_label)
+        self.user_frame_layout.addWidget(self.update_client_button)
         self.user_frame_layout.addWidget(self.new_user_button)
         self.user_frame_layout.addWidget(self.settings_button)
 
@@ -472,6 +500,10 @@ class MainUi(QWidget):
 
         if scrollbar.value() == scrollbar.minimum():
             print("send message history")
+
+    def update_button_updater(self, update):
+        if update:
+            self.update_client_button.setVisible(True)
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
