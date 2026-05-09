@@ -8,6 +8,7 @@ import os
 from datetime import datetime
 from server_modules.data_manipulation import files_check, database_files
 from PySide6.QtCore import Signal, QObject
+import bcrypt
 
 class Client:
     def __init__(self, conn, address):
@@ -85,10 +86,12 @@ class ChatServer(QObject):
         conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
 
+        hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
         try:
             cursor.execute(
                 "INSERT INTO users (username, password) VALUES (?, ?)",
-                (username, password)
+                (username, hashed_password)
             )
             conn.commit()
             return True
@@ -110,10 +113,13 @@ class ChatServer(QObject):
             )
 
             result = cursor.fetchone()
+            print(result)
 
-            if result and result [0] == password:
-                return True
-            return False
+            if not result:
+                return False
+
+            stored_hash = result[0].encode("utf-8")
+            return bcrypt.checkpw(password.encode("utf-8"), stored_hash)
 
         finally:
             conn.close()
