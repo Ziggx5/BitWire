@@ -16,6 +16,7 @@ class Client:
         self.address = address
         self.username = None
         self.buffer = ""
+        self.last_pong = None
     
     def send(self, data):
         try:
@@ -113,7 +114,6 @@ class ChatServer(QObject):
             )
 
             result = cursor.fetchone()
-            print(result)
 
             if not result:
                 return False
@@ -178,7 +178,10 @@ class ChatServer(QObject):
                 "content": content,
                 "time": current_time
             })
-        
+
+        elif message_type == "pong":
+            client.last_pong = time.time()
+
         else:
             self.remove_client(client)
 
@@ -225,6 +228,7 @@ class ChatServer(QObject):
         self.context.load_cert_chain(self.certfile, self.keyfile)
 
         threading.Thread(target = self.server_uptime, daemon = True).start()
+        threading.Thread(target = self.ping_client, daemon = True).start()
 
         self.init_database()
 
@@ -357,3 +361,21 @@ class ChatServer(QObject):
 
         conn.commit()
         conn.close()
+
+    def ping_client(self):
+        while not self.stop_event.is_set():
+            time.sleep(15)
+            self.broadcast({"type": "ping"})
+
+            with self.clients_lock:
+                clients_copy = self.clients[:]
+
+            for client in clients_copy:
+                if not client.last_pong:
+                    continue
+
+                if time.time() - client.last_pong > 30:
+                    print("disconnect")
+                    self.remove_client(client)
+                else:
+                    print("don't disconnect")

@@ -34,6 +34,7 @@ class ChatHandler(QObject):
                     if not line.strip():
                         continue
                     message = json.loads(line)
+                    
                     if message['type'] == "message":
                         username = message['user']
                         content = message['content']
@@ -47,6 +48,10 @@ class ChatHandler(QObject):
                     elif message['type'] == "server_status":
                         self.server_status.emit(message['status'])
                         self.handle_disconnect()
+                    
+                    elif message['type'] == "ping":
+                        self.send_json_message({"type": "pong"})
+
             except socket.timeout:
                 continue
             except Exception as e:
