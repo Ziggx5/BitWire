@@ -1,5 +1,5 @@
 # 💬 BiteWire
-![Version](https://img.shields.io/badge/version-1.7.0-blue)
+![Version](https://img.shields.io/badge/version-1.8.0-blue)
 ![License](https://img.shields.io/badge/license-GPL--3.0-green)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey)
 ![Downloads](https://img.shields.io/github/downloads/Ziggx5/BiteWire/total)
@@ -9,16 +9,23 @@
 BiteWire is a simple, secure chat application that allows users to connect to hosted servers, communicate in real-time, and manage their own server through a dedicated server application.
 
 ---
-<img width="1920" height="1036" alt="image" src="https://github.com/user-attachments/assets/5d5c0e75-f984-43f9-afeb-8f38a99288cb" />
+<img width="2050" height="1166" alt="image" src="https://github.com/user-attachments/assets/090440f9-6715-4b19-bf9d-a2e57ac1feb1" />
 
 
 ## ⚙️ Server Setup
+
 ### 1. Generate TLS certificate
-To host a BiteWire server, an TLS certificate is required for encrypted connections.
+
+To host a BiteWire server, a TLS certificate is required for encrypted connections.
 Example of a self signed certificate:
 
 ### Windows
+Download and install <a href = https://git-scm.com/>Git</a>.
+Then open **Git Bash** and run:
 
+```bash
+openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 365 -nodes
+```
 
 ### Linux
 Most Linux distributions already have ```openssl``` installed.
@@ -32,7 +39,7 @@ After certificate generation two files will be created:
 ```server.key```
 ```server.crt```
 
-In server app select these files, they will be automatically copied to the app data directory.
+After that, open the server app, click the folder button and drag generated files into opened folder.
 
 ### 2. Port forward
 Make sure port ```50505``` is open on your router.
@@ -51,16 +58,16 @@ Make sure port ```50505``` is open on your router.
     <th>Red Hat (.rpm)</th>
   </tr>
   <tr>
-    <td>BiteWire 1.7.0</td>
-    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.7.0/BiteWire.exe">⬇️ Download</a></td>
-    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.7.0/bitewire_1.7.0_amd64.deb">⬇️ Download</a></td>
-      <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.7.0/bitewire-1.7.0-1.x86_64.rpm">⬇️ Download</a></td>
+    <td>BiteWire 1.8.0</td>
+    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.8.0/BiteWire.exe">⬇️ Download</a></td>
+    <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.8.0/bitewire_1.8.0_amd64.deb">⬇️ Download</a></td>
+      <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.8.0/bitewire-1.8.0-1.x86_64.rpm">⬇️ Download</a></td>
   </tr>
   <tr>
-  <td>BiteWire Server 1.5.0</td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.5.0/BiteWire.Server.exe">⬇️ Download</a></td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.5.0/bitewire-server_1.5.0_amd64.deb">⬇️ Download</a></td>
-  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.5.0/bitewire-server-1.5.0-1.x86_64.rpm">⬇️ Download</a></td>
+  <td>BiteWire Server 1.6.0</td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.6.0/BiteWire.Server.exe">⬇️ Download</a></td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.6.0/bitewire-server_1.6.0_amd64.deb">⬇️ Download</a></td>
+  <td><a href = "https://github.com/Ziggx5/BiteWire/releases/download/s1.6.0/bitewire-server-1.6.0-1.x86_64.rpm">⬇️ Download</a></td>
   </tr>
 </table>
 
