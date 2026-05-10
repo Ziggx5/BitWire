@@ -8,7 +8,7 @@ class UpdateChecker(QObject):
 
     def __init__(self):
         super().__init__()
-        self.current_release = "1.6.0"
+        self.current_release = "1.8.0"
         self.url = "https://api.github.com/repos/Ziggx5/BiteWire/releases"
 
     def check_update(self):

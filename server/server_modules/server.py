@@ -375,7 +375,4 @@ class ChatServer(QObject):
                     continue
 
                 if time.time() - client.last_pong > 30:
-                    print("disconnect")
                     self.remove_client(client)
-                else:
-                    print("don't disconnect")
