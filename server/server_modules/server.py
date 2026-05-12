@@ -154,6 +154,7 @@ class ChatServer(QObject):
                 self.add_client(client)
                 self.send_users_list(client)
                 self.send_users_list_all_clients()
+                self.send_message_history()
             else:
                 client.send({"type": "login", "status": "fail"})
         
@@ -376,3 +377,21 @@ class ChatServer(QObject):
 
                 if time.time() - client.last_pong > 30:
                     self.remove_client(client)
+
+    def send_message_history(self):
+        conn = sqlite3.connect(self.messages_database_path)
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT sender, content, created_at FROM messages
+            LIMIT ?
+        """, (50,))
+
+        result = cursor.fetchall()
+
+        messages = []
+
+        for message in result:
+            messages.append({"user": message[0], "content": message[1], "time": message[2]})
+
+        print(messages)
