@@ -51,6 +51,10 @@ class ChatHandler(QObject):
                     
                     elif message['type'] == "ping":
                         self.send_json_message({"type": "pong"})
+                    
+                    elif message['type'] == "message_history":
+                        for content in message['content']:
+                            self.message_received.emit(content['user'], content['content'], content['time'])
 
             except socket.timeout:
                 continue
