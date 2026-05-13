@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
-from client_modules.data_manipulation import save_server_data, server_loader
-from client_modules.networking import ChatHandler
+from client_modules.data_manipulation import save_server_data
+from client_modules.identity_ui import AddIdentityUi
 
 class AddServerUi(QWidget):
     def __init__(self, on_cancel):
@@ -12,7 +12,7 @@ class AddServerUi(QWidget):
         self.setStyleSheet("background-color: transparent;")
         self.on_cancel = on_cancel
         self.stacked = QStackedLayout(self)
-        self.chat_handler = ChatHandler()
+        self.register = AddIdentityUi(self.reset, self.add_server_no_register)
 
         self.add_server_page = QWidget()
         add_server_layout = QVBoxLayout(self.add_server_page)
@@ -129,108 +129,7 @@ class AddServerUi(QWidget):
         add_server_layout.addSpacing(10)
         add_server_layout.addLayout(add_server_option_buttons)
         self.stacked.addWidget(self.add_server_page)
-
-        self.register_page = QWidget()
-        register_layout = QVBoxLayout(self.register_page)
-        register_layout.setContentsMargins(10, 10, 10, 10)
-        register_layout.setSpacing(0)
-
-        register_option_buttons_layout = QHBoxLayout()
-
-        register_top_line = QFrame()
-        register_top_line.setFrameShape(QFrame.HLine)
-        register_top_line.setStyleSheet("color: #30363d;")
-
-        register_bot_line = QFrame()
-        register_bot_line.setFrameShape(QFrame.HLine)
-        register_bot_line.setStyleSheet("color: #30363d;")
-
-        register_label = QLabel("Register")
-        register_label.setFixedHeight(30)
-        register_label.setStyleSheet(main_title)
-
-        register_subtitle = QLabel("Enter username and password")
-        register_subtitle.setFixedHeight(20)
-        register_subtitle.setStyleSheet("color: #8b949e; font-size: 13px;")
-
-        username_label = QLabel("Username")
-        username_label.setFont(QFont("Courier New", 12))
-        username_label.setFixedHeight(30)
-        username_label.setStyleSheet("color: #a5a8ad;")
-
-        self.username_input = QLineEdit()
-        self.username_input.setFixedHeight(40)
-
-        self.username_input.setStyleSheet(input_style)
-
-        password_label = QLabel("Password")
-        password_label.setFont(QFont("Courier New", 12))
-        password_label.setFixedHeight(30)
-        password_label.setStyleSheet("color: #a5a8ad;")
-
-        self.password_input = QLineEdit()
-        self.password_input.setFixedHeight(40)
-        self.password_input.setStyleSheet(input_style)
-        self.password_input.setEchoMode(QLineEdit.Password)
-
-        self.already_registered_button = QPushButton("Already registered?")
-        self.already_registered_button.setFixedSize(200, 30)
-        self.already_registered_button.setStyleSheet("""
-            QPushButton {
-                background: #161b22;
-                color: #58a6ff;
-                border: none;
-                font-size: 13px;
-                text-align: left;
-            }
-
-            QPushButton:hover {
-                color: #79c0ff;
-                text-decoration: underline;
-            }
-
-            QPushButton:pressed {
-                color: #1f6feb;
-            }
-        """)
-        self.already_registered_button.clicked.connect(self.add_server_no_register)
-        self.already_registered_button.setCursor(Qt.PointingHandCursor)
-
-        self.cancel_register = QPushButton("Cancel")
-        self.cancel_register.setStyleSheet(cancel_button_style)
-        self.cancel_register.clicked.connect(self.reset)
-        self.cancel_register.setFixedSize(110, 35)
-        self.cancel_register.setCursor(Qt.PointingHandCursor)
-
-        self.confirm_register = QPushButton("Confirm")
-        self.confirm_register.setStyleSheet(confirm_button_style)
-        self.confirm_register.clicked.connect(self.register_check_entries)
-        self.confirm_register.setFixedSize(110, 35)
-        self.confirm_register.setCursor(Qt.PointingHandCursor)
-
-        register_option_buttons_layout.addStretch()
-        register_option_buttons_layout.addWidget(self.cancel_register)
-        register_option_buttons_layout.addSpacing(10)
-        register_option_buttons_layout.addWidget(self.confirm_register)
-
-        register_layout.addWidget(register_label)
-        register_layout.addWidget(register_subtitle)
-        register_layout.addSpacing(10)
-        register_layout.addWidget(register_top_line)
-        register_layout.addSpacing(10)
-        register_layout.addWidget(username_label)
-        register_layout.addWidget(self.username_input)
-        register_layout.addSpacing(10)
-        register_layout.addWidget(password_label)
-        register_layout.addWidget(self.password_input)
-        register_layout.addSpacing(10)
-        register_layout.addWidget(self.already_registered_button)
-        register_layout.addSpacing(10)
-        register_layout.addStretch()
-        register_layout.addWidget(register_bot_line)
-        register_layout.addSpacing(10)
-        register_layout.addLayout(register_option_buttons_layout)
-        self.stacked.addWidget(self.register_page)
+        self.stacked.addWidget(self.register)
 
     def add_server_no_register(self):
         self.name = self.server_name_input.text()
@@ -244,7 +143,8 @@ class AddServerUi(QWidget):
         self.ip_address = self.ip_address_input.text()
 
         if self.name and self.ip_address:
-            self.stacked.setCurrentWidget(self.register_page)
+            self.stacked.setCurrentWidget(self.register)
+            self.register.send_ip_address(self.ip_address)
 
         else:
             QMessageBox.warning(
@@ -252,50 +152,9 @@ class AddServerUi(QWidget):
                 "Error",
                 "Please enter server name and IP address."
             )
-
-    def register_check_entries(self):
-        username = self.username_input.text()
-        password = self.password_input.text()
-
-        if username and password:
-            return_message = self.chat_handler.register(username, password, self.ip_address)
-
-            if return_message["type"] == "register" and return_message["status"] == "ok":
-                save_server_data(self.name, self.ip_address)
-                self.reset()
-
-            elif return_message["type"] == "register" and return_message["status"] == "fail":
-                QMessageBox.warning(
-                self,
-                "Error",
-                "Username already taken, try another one."
-                )
-            
-            elif return_message["type"] == "error":
-                QMessageBox.warning(
-                    self,
-                    "Error",
-                    return_message["message"]
-                )
-
-            else:
-                QMessageBox.warning(
-                self,
-                "Error",
-                f"Something went wrong, try again.\n {return_message}"
-                )
-
-        else:
-            QMessageBox.warning(
-                self,
-                "Error",
-                "Please enter username and password."
-            )
     
     def reset(self):
         self.stacked.setCurrentWidget(self.add_server_page)
         self.server_name_input.clear()
         self.ip_address_input.clear()
-        self.username_input.clear()
-        self.password_input.clear()
         self.on_cancel()

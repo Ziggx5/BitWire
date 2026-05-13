@@ -3,17 +3,21 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QPixmap, QPainter, QPainterPath
 import os
 from client_modules.path_finder import file_root
-from client_modules.data_manipulation import save_identity_data, pictures_file
+from client_modules.data_manipulation import pictures_file, save_server_data
+from client_modules.networking import ChatHandler
 
 class AddIdentityUi(QWidget):
-    def __init__(self, on_cancel):
+    def __init__(self, on_cancel, no_register):
         super().__init__()
 
         self.on_cancel = on_cancel
         self.rounded = None
         self.picture_path = file_root()
+        self.no_register = no_register
+        self.chat_handler = ChatHandler()
+        self.ip_address = ""
 
-        self.setFixedSize(500, 300)
+        self.setFixedSize(500, 350)
         self.setStyleSheet("background-color: transparent;")
 
         input_style = """
@@ -95,10 +99,42 @@ class AddIdentityUi(QWidget):
         password_label = QLabel("Password")
         password_label.setStyleSheet("color: #a5a8ad; font-size: 15px;")
         password_label.setFixedHeight(20)
+
         self.password_input = QLineEdit()
         self.password_input.setStyleSheet(input_style)
         self.password_input.setEchoMode(QLineEdit.Password)
         self.password_input.setPlaceholderText("Enter password")
+
+        repeat_password_label = QLabel("Repeat password")
+        repeat_password_label.setStyleSheet("color: #a5a8ad; font-size: 15px;")
+        repeat_password_label.setFixedHeight(20)
+
+        self.repeat_password_input = QLineEdit()
+        self.repeat_password_input.setStyleSheet(input_style)
+        self.repeat_password_input.setEchoMode(QLineEdit.Password)
+
+        self.already_registered_button = QPushButton("Already registered?")
+        self.already_registered_button.setFixedSize(200, 30)
+        self.already_registered_button.setStyleSheet("""
+            QPushButton {
+                background: #161b22;
+                color: #58a6ff;
+                border: none;
+                font-size: 13px;
+                text-align: left;
+            }
+
+            QPushButton:hover {
+                color: #79c0ff;
+                text-decoration: underline;
+            }
+
+            QPushButton:pressed {
+                color: #1f6feb;
+            }
+        """)
+        self.already_registered_button.clicked.connect(self.no_register)
+        self.already_registered_button.setCursor(Qt.PointingHandCursor)
 
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.setFixedSize(110, 35)
@@ -119,7 +155,7 @@ class AddIdentityUi(QWidget):
         self.confirm_button = QPushButton("Confirm")
         self.confirm_button.setFixedSize(110, 35)
         self.confirm_button.setCursor(Qt.PointingHandCursor)
-        self.confirm_button.clicked.connect(self.save_identity)
+        self.confirm_button.clicked.connect(self.register_check_entries)
         self.confirm_button.setStyleSheet("""
             QPushButton {
                 background-color: #175723;
@@ -133,22 +169,6 @@ class AddIdentityUi(QWidget):
             }
         """)
 
-        self.all_identities_button = QPushButton("Identities")
-        self.all_identities_button.setFixedSize(110, 35)
-        self.all_identities_button.setCursor(Qt.PointingHandCursor)
-        self.all_identities_button.setStyleSheet("""
-            QPushButton {
-            background-color: #1f6feb;
-            font-weight: 600;
-            border-radius: 5px;
-            border: 1px solid #30363d;
-            }
-
-            QPushButton:hover {
-            background-color: #388bfd;
-            }
-        """)
-
         add_identity_left_layout.addWidget(self.profile_picture_widget)
 
         add_identity_right_layout.addWidget(title)
@@ -156,13 +176,15 @@ class AddIdentityUi(QWidget):
         add_identity_right_layout.addWidget(self.username_input)
         add_identity_right_layout.addWidget(password_label)
         add_identity_right_layout.addWidget(self.password_input)
+        add_identity_right_layout.addWidget(repeat_password_label)
+        add_identity_right_layout.addWidget(self.repeat_password_input)
 
         add_identity_upper_layout.addLayout(add_identity_left_layout)
         add_identity_upper_layout.addSpacing(30)
         add_identity_upper_layout.addLayout(add_identity_right_layout)
 
         add_identity_lower_layout.addStretch()
-        add_identity_lower_layout.addWidget(self.all_identities_button)
+        add_identity_lower_layout.addWidget(self.already_registered_button)
         add_identity_lower_layout.addSpacing(10)
         add_identity_lower_layout.addWidget(self.cancel_button)
         add_identity_lower_layout.addSpacing(10)
@@ -215,3 +237,47 @@ class AddIdentityUi(QWidget):
                 "Error",
                 "Please enter username, password and profile picture."
             )
+    
+    def register_check_entries(self):
+        print(self.ip_address)
+        username = self.username_input.text()
+        password = self.password_input.text()
+        repeat_password = self.repeat_password_input.text()
+
+        if username and password and repeat_password:
+            return_message = self.chat_handler.register(username, password, self.ip_address)
+
+            if return_message["type"] == "register" and return_message["status"] == "ok":
+                save_server_data(self.name, self.ip_address)
+                self.reset()
+
+            elif return_message["type"] == "register" and return_message["status"] == "fail":
+                QMessageBox.warning(
+                self,
+                "Error",
+                "Username already taken, try another one."
+                )
+            
+            elif return_message["type"] == "error":
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    return_message["message"]
+                )
+
+            else:
+                QMessageBox.warning(
+                self,
+                "Error",
+                f"Something went wrong, try again.\n {return_message}"
+                )
+
+        else:
+            QMessageBox.warning(
+                self,
+                "Error",
+                "Please enter data."
+            )
+
+    def send_ip_address(self, ip_address):
+        self.ip_address = ip_address

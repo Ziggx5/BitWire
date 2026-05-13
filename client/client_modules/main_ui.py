@@ -42,7 +42,6 @@ class MainUi(QWidget):
         self.chat_handler.users_received.connect(self.add_users)
         self.chat_handler.server_status.connect(self.server_close_message)
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
-        self.identity_window = AddIdentityUi(self.identity_window_show_main_ui)
         self.tray = TrayManager(self)
         self.image_path = file_root()
         self.update_checker = UpdateChecker()
@@ -68,7 +67,6 @@ class MainUi(QWidget):
         self.overlay_layout.addWidget(popup_background_container, alignment = Qt.AlignCenter)
 
         self.add_server_window.hide()
-        self.identity_window.hide()
 
         main_root_layout = QHBoxLayout(self)
         main_root_layout.setSpacing(0)
@@ -446,10 +444,6 @@ class MainUi(QWidget):
         self.server_address = item.ip
         delete_server(self.server_address)
         self.reload_servers()
-
-    def identity_window_show_main_ui(self):
-        self.identity_window.hide()
-        self.overlay.hide()
 
     def show_popup(self, widget):
         while self.popup_background_container_layout.count():
