@@ -7,7 +7,6 @@ from client_modules.networking import ChatHandler
 from client_modules.tray_manager import TrayManager
 from client_modules.path_finder import file_root
 from client_modules.login_ui import Login
-from client_modules.identity_ui import AddIdentityUi
 from client_modules.update_checker import UpdateChecker
 
 class MainUi(QWidget):
@@ -148,28 +147,6 @@ class MainUi(QWidget):
 
         self.username_label = QLabel("User")
 
-        self.new_user_button = QPushButton()
-        self.new_user_button.setFixedSize(30, 30)
-        self.new_user_button.setStyleSheet("""
-            QPushButton {
-                background-color: transparent;
-                border: none;
-                border-radius: 6px;
-            }
-
-            QPushButton:hover {
-                background-color: rgba(255, 255, 255, 0.08)
-            }
-
-            QPushButton:pressed {
-                background-color: rgba(255, 255, 255, 0.15)
-            }
-        """)
-        self.new_user_button.clicked.connect(lambda: self.show_popup(self.identity_window))
-        self.new_user_button.setIcon(QIcon(f"{self.image_path}/identity.png"))
-        self.new_user_button.setIconSize(QSize(30, 30))
-        self.new_user_button.setCursor(Qt.PointingHandCursor)
-
         self.settings_button = QPushButton()
         self.settings_button.setIcon(QIcon(f"{self.image_path}/settings.png"))
         self.settings_button.setStyleSheet("""
@@ -224,7 +201,6 @@ class MainUi(QWidget):
         self.user_frame_layout.addWidget(self.user_picture)
         self.user_frame_layout.addWidget(self.username_label)
         self.user_frame_layout.addWidget(self.update_client_button)
-        self.user_frame_layout.addWidget(self.new_user_button)
         self.user_frame_layout.addWidget(self.settings_button)
 
         left_container.addWidget(logo_frame)

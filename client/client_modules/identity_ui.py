@@ -7,10 +7,11 @@ from client_modules.data_manipulation import pictures_file, save_server_data
 from client_modules.networking import ChatHandler
 
 class AddIdentityUi(QWidget):
-    def __init__(self, on_cancel, no_register):
+    def __init__(self, on_cancel, no_register, on_confirm):
         super().__init__()
 
         self.on_cancel = on_cancel
+        self.on_confirm = on_confirm
         self.rounded = None
         self.picture_path = file_root()
         self.no_register = no_register
@@ -78,7 +79,7 @@ class AddIdentityUi(QWidget):
         profile_picture_layout.addWidget(self.profile_picture)
         profile_picture_layout.addWidget(self.profile_picture_subtitle)
 
-        title = QLabel("Add new identity")
+        title = QLabel("Create account")
         title.setStyleSheet("""
             QLabel {
                 color: #e6edf3;
@@ -112,6 +113,7 @@ class AddIdentityUi(QWidget):
         self.repeat_password_input = QLineEdit()
         self.repeat_password_input.setStyleSheet(input_style)
         self.repeat_password_input.setEchoMode(QLineEdit.Password)
+        self.repeat_password_input.setPlaceholderText("Repeat password")
 
         self.already_registered_button = QPushButton("Already registered?")
         self.already_registered_button.setFixedSize(200, 30)
@@ -220,23 +222,6 @@ class AddIdentityUi(QWidget):
             self.profile_picture.setPixmap(self.rounded)
             self.profile_picture.setScaledContents(True)
             self.profile_picture_subtitle.hide()
-
-    def save_identity(self):
-        profile_pictures_folder_path = pictures_file()
-        username = self.username_input.text().strip()
-        password = self.password_input.text().strip()
-        profile_picture = self.rounded
-        
-        if username and password and profile_picture:
-            profile_picture_path = os.path.join(profile_pictures_folder_path, f"{username}.png")
-            profile_picture.save(profile_picture_path)
-            save_identity_data(username, password, profile_picture_path)
-        else:
-            QMessageBox.warning(
-                self,
-                "Error",
-                "Please enter username, password and profile picture."
-            )
     
     def register_check_entries(self):
         print(self.ip_address)
@@ -245,24 +230,25 @@ class AddIdentityUi(QWidget):
         repeat_password = self.repeat_password_input.text()
 
         if username and password and repeat_password:
+            if password != repeat_password:
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    "Passwords do not match."
+                )
+                return
+
             return_message = self.chat_handler.register(username, password, self.ip_address)
 
             if return_message["type"] == "register" and return_message["status"] == "ok":
                 save_server_data(self.name, self.ip_address)
-                self.reset()
+                self.on_confirm()
 
             elif return_message["type"] == "register" and return_message["status"] == "fail":
                 QMessageBox.warning(
-                self,
-                "Error",
-                "Username already taken, try another one."
-                )
-            
-            elif return_message["type"] == "error":
-                QMessageBox.warning(
                     self,
                     "Error",
-                    return_message["message"]
+                    "Username already taken, try another one."
                 )
 
             else:
@@ -276,8 +262,9 @@ class AddIdentityUi(QWidget):
             QMessageBox.warning(
                 self,
                 "Error",
-                "Please enter data."
+                "Please fill in all fields."
             )
 
-    def send_ip_address(self, ip_address):
+    def send_ip_address(self, ip_address, name):
         self.ip_address = ip_address
+        self.name = name

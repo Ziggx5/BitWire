@@ -12,7 +12,7 @@ class AddServerUi(QWidget):
         self.setStyleSheet("background-color: transparent;")
         self.on_cancel = on_cancel
         self.stacked = QStackedLayout(self)
-        self.register = AddIdentityUi(self.reset, self.add_server_no_register)
+        self.register = AddIdentityUi(self.reset, self.add_server_no_register, self.reset)
 
         self.add_server_page = QWidget()
         add_server_layout = QVBoxLayout(self.add_server_page)
@@ -144,7 +144,7 @@ class AddServerUi(QWidget):
 
         if self.name and self.ip_address:
             self.stacked.setCurrentWidget(self.register)
-            self.register.send_ip_address(self.ip_address)
+            self.register.send_ip_address(self.ip_address, self.name)
 
         else:
             QMessageBox.warning(
