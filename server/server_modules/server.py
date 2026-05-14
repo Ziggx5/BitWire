@@ -7,7 +7,7 @@ import time
 import os
 import base64
 from datetime import datetime
-from server_modules.data_manipulation import files_check, database_files
+from server_modules.data_manipulation import files_check, database_files, profile_pictures_file
 from PySide6.QtCore import Signal, QObject
 import bcrypt
 
@@ -45,6 +45,7 @@ class ChatServer(QObject):
 
         self.load_files()
         self.users_database_path, self.messages_database_path = database_files()
+        self.profile_pictures_path = profile_pictures_file()
 
     def load_files(self):
         for file_path in files_check():
@@ -90,7 +91,9 @@ class ChatServer(QObject):
 
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
         decode_profile_picture = base64.b64decode(profile_picture)
-        print("dela")
+
+        with open (f"{self.profile_pictures_path}/me.jpg", "wb") as f:
+            f.write(decode_profile_picture)
 
         try:
             cursor.execute(

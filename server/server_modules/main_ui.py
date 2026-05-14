@@ -2,7 +2,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 import threading
-from server_modules.data_manipulation import local_data_file, copy_to_data_dir, files_check
+from server_modules.data_manipulation import local_data_file, files_check
 from server_modules.server import ChatServer
 from server_modules.system_tray import TrayManager
 from server_modules.load_assets import file_root

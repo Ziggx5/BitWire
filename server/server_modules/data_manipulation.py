@@ -1,6 +1,5 @@
 from platformdirs import user_data_dir
 import os
-import shutil
 import json
 
 def local_data_file():
@@ -9,17 +8,6 @@ def local_data_file():
     os.makedirs(data_dir, exist_ok = True)
 
     return data_dir
-
-def copy_to_data_dir(file_path):
-    if file_path:
-        data_file_path = local_data_file()
-        file_name = os.path.basename(file_path)
-        destination_path = os.path.join(data_file_path, file_name)
-
-        if not os.path.exists(destination_path):
-            shutil.copy(file_path, destination_path)
-
-        return destination_path
 
 def database_files():
     data_dir = local_data_file()
@@ -39,3 +27,10 @@ def files_check():
         files.append(file_path)
     
     return files
+
+def profile_pictures_file():
+    data_dir = local_data_file()
+    path = f"{data_dir}/profile_pictures"
+    os.makedirs(path, exist_ok = True)
+
+    return path
