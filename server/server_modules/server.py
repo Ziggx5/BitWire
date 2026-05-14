@@ -5,6 +5,7 @@ import ssl
 import sqlite3
 import time
 import os
+import base64
 from datetime import datetime
 from server_modules.data_manipulation import files_check, database_files
 from PySide6.QtCore import Signal, QObject
@@ -83,11 +84,13 @@ class ChatServer(QObject):
         conn.commit()
         conn.close()
 
-    def register_user(self, username, password):
+    def register_user(self, username, password, profile_picture):
         conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
 
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+        decode_profile_picture = base64.b64decode(profile_picture)
+        print("dela")
 
         try:
             cursor.execute(
@@ -130,11 +133,12 @@ class ChatServer(QObject):
         if message_type == "register":
             username = data.get("username")
             password = data.get("password")
+            profile_picture = data.get("profile_picture")
 
             if not isinstance(username, str) or not isinstance(password, str):
                 return
 
-            if self.register_user(username, password):
+            if self.register_user(username, password, profile_picture):
                 client.send({"type": "register", "status": "ok"})
                 self.send_users_list_all_clients()
 

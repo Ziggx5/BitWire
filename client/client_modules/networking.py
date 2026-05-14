@@ -71,15 +71,17 @@ class ChatHandler(QObject):
         except:
             self.handle_disconnect()
 
-    def register(self, username, password, ip_address):
+    def register(self, username, password, ip_address, encoded_profile_picture):
         try:
             self.connect(ip_address)
             self.send_json_message({
                 "type": "register",
                 "username": username,
-                "password": password
+                "password": password,
+                "profile_picture": encoded_profile_picture
             })
             response = json.loads(self.client.recv(1024).decode("utf-8"))
+            
         except Exception as e:
             self.handle_disconnect()
             return {"type": "error", "message": str(e)}

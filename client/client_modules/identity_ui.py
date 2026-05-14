@@ -2,8 +2,9 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QPixmap, QPainter, QPainterPath
 import os
+import base64
 from client_modules.path_finder import file_root
-from client_modules.data_manipulation import pictures_file, save_server_data
+from client_modules.data_manipulation import save_server_data
 from client_modules.networking import ChatHandler
 
 class AddIdentityUi(QWidget):
@@ -222,9 +223,13 @@ class AddIdentityUi(QWidget):
             self.profile_picture.setPixmap(self.rounded)
             self.profile_picture.setScaledContents(True)
             self.profile_picture_subtitle.hide()
+
+            with open (file_path, "rb") as f:
+                image_bytes = f.read()
+
+            self.encoded_profile_picture = base64.b64encode(image_bytes).decode("utf-8")
     
     def register_check_entries(self):
-        print(self.ip_address)
         username = self.username_input.text()
         password = self.password_input.text()
         repeat_password = self.repeat_password_input.text()
@@ -238,7 +243,7 @@ class AddIdentityUi(QWidget):
                 )
                 return
 
-            return_message = self.chat_handler.register(username, password, self.ip_address)
+            return_message = self.chat_handler.register(username, password, self.ip_address, self.encoded_profile_picture)
 
             if return_message["type"] == "register" and return_message["status"] == "ok":
                 save_server_data(self.name, self.ip_address)
@@ -249,6 +254,13 @@ class AddIdentityUi(QWidget):
                     self,
                     "Error",
                     "Username already taken, try another one."
+                )
+
+            elif return_message["type"] == "error":
+                QMessageBox.warning(
+                    self,
+                    "Error",
+                    return_message["message"]
                 )
 
             else:
