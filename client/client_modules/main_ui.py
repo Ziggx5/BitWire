@@ -40,11 +40,13 @@ class MainUi(QWidget):
         self.chat_handler.message_received.connect(self.client_display_message)
         self.chat_handler.users_received.connect(self.add_users)
         self.chat_handler.server_status.connect(self.server_close_message)
+        self.chat_handler.profile_picture_received.connect(self.update_profile_picture)
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
         self.tray = TrayManager(self)
         self.image_path = file_root()
         self.update_checker = UpdateChecker()
         self.update_checker.update_found.connect(self.update_button_updater)
+        self.user_widgets = []
 
         self.overlay = QWidget(self)
         self.overlay.setStyleSheet("background-color: rgba(0, 0, 0, 150);")
@@ -441,13 +443,16 @@ class MainUi(QWidget):
                 widget.deleteLater()
                 
         for user in users:
-            self.chat_handler.get_profile_pictures(user['username'])
             if user['status']:
                 user_widget = UserWidget(user['username'], f"{self.image_path}/user_picture_placeholder.png", "Online")
             else:
                 user_widget = UserWidget(user['username'], f"{self.image_path}/user_picture_placeholder.png", "Offline")
 
             self.all_users_layout.addWidget(user_widget)
+
+            self.user_widgets.append(user_widget.username)
+
+            self.chat_handler.get_profile_pictures(user_widget.username)
     
     def eventFilter(self, obj, event):
         if obj == self.message_input and event.type() == QEvent.KeyPress:
@@ -479,6 +484,9 @@ class MainUi(QWidget):
     def update_button_updater(self, update):
         if update:
             self.update_client_button.setVisible(True)
+
+    def update_profile_picture(self, profile_picture):
+        print(profile_picture)
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
@@ -619,6 +627,8 @@ class UserWidget(QWidget):
     def __init__(self, username, image, status):
         super().__init__()
 
+        self.username = username
+
         self.setObjectName("userwidget")
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -661,7 +671,7 @@ class UserWidget(QWidget):
 
         icon.setPixmap(pixmap)
 
-        username_label = QLabel(username)
+        username_label = QLabel(self.username)
         username_label.setStyleSheet("font-size: 15px; border: none;")
 
         status_label = QLabel(status)
@@ -671,3 +681,6 @@ class UserWidget(QWidget):
 
         main_layout.addWidget(icon)
         main_layout.addLayout(text_layout)
+
+    def set_profile_picture(self):
+        pass

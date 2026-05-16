@@ -8,6 +8,7 @@ class ChatHandler(QObject):
     message_received = Signal(str, str, str)
     users_received = Signal(list)
     server_status = Signal(str)
+    profile_picture_received = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -44,8 +45,6 @@ class ChatHandler(QObject):
                     elif message['type'] == "users_list":
                         users = message['content']
                         self.users_received.emit(users)
-                        for user in users:
-                            print(user)
                         
                     elif message['type'] == "server_status":
                         self.server_status.emit(message['status'])
@@ -59,9 +58,7 @@ class ChatHandler(QObject):
                             self.message_received.emit(content['user'], content['content'], content['time'])
                     
                     elif message['type'] == "profile_picture":
-                        print("yo")
-                        print(f"{message['content']}")
-
+                        self.profile_picture_received.emit(message['content'])
 
             except socket.timeout:
                 continue

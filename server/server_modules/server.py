@@ -160,7 +160,6 @@ class ChatServer(QObject):
                 client.username = username
                 client.send({"type": "login", "status": "ok"})
                 self.add_client(client)
-                #self.send_users_list(client)
                 self.send_users_list_all_clients()
                 self.send_message_history(client)
             else:
@@ -193,7 +192,7 @@ class ChatServer(QObject):
 
         elif message_type == "get_profile_picture":
             username = data.get("username")
-            self.send_profile_picture(username)
+            self.send_profile_picture(username, client)
 
         else:
             self.remove_client(client)
@@ -310,27 +309,6 @@ class ChatServer(QObject):
                 except:
                     self.clients.remove(client)
 
-    def send_users_list(self, client):
-        conn = sqlite3.connect(self.users_database_path)
-        cursor = conn.cursor()
-        online_users = []
-        users = []
-
-        try:
-            cursor.execute("SELECT username FROM users")
-            result = cursor.fetchall()
-
-            for client in self.clients:
-                if client.username:
-                    online_users.append(client.username)
-                        
-            for (user,) in result:
-                users.append({"username": user, "status": user in online_users})
-            
-            client.send({"type": "users_list", "content": users})
-        finally:
-            conn.close()
-
     def send_users_list_all_clients(self):
         conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
@@ -408,8 +386,7 @@ class ChatServer(QObject):
 
         client.send({"type": "message_history", "content": messages})
 
-    def send_profile_picture(self, username):
-        print(username)
+    def send_profile_picture(self, username, client):
         conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
 
@@ -419,6 +396,9 @@ class ChatServer(QObject):
 
         result = cursor.fetchone()
 
-        print(result)
+        with open (result[0], "rb") as f:
+            image_bytes = f.read()
+            
+        encoded_image_bytes = base64.b64encode(image_bytes).decode("utf-8")
 
-        #return {"type": "profile_picture", "content": result}
+        client.send({"type": "profile_picture", "content": encoded_image_bytes})
