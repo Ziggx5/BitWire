@@ -64,7 +64,8 @@ class ChatServer(QObject):
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT UNIQUE,
-                password TEXT
+                password TEXT,
+                profile_picture TEXT
             )
         """)
         conn.commit()
@@ -91,14 +92,14 @@ class ChatServer(QObject):
 
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
         decode_profile_picture = base64.b64decode(profile_picture)
-
-        with open (f"{self.profile_pictures_path}/me.jpg", "wb") as f:
+        image_path = f"{self.profile_pictures_path}/{username}.jpg"
+        with open (image_path, "wb") as f:
             f.write(decode_profile_picture)
 
         try:
             cursor.execute(
-                "INSERT INTO users (username, password) VALUES (?, ?)",
-                (username, hashed_password)
+                "INSERT INTO users (username, password, profile_picture) VALUES (?, ?, ?)",
+                (username, hashed_password, image_path)
             )
             conn.commit()
             return True
@@ -159,7 +160,7 @@ class ChatServer(QObject):
                 client.username = username
                 client.send({"type": "login", "status": "ok"})
                 self.add_client(client)
-                self.send_users_list(client)
+                #self.send_users_list(client)
                 self.send_users_list_all_clients()
                 self.send_message_history(client)
             else:
@@ -189,6 +190,10 @@ class ChatServer(QObject):
 
         elif message_type == "pong":
             client.last_pong = time.time()
+
+        elif message_type == "get_profile_picture":
+            username = data.get("username")
+            self.send_profile_picture(username)
 
         else:
             self.remove_client(client)
@@ -402,3 +407,18 @@ class ChatServer(QObject):
             messages.append({"user": message[0], "content": message[1], "time": message[2]})
 
         client.send({"type": "message_history", "content": messages})
+
+    def send_profile_picture(self, username):
+        print(username)
+        conn = sqlite3.connect(self.users_database_path)
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT profile_picture FROM users WHERE username = ?
+        """, (username,))
+
+        result = cursor.fetchone()
+
+        print(result)
+
+        #return {"type": "profile_picture", "content": result}

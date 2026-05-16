@@ -44,6 +44,8 @@ class ChatHandler(QObject):
                     elif message['type'] == "users_list":
                         users = message['content']
                         self.users_received.emit(users)
+                        for user in users:
+                            print(user)
                         
                     elif message['type'] == "server_status":
                         self.server_status.emit(message['status'])
@@ -55,6 +57,11 @@ class ChatHandler(QObject):
                     elif message['type'] == "message_history":
                         for content in message['content']:
                             self.message_received.emit(content['user'], content['content'], content['time'])
+                    
+                    elif message['type'] == "profile_picture":
+                        print("yo")
+                        print(f"{message['content']}")
+
 
             except socket.timeout:
                 continue
@@ -136,3 +143,6 @@ class ChatHandler(QObject):
             pass
 
         self.client = None
+
+    def get_profile_pictures(self, username):
+        self.send_json_message({"type": "get_profile_picture", "username": username})

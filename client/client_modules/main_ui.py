@@ -441,6 +441,7 @@ class MainUi(QWidget):
                 widget.deleteLater()
                 
         for user in users:
+            self.chat_handler.get_profile_pictures(user['username'])
             if user['status']:
                 user_widget = UserWidget(user['username'], f"{self.image_path}/user_picture_placeholder.png", "Online")
             else:
