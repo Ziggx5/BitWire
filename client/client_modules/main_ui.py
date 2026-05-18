@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+import base64
 from client_modules.add_server_ui import AddServerUi
 from client_modules.data_manipulation import delete_server, server_loader
 from client_modules.networking import ChatHandler
@@ -46,7 +47,7 @@ class MainUi(QWidget):
         self.image_path = file_root()
         self.update_checker = UpdateChecker()
         self.update_checker.update_found.connect(self.update_button_updater)
-        self.user_widgets = []
+        self.user_widgets = {}
 
         self.overlay = QWidget(self)
         self.overlay.setStyleSheet("background-color: rgba(0, 0, 0, 150);")
@@ -450,7 +451,7 @@ class MainUi(QWidget):
 
             self.all_users_layout.addWidget(user_widget)
 
-            self.user_widgets.append(user_widget.username)
+            self.user_widgets[user['username']] = user_widget
 
             self.chat_handler.get_profile_pictures(user_widget.username)
     
@@ -485,8 +486,18 @@ class MainUi(QWidget):
         if update:
             self.update_client_button.setVisible(True)
 
-    def update_profile_picture(self, profile_picture):
-        print(profile_picture)
+    def update_profile_picture(self, username, profile_picture):
+        decoded_image_bytes = base64.b64decode(profile_picture)
+        
+        pixmap = QPixmap()
+        pixmap.loadFromData(decoded_image_bytes)
+        
+        picture = pixmap.scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
+
+        widget = self.user_widgets.get(username)
+
+        if widget:
+            widget.set_profile_picture(picture)
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
@@ -653,9 +664,9 @@ class UserWidget(QWidget):
         text_layout = QVBoxLayout()
         text_layout.setSpacing(0)
 
-        icon = QLabel("icon")
-        icon.setStyleSheet("background-color: white; border-radius: 15px; border: none;")
-        icon.setFixedSize(30, 30)
+        self.icon = QLabel("icon")
+        self.icon.setStyleSheet("background-color: white; border-radius: 15px; border: none;")
+        self.icon.setFixedSize(30, 30)
 
         pixmap = QPixmap(image).scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
         mask = QBitmap(30, 30)
@@ -669,7 +680,7 @@ class UserWidget(QWidget):
 
         pixmap.setMask(mask)
 
-        icon.setPixmap(pixmap)
+        self.icon.setPixmap(pixmap)
 
         username_label = QLabel(self.username)
         username_label.setStyleSheet("font-size: 15px; border: none;")
@@ -679,8 +690,8 @@ class UserWidget(QWidget):
         text_layout.addWidget(username_label)
         text_layout.addWidget(status_label)
 
-        main_layout.addWidget(icon)
+        main_layout.addWidget(self.icon)
         main_layout.addLayout(text_layout)
 
-    def set_profile_picture(self):
-        pass
+    def set_profile_picture(self, image):
+        self.icon.setPixmap(image)

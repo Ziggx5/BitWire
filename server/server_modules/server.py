@@ -401,4 +401,4 @@ class ChatServer(QObject):
             
         encoded_image_bytes = base64.b64encode(image_bytes).decode("utf-8")
 
-        client.send({"type": "profile_picture", "content": encoded_image_bytes})
+        client.send({"type": "profile_picture", "username": username, "content": encoded_image_bytes})

@@ -8,7 +8,7 @@ class ChatHandler(QObject):
     message_received = Signal(str, str, str)
     users_received = Signal(list)
     server_status = Signal(str)
-    profile_picture_received = Signal(str)
+    profile_picture_received = Signal(str, str)
 
     def __init__(self):
         super().__init__()
@@ -58,8 +58,8 @@ class ChatHandler(QObject):
                             self.message_received.emit(content['user'], content['content'], content['time'])
                     
                     elif message['type'] == "profile_picture":
-                        self.profile_picture_received.emit(message['content'])
-
+                        self.profile_picture_received.emit(message['username'], message['content'])
+                        
             except socket.timeout:
                 continue
             except Exception as e:
