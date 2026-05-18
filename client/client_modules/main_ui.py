@@ -38,15 +38,17 @@ class MainUi(QWidget):
 
         self.add_server_window = AddServerUi(self.add_server_window_show_main_ui)
         self.chat_handler = ChatHandler()
+        self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
+        self.tray = TrayManager(self)
+        self.update_checker = UpdateChecker()
+
         self.chat_handler.message_received.connect(self.client_display_message)
         self.chat_handler.users_received.connect(self.add_users)
         self.chat_handler.server_status.connect(self.server_close_message)
         self.chat_handler.profile_picture_received.connect(self.update_profile_picture)
-        self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
-        self.tray = TrayManager(self)
-        self.image_path = file_root()
-        self.update_checker = UpdateChecker()
         self.update_checker.update_found.connect(self.update_button_updater)
+
+        self.image_path = file_root()
         self.user_widgets = {}
 
         self.overlay = QWidget(self)
@@ -67,8 +69,6 @@ class MainUi(QWidget):
         self.popup_background_container_layout = QVBoxLayout(popup_background_container)
 
         self.overlay_layout.addWidget(popup_background_container, alignment = Qt.AlignCenter)
-
-        self.add_server_window.hide()
 
         main_root_layout = QHBoxLayout(self)
         main_root_layout.setSpacing(0)
@@ -184,6 +184,7 @@ class MainUi(QWidget):
         self.update_client_button.setIcon(QIcon(f"{self.image_path}/update.png"))
         self.update_client_button.setIconSize(QSize(18, 18))
         self.update_client_button.setVisible(False)
+        self.update_client_button.clicked.connect(lambda: self.show_popup(self.update_checker))
         self.update_client_button.setStyleSheet("""
             QPushButton {
                 background-color: #f59e0b;

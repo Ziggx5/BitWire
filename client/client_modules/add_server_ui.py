@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import *
-from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QFont
+from PySide6.QtCore import *
+from PySide6.QtGui import *
 from client_modules.data_manipulation import save_server_data
 from client_modules.identity_ui import AddIdentityUi
 
