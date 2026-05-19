@@ -36,11 +36,12 @@ class MainUi(QWidget):
         """)
         self.showMaximized()
 
+        self.image_path = file_root()
         self.add_server_window = AddServerUi(self.add_server_window_show_main_ui)
         self.chat_handler = ChatHandler()
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
         self.tray = TrayManager(self)
-        self.update_checker = UpdateChecker()
+        self.update_checker = UpdateChecker(self.image_path)
 
         self.chat_handler.message_received.connect(self.client_display_message)
         self.chat_handler.users_received.connect(self.add_users)
@@ -48,7 +49,6 @@ class MainUi(QWidget):
         self.chat_handler.profile_picture_received.connect(self.update_profile_picture)
         self.update_checker.update_found.connect(self.update_button_updater)
 
-        self.image_path = file_root()
         self.user_widgets = {}
 
         self.overlay = QWidget(self)
