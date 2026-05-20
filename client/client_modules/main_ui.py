@@ -41,7 +41,7 @@ class MainUi(QWidget):
         self.chat_handler = ChatHandler()
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
         self.tray = TrayManager(self)
-        self.update_checker = UpdateChecker(self.image_path)
+        self.update_checker = UpdateChecker(self.image_path, self.update_window_show_main_ui)
 
         self.chat_handler.message_received.connect(self.client_display_message)
         self.chat_handler.users_received.connect(self.add_users)
@@ -224,6 +224,10 @@ class MainUi(QWidget):
         self.login_server_window.hide()
         self.overlay.hide()
         self.reload_servers()
+    
+    def update_window_show_main_ui(self):
+        self.update_checker.hide()
+        self.overlay.hide()
 
     def reload_servers(self):
         while self.server_layout.count():
