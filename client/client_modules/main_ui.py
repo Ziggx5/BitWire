@@ -698,5 +698,18 @@ class UserWidget(QWidget):
         main_layout.addWidget(self.icon)
         main_layout.addLayout(text_layout)
 
-    def set_profile_picture(self, image):
-        self.icon.setPixmap(image)
+    def set_profile_picture(self, pixmap):
+        result = QPixmap(30, 30)
+        result.fill(Qt.GlobalColor.transparent)
+
+        painter = QPainter(result)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        path = QPainterPath()
+        path.addEllipse(0, 0, 30, 30)
+
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, pixmap)
+        painter.end()
+
+        self.icon.setPixmap(result)

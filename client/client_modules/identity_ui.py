@@ -18,6 +18,7 @@ class AddIdentityUi(QWidget):
         self.no_register = no_register
         self.chat_handler = ChatHandler()
         self.ip_address = ""
+        self.encoded_profile_picture = None
 
         self.setFixedSize(500, 350)
         self.setStyleSheet("background-color: transparent;")
@@ -234,7 +235,7 @@ class AddIdentityUi(QWidget):
         password = self.password_input.text()
         repeat_password = self.repeat_password_input.text()
 
-        if username and password and repeat_password:
+        if username and password and repeat_password and self.encoded_profile_picture:
             if password != repeat_password:
                 QMessageBox.warning(
                     self,
