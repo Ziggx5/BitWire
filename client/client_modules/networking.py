@@ -3,6 +3,7 @@ import threading
 import json
 import ssl
 from PySide6.QtCore import QObject, Signal
+import struct
 
 class ChatHandler(QObject):
     message_received = Signal(str, str, str)
@@ -25,40 +26,68 @@ class ChatHandler(QObject):
         tls_socket.connect((ip_address, port))
         self.client = tls_socket
 
+    def recvall(self, length):
+        data = b""
+
+        while len(data) < length:
+            packet = self.client.recv(length - len(data))
+
+            if not packet:
+                return None
+            
+            data += packet
+        
+        return data
+
+    def receive_json_message(self):
+        raw_length = self.recvall(4)
+
+        if not raw_length:
+            return None
+
+        length = struct.unpack("!I", raw_length)[0]
+
+        data = self.recvall(length)
+
+        if not data:
+            return None
+
+        return json.loads(data.decode("utf-8"))
+
+
     def receive_messages(self):
-        buffer = ""
         while self.running:
             try:
-                buffer += self.client.recv(1024).decode("utf-8")
-                while "\n" in buffer:
-                    line, buffer = buffer.split("\n", 1)
-                    if not line.strip():
-                        continue
-                    message = json.loads(line)
+                message = self.receive_json_message()
+
+                if not message:
+                    break
+
+                print(message)
                     
-                    if message['type'] == "message":
-                        username = message['user']
-                        content = message['content']
-                        time = message['time']
-                        self.message_received.emit(username, content, time)
+                if message['type'] == "message":
+                    username = message['user']
+                    content = message['content']
+                    time = message['time']
+                    self.message_received.emit(username, content, time)
                     
-                    elif message['type'] == "users_list":
-                        users = message['content']
-                        self.users_received.emit(users)
+                elif message['type'] == "users_list":
+                    users = message['content']
+                    self.users_received.emit(users)
                         
-                    elif message['type'] == "server_status":
-                        self.server_status.emit(message['status'])
-                        self.handle_disconnect()
+                elif message['type'] == "server_status":
+                    self.server_status.emit(message['status'])
+                    self.handle_disconnect()
                     
-                    elif message['type'] == "ping":
-                        self.send_json_message({"type": "pong"})
+                elif message['type'] == "ping":
+                    self.send_json_message({"type": "pong"})
                     
-                    elif message['type'] == "message_history":
-                        for content in message['content']:
-                            self.message_received.emit(content['user'], content['content'], content['time'])
+                elif message['type'] == "message_history":
+                    for content in message['content']:
+                        self.message_received.emit(content['user'], content['content'], content['time'])
                     
-                    elif message['type'] == "profile_picture":
-                        self.profile_picture_received.emit(message['username'], message['content'])
+                elif message['type'] == "profile_picture":
+                    self.profile_picture_received.emit(message['username'], message['content'])
                         
             except socket.timeout:
                 continue
@@ -71,7 +100,9 @@ class ChatHandler(QObject):
         if not self.client:
             return
         try:
-            self.client.send((json.dumps(message) + "\n").encode("utf-8"))
+            data = json.dumps(message).encode("utf-8")
+            length = struct.pack("!I", len(data))
+            self.client.sendall(length + data)
         except:
             self.handle_disconnect()
 
@@ -84,7 +115,7 @@ class ChatHandler(QObject):
                 "password": password,
                 "profile_picture": encoded_profile_picture
             })
-            response = json.loads(self.client.recv(1024).decode("utf-8"))
+            response = self.receive_json_message()
             
         except Exception as e:
             self.handle_disconnect()
@@ -101,7 +132,7 @@ class ChatHandler(QObject):
                 "username": username,
                 "password": password
             })
-            response = json.loads(self.client.recv(1024).decode("utf-8"))
+            response = self.receive_json_message()
             
             if response["status"] == "ok":
                 self.running = True

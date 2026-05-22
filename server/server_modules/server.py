@@ -10,6 +10,7 @@ from datetime import datetime
 from server_modules.data_manipulation import files_check, database_files, profile_pictures_file
 from PySide6.QtCore import Signal, QObject
 import bcrypt
+import struct
 
 class Client:
     def __init__(self, conn, address):
@@ -18,10 +19,40 @@ class Client:
         self.username = None
         self.buffer = ""
         self.last_pong = None
+
+    def recvall(self, length):
+        data = b""
+
+        while len(data) < length:
+            packet = self.conn.recv(length - len(data))
+
+            if not packet:
+                return None
+            
+            data += packet
+        
+        return data
+
+    def receive_json_message(self):
+        raw_length = self.recvall(4)
+
+        if not raw_length:
+            return None
+
+        length = struct.unpack("!I", raw_length)[0]
+
+        data = self.recvall(length)
+
+        if not data:
+            return None
+
+        return json.loads(data.decode("utf-8"))
     
     def send(self, data):
         try:
-            self.conn.send((json.dumps(data) + "\n").encode("utf-8"))
+            message = json.dumps(data).encode("utf-8")
+            length = struct.pack("!I", len(message))
+            self.conn.send(length + message)
         except Exception as e:
             print(e)
 
@@ -200,27 +231,16 @@ class ChatServer(QObject):
     def client_handler(self, client):
         while True:
             try:
-                data = client.conn.recv(1024)
+                data = client.receive_json_message()
+
                 if not data:
                     break
 
-                client.buffer += data.decode("utf-8")
+                if not isinstance(data, dict):
+                    break
 
-                while "\n" in client.buffer:
-                    line, client.buffer = client.buffer.split("\n", 1)
+                self.process_message(client, data)
 
-                    if not line.strip():
-                        continue
-
-                    try:
-                        data = json.loads(line)
-                    except:
-                        continue
-
-                    if not isinstance(data, dict):
-                        break
-                    
-                    self.process_message(client, data)
             except Exception as e:
                 print(e)
                 break
