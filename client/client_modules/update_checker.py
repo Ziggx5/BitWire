@@ -173,10 +173,13 @@ class UpdateChecker(QWidget):
         update_page_layout.addLayout(update_button_layout)
 
     def check_update(self):
-        response = requests.get(self.url)
-        data = response.json()
-
         try:
+            response = requests.get(self.url, timeout = 2)
+            data = response.json()
+
+            if response.status_code != 200:
+                return None
+
             for release in data:
                 tag = release["tag_name"]
                 if tag.startswith("c"):
