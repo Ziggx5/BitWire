@@ -244,7 +244,7 @@ class MainUi(QWidget):
     def client_display_message(self, username, content, time):
         message_widget = MessageWidget(username, content, time, f"{self.image_path}/user_picture_placeholder.png")
         self.chat_layout.addWidget(message_widget)
-        QTimer.singleShot(1, lambda: self.scroll.ensureWidgetVisible(message_widget))
+        QTimer.singleShot(5, lambda: self.scroll.verticalScrollBar().setValue(self.scroll.verticalScrollBar().maximum()))
 
     def client_send_message(self):
         message = self.message_input.toPlainText().strip()
@@ -582,7 +582,7 @@ class ServerButton(QFrame):
         self.delete_button.setVisible(False)
 
 class MessageWidget(QWidget):
-    def __init__(self, username, message, time, image):
+    def __init__(self, username, data, time, image):
         super().__init__() 
         self.setObjectName("message_container")
         self.setAttribute(Qt.WA_StyledBackground, True)
@@ -622,9 +622,15 @@ class MessageWidget(QWidget):
         time.setAlignment(Qt.AlignmentFlag.AlignCenter)
         time.setStyleSheet("color: #58a6ff; font-weight: 500; font-size: 11px;")
 
-        message = QLabel(message)
-        message.setWordWrap(True)
+        message = QTextBrowser()
+        message.setReadOnly(True)
+        message.setText(data)
+        message.setOpenExternalLinks(True)
+        message.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        message.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         message.setStyleSheet("color: #e6edf3;")
+
+        QTimer.singleShot(1, lambda: self.adjust_message_height(message))
 
         right_layout.addLayout(top_row)
         right_layout.addWidget(message)
@@ -638,6 +644,11 @@ class MessageWidget(QWidget):
         layout.addLayout(left_layout)
         layout.addSpacing(10)
         layout.addLayout(right_layout)
+    
+    def adjust_message_height(self, message):
+        message.document().setTextWidth(message.viewport().width())
+        message_height = message.document().size().height()
+        message.setFixedHeight(int(message_height))
 
 class UserWidget(QWidget):
     def __init__(self, username, image, status):

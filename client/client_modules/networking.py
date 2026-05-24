@@ -62,8 +62,6 @@ class ChatHandler(QObject):
 
                 if not message:
                     break
-
-                print(message)
                     
                 if message['type'] == "message":
                     username = message['user']
