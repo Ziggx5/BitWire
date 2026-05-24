@@ -625,6 +625,7 @@ class MessageWidget(QWidget):
         message = QTextBrowser()
         message.setReadOnly(True)
         message.setText(data)
+        message.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         message.setOpenExternalLinks(True)
         message.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         message.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
