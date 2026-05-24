@@ -394,8 +394,7 @@ class ChatServer(QObject):
 
         cursor.execute("""
             SELECT sender, content, created_at FROM messages
-            LIMIT ?
-        """, (50,))
+        """)
 
         result = cursor.fetchall()
 
