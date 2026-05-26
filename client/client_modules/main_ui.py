@@ -651,6 +651,22 @@ class MessageWidget(QWidget):
         message_height = message.document().size().height()
         message.setFixedHeight(int(message_height))
 
+    def set_profile_picture(self, pixmap):
+        result = QPixmap(30, 30)
+        result.fill(Qt.GlobalColor.transparent)
+
+        painter = QPainter(result)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        path = QPainterPath()
+        path.addEllipse(0, 0, 30, 30)
+
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, pixmap)
+        painter.end()
+
+        self.icon.setPixmap(result)
+
 class UserWidget(QWidget):
     def __init__(self, username, image, status):
         super().__init__()

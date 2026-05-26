@@ -193,6 +193,10 @@ class ChatServer(QObject):
                 self.add_client(client)
                 self.send_users_list_all_clients()
                 self.send_message_history(client)
+                for client in self.clients:
+                    print(client)
+                    print(client.username)
+                    self.send_profile_picture(client.username, client)
             else:
                 client.send({"type": "login", "status": "fail"})
         

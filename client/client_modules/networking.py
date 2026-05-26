@@ -4,6 +4,7 @@ import json
 import ssl
 from PySide6.QtCore import QObject, Signal
 import struct
+from client_modules.profile_cache import ProfileCache
 
 class ChatHandler(QObject):
     message_received = Signal(str, str, str)
@@ -13,6 +14,8 @@ class ChatHandler(QObject):
 
     def __init__(self):
         super().__init__()
+        self.profile_cache = ProfileCache()
+
         self.client = None
         self.running = False
         self.context = ssl.create_default_context()
@@ -85,7 +88,9 @@ class ChatHandler(QObject):
                         self.message_received.emit(content['user'], content['content'], content['time'])
                     
                 elif message['type'] == "profile_picture":
-                    self.profile_picture_received.emit(message['username'], message['content'])
+                    #self.profile_picture_received.emit(message['username'], message['content'])
+                    self.profile_cache.save(message['username'], message['content'])
+
                         
             except socket.timeout:
                 continue
