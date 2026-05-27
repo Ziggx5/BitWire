@@ -9,6 +9,7 @@ from client_modules.tray_manager import TrayManager
 from client_modules.path_finder import file_root
 from client_modules.login_ui import Login
 from client_modules.update_checker import UpdateChecker
+from client_modules.profile_cache import ProfileCache
 
 class MainUi(QWidget):
     def __init__(self):
@@ -37,8 +38,9 @@ class MainUi(QWidget):
         self.showMaximized()
 
         self.image_path = file_root()
+        self.profile_cache = ProfileCache()
         self.add_server_window = AddServerUi(self.add_server_window_show_main_ui)
-        self.chat_handler = ChatHandler()
+        self.chat_handler = ChatHandler(self.profile_cache)
         self.login_server_window = Login(self.login_server_window_show_main_ui, self.on_success_login, self.chat_handler)
         self.tray = TrayManager(self)
         self.update_checker = UpdateChecker(self.image_path, self.update_window_show_main_ui)
@@ -46,7 +48,6 @@ class MainUi(QWidget):
         self.chat_handler.message_received.connect(self.client_display_message)
         self.chat_handler.users_received.connect(self.add_users)
         self.chat_handler.server_status.connect(self.server_close_message)
-        self.chat_handler.profile_picture_received.connect(self.update_profile_picture)
         self.update_checker.update_found.connect(self.update_button_updater)
 
         self.user_widgets = {}
@@ -458,7 +459,7 @@ class MainUi(QWidget):
 
             self.user_widgets[user['username']] = user_widget
 
-            self.chat_handler.get_profile_pictures(user_widget.username)
+            self.profile_cache.get(user['username'])
     
     def eventFilter(self, obj, event):
         if obj == self.message_input and event.type() == QEvent.KeyPress:
@@ -490,19 +491,6 @@ class MainUi(QWidget):
     def update_button_updater(self, update):
         if update:
             self.update_client_button.setVisible(True)
-
-    def update_profile_picture(self, username, profile_picture):
-        decoded_image_bytes = base64.b64decode(profile_picture)
-        
-        pixmap = QPixmap()
-        pixmap.loadFromData(decoded_image_bytes)
-        
-        picture = pixmap.scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
-
-        widget = self.user_widgets.get(username)
-
-        if widget:
-            widget.set_profile_picture(picture)
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):

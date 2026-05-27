@@ -193,10 +193,7 @@ class ChatServer(QObject):
                 self.add_client(client)
                 self.send_users_list_all_clients()
                 self.send_message_history(client)
-                for client in self.clients:
-                    print(client)
-                    print(client.username)
-                    self.send_profile_picture(client.username, client)
+                self.send_profile_picture(client)
             else:
                 client.send({"type": "login", "status": "fail"})
         
@@ -224,10 +221,6 @@ class ChatServer(QObject):
 
         elif message_type == "pong":
             client.last_pong = time.time()
-
-        elif message_type == "get_profile_picture":
-            username = data.get("username")
-            self.send_profile_picture(username, client)
 
         else:
             self.remove_client(client)
@@ -409,19 +402,20 @@ class ChatServer(QObject):
 
         client.send({"type": "message_history", "content": messages})
 
-    def send_profile_picture(self, username, client):
+    def send_profile_picture(self, client):
         conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
 
         cursor.execute("""
-            SELECT profile_picture FROM users WHERE username = ?
-        """, (username,))
+            SELECT profile_picture, username FROM users
+        """)
 
-        result = cursor.fetchone()
+        result = cursor.fetchall()
 
-        with open (result[0], "rb") as f:
-            image_bytes = f.read()
-            
-        encoded_image_bytes = base64.b64encode(image_bytes).decode("utf-8")
+        for picture_path, username in result:
+            with open(picture_path, "rb") as f:
+                image_bytes = f.read()
 
-        client.send({"type": "profile_picture", "username": username, "content": encoded_image_bytes})
+            encoded_image_bytes = base64.b64encode(image_bytes).decode("utf-8")
+
+            client.send({"type": "profile_picture", "username": username, "content": encoded_image_bytes})

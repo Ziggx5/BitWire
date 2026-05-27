@@ -28,3 +28,8 @@ class ProfileCache:
         painter.end()
 
         self.cache[username] = icon
+
+        print(self.cache)
+
+    def get(self, username):
+        print(self.cache)
