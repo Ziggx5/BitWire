@@ -7,29 +7,31 @@ class ProfileCache:
     def __init__(self):
         self.cache = {}
 
-    def save(self, username, picture_bytes):
-        decoded_bytes = base64.b64decode(picture_bytes)
+    def save(self, data):
+        for user_data in data:
+            username = user_data['username']
+            picture_bytes = user_data['image_bytes']
 
-        pixmap = QPixmap()
-        pixmap.loadFromData(decoded_bytes)
-        picture = pixmap.scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
+            decoded_bytes = base64.b64decode(picture_bytes)
 
-        icon = QPixmap(30, 30)
-        icon.fill(Qt.GlobalColor.transparent)
+            pixmap = QPixmap()
+            pixmap.loadFromData(decoded_bytes)
+            picture = pixmap.scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
 
-        painter = QPainter(icon)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+            icon = QPixmap(30, 30)
+            icon.fill(Qt.GlobalColor.transparent)
 
-        path = QPainterPath()
-        path.addEllipse(0, 0, 30, 30)
+            painter = QPainter(icon)
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        painter.setClipPath(path)
-        painter.drawPixmap(0, 0, picture)
-        painter.end()
+            path = QPainterPath()
+            path.addEllipse(0, 0, 30, 30)
 
-        self.cache[username] = icon
+            painter.setClipPath(path)
+            painter.drawPixmap(0, 0, picture)
+            painter.end()
 
-        print(self.cache)
+            self.cache[username] = icon
 
     def get(self, username):
-        print(self.cache)
+        pass

@@ -403,6 +403,7 @@ class ChatServer(QObject):
         client.send({"type": "message_history", "content": messages})
 
     def send_profile_picture(self, client):
+        data = []
         conn = sqlite3.connect(self.users_database_path)
         cursor = conn.cursor()
 
@@ -418,4 +419,6 @@ class ChatServer(QObject):
 
             encoded_image_bytes = base64.b64encode(image_bytes).decode("utf-8")
 
-            client.send({"type": "profile_picture", "username": username, "content": encoded_image_bytes})
+            data.append({"username": username, "image_bytes": encoded_image_bytes})
+
+        client.send({"type": "profile_picture_data", "content": data})

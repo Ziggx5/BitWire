@@ -60,6 +60,7 @@ class ChatHandler(QObject):
         while self.running:
             try:
                 message = self.receive_json_message()
+                print(message['type'])
 
                 if not message:
                     break
@@ -85,8 +86,8 @@ class ChatHandler(QObject):
                     for content in message['content']:
                         self.message_received.emit(content['user'], content['content'], content['time'])
                     
-                elif message['type'] == "profile_picture":
-                    self.profile_cache.save(message['username'], message['content'])
+                elif message['type'] == "profile_picture_data":
+                    self.profile_cache.save(message['content'])
 
             except socket.timeout:
                 continue
