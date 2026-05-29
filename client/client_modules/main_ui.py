@@ -49,6 +49,7 @@ class MainUi(QWidget):
         self.chat_handler.users_received.connect(self.add_users)
         self.chat_handler.server_status.connect(self.server_close_message)
         self.update_checker.update_found.connect(self.update_button_updater)
+        self.profile_cache.profile_picture.connect(self.update_profile_pictures)
 
         self.user_widgets = {}
 
@@ -458,8 +459,6 @@ class MainUi(QWidget):
             self.all_users_layout.addWidget(user_widget)
 
             self.user_widgets[user['username']] = user_widget
-
-            self.profile_cache.get(user['username'])
     
     def eventFilter(self, obj, event):
         if obj == self.message_input and event.type() == QEvent.KeyPress:
@@ -491,6 +490,12 @@ class MainUi(QWidget):
     def update_button_updater(self, update):
         if update:
             self.update_client_button.setVisible(True)
+
+    def update_profile_pictures(self, username):
+        picture = self.profile_cache.get(username)
+
+        if picture:
+            self.user_widgets[username].set_profile_picture(picture)
 
 class ServerButton(QFrame):
     def __init__(self, name, ip, on_click, on_delete):
@@ -715,17 +720,4 @@ class UserWidget(QWidget):
         main_layout.addLayout(text_layout)
 
     def set_profile_picture(self, pixmap):
-        result = QPixmap(30, 30)
-        result.fill(Qt.GlobalColor.transparent)
-
-        painter = QPainter(result)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-
-        path = QPainterPath()
-        path.addEllipse(0, 0, 30, 30)
-
-        painter.setClipPath(path)
-        painter.drawPixmap(0, 0, pixmap)
-        painter.end()
-
-        self.icon.setPixmap(result)
+        self.icon.setPixmap(pixmap)

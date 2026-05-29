@@ -3,8 +3,11 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 import base64
 
-class ProfileCache:
+class ProfileCache(QObject):
+    profile_picture = Signal(str)
+
     def __init__(self):
+        super().__init__()
         self.cache = {}
 
     def save(self, data):
@@ -32,6 +35,7 @@ class ProfileCache:
             painter.end()
 
             self.cache[username] = icon
+            self.profile_picture.emit(username)
 
     def get(self, username):
-        pass
+        return self.cache.get(username)
