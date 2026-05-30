@@ -19,23 +19,34 @@ class ProfileCache(QObject):
 
             pixmap = QPixmap()
             pixmap.loadFromData(decoded_bytes)
-            picture = pixmap.scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
 
-            icon = QPixmap(30, 30)
-            icon.fill(Qt.GlobalColor.transparent)
+            self.cache[username] = {
+                "list_profile_picture": self.create_picture(pixmap, 30),
+                "message_profile_picture": self.create_picture(pixmap, 35)
+            }
+            
 
-            painter = QPainter(icon)
-            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-
-            path = QPainterPath()
-            path.addEllipse(0, 0, 30, 30)
-
-            painter.setClipPath(path)
-            painter.drawPixmap(0, 0, picture)
-            painter.end()
-
-            self.cache[username] = icon
             self.profile_picture.emit(username)
 
-    def get(self, username):
-        return self.cache.get(username)
+    def get(self, username, picture_type):
+        user_cache = self.cache.get(username)
+
+        return user_cache.get(picture_type)
+
+    def create_picture(self, pixmap, size):
+        picture = pixmap.scaled(size, size, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
+
+        icon = QPixmap(size, size)
+        icon.fill(Qt.GlobalColor.transparent)
+
+        painter = QPainter(icon)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        path = QPainterPath()
+        path.addEllipse(0, 0, size, size)
+
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, picture)
+        painter.end()
+
+        return icon

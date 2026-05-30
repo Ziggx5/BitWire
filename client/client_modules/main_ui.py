@@ -244,7 +244,13 @@ class MainUi(QWidget):
             self.server_layout.addWidget(server_button)
 
     def client_display_message(self, username, content, time):
-        message_widget = MessageWidget(username, content, time, f"{self.image_path}/user_picture_placeholder.png")
+        cached_picture = self.profile_cache.get(username, "message_profile_picture")
+
+        if cached_picture:
+            message_widget = MessageWidget(username, content, time, cached_picture)
+        else:
+            message_widget = MessageWidget(username, content, time, f"{self.image_path}/user_picture_placeholder.png")
+
         self.chat_layout.addWidget(message_widget)
         QTimer.singleShot(5, lambda: self.scroll.verticalScrollBar().setValue(self.scroll.verticalScrollBar().maximum()))
 
@@ -492,7 +498,7 @@ class MainUi(QWidget):
             self.update_client_button.setVisible(True)
 
     def update_profile_pictures(self, username):
-        picture = self.profile_cache.get(username)
+        picture = self.profile_cache.get(username, "list_profile_picture")
 
         if picture:
             self.user_widgets[username].set_profile_picture(picture)
