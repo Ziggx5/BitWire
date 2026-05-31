@@ -595,18 +595,20 @@ class MessageWidget(QWidget):
         layout = QHBoxLayout(self)
         
         icon = QLabel()
-        icon.setStyleSheet("background-color: white; border-radius: 15px;")
-        pixmap = QPixmap(image).scaled(35, 35, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        icon.setStyleSheet("background-color: transparent; border: none;")
+        icon.setFixedSize(35, 35)
+
+        pixmap = QPixmap(image).scaled(35, 35, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
         mask = QBitmap(35, 35)
         mask.fill(Qt.color0)
+
         painter = QPainter(mask)
-        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.setBrush(Qt.color1)
         painter.drawEllipse(0, 0, 35, 35)
         painter.end()
         pixmap.setMask(mask)
         icon.setPixmap(pixmap)
-        icon.setFixedSize(35, 35)
 
         right_layout = QVBoxLayout()
 
@@ -650,22 +652,6 @@ class MessageWidget(QWidget):
         message_height = message.document().size().height()
         message.setFixedHeight(int(message_height))
 
-    def set_profile_picture(self, pixmap):
-        result = QPixmap(30, 30)
-        result.fill(Qt.GlobalColor.transparent)
-
-        painter = QPainter(result)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-
-        path = QPainterPath()
-        path.addEllipse(0, 0, 30, 30)
-
-        painter.setClipPath(path)
-        painter.drawPixmap(0, 0, pixmap)
-        painter.end()
-
-        self.icon.setPixmap(result)
-
 class UserWidget(QWidget):
     def __init__(self, username, image, status):
         super().__init__()
@@ -697,7 +683,7 @@ class UserWidget(QWidget):
         text_layout.setSpacing(0)
 
         self.icon = QLabel("icon")
-        self.icon.setStyleSheet("background-color: white; border-radius: 15px; border: none;")
+        self.icon.setStyleSheet("background-color: transparent; border: none;")
         self.icon.setFixedSize(30, 30)
 
         pixmap = QPixmap(image).scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatioByExpanding, Qt.TransformationMode.SmoothTransformation)
