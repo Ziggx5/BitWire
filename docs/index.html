@@ -12,7 +12,7 @@
 
     <header class = "header">
         <h1>💬 BiteWire</h1>
-        <p class = "version">Latest version 1.8.0</p>
+        <p class = "version">Latest version 1.9.0</p>
         <div class = "header-right">
             <div class = "donate_container">
                 <a href = "https://ko-fi.com/ziggx5"><button class = "Kofi_donate_button"><img src = "images/kofi_logo.png" alt = "Kofi logo"></button></a>
@@ -28,14 +28,14 @@
     </header>
 
     <div class = "download_button_section">
-        <a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.8.0/BiteWire.exe"><button class ="download_button"><img src = "images/download.png" alt = "Download button">Download</button></a>
+        <a href = "https://github.com/Ziggx5/BiteWire/releases/download/c1.9.0/BiteWire.exe"><button class ="download_button"><img src = "images/download.png" alt = "Download button">Download</button></a>
         <a href = "https://github.com/Ziggx5/BiteWire"><button class = "github_button"><img src = "images/github_logo.png" alt = "github button">github repository</button></a>
     </div>
     <div class="container">
         <div class = "description">
             <h2>Description</h2>
             <p>BiteWire is a simple, secure chat application that allows users to connect to hosted servers, communicate in real-time, and manage their own server through a dedicated server application.</p>
-            <div><img src = "images/screenshot.png" alt="screenshot"></div>
+            <div><img src = "images/client_screenshot.png" alt="client_screenshot"></div>
             <h2>⚙️ Server Setup</h2>
             <h3>1. Generate TLS certificate</h3>
             <p>To host a BiteWire server, a TLS certificate is required for encrypted connections.</p>
@@ -44,7 +44,6 @@
             <p>Download and install <a href = https://git-scm.com/>Git</a>.</p>
             <p>Then open **Git Bash** and run:</p>
             <p>openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -sha256 -days 365 -nodes</p>
-
             <h1>Linux</h1>
             <p>Most Linux distributions already have <b>openssl</b> installed.</p>
             <p>Open terminal and generate self signed certificate:</p>
@@ -57,6 +56,8 @@
             <p>Make sure port <b>50505</b> is open on your router.</p>
             <p>- for local (LAN) usage, this step is not required</p>
             <p>- for external connections, port forwarding is necessary</p>
+
+            <div><img src = "images/server_screenshot.png" alt="server_screenshot"></div>
 
             <h2>⚠️ Disclaimer</h2>
             <p>This project is still in an early stage of development.</p>
